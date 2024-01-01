@@ -14,7 +14,7 @@ const Nav = () => {
     const [NavColorChanged, setNavColorChanged] = useState(false);
 
     const changeNavColor = () => {
-        if (window.scrollY >= 80) {
+        if (window.scrollY >= 40) {
             setNavColorChanged(true);
         } else {
             setNavColorChanged(false);
@@ -25,15 +25,15 @@ const Nav = () => {
     return (
         <div>
             <nav className={!NavColorChanged ? 'top-0 fixed z-10 text-black  w-full font-title text-menu flex justify-between items-center h-20 mx-auto px-4 pt-8 pb-8 uppercase bg-transparent'
-            :'top-0 fixed z-10 text-black w-full font-title text-menu flex justify-between items-center h-20 mx-auto px-4 pt-8 pb-8 uppercase bg-white'}>
+            :'top-0 fixed z-10 text-black w-full font-title text-menu flex justify-between shadow-sm items-center h-20 mx-auto px-4 pt-8 pb-8 uppercase bg-white'}>
                 <div className='container flex justify-between items-center pl-14 pr-14'>
-                <img src={logo} alt="logo" width="130px%" className='' />
+                <img src={logo} alt="logo" onClick={() => window.location.href = `/`} className=' cursor-pointer w-[143px] h-auto' />
                     <ul className='hidden md:flex items-center space-x-4'>
-                        <li className='p-4 rounded-md hover:text-primary-color '>Home</li>
-                        <li className='p-4 rounded-md hover:text-primary-color '>Browse Topics</li>
-                        <li className='p-4 rounded-md hover:text-primary-color '>How it Works</li>
-                        <li className='p-4 rounded-md hover:text-primary-color '>About</li>
-                        <li className='p-4 rounded-md hover:text-primary-color '>Contact</li>
+                        <li className='p-4 rounded-md cursor-pointer hover:text-primary-color '>Home</li>
+                        <li className='p-4 rounded-md cursor-pointer hover:text-primary-color '>Browse Topics</li>
+                        <li className='p-4 rounded-md cursor-pointer hover:text-primary-color '>How it Works</li>
+                        <li className='p-4 rounded-md cursor-pointer hover:text-primary-color '>About</li>
+                        <li className='p-4 rounded-md cursor-pointer hover:text-primary-color '>Contact</li>
                     </ul>
                     <div className='flex items-center'>
                         <PiUserDuotone size={30} />
@@ -46,10 +46,10 @@ const Nav = () => {
                     <div>
                     </div>
                     <ul className='uppercase p-4'>
-                        <li className='p-4 border-b border-gray-600'>Home</li>
-                        <li className='p-4 border-b border-gray-600'>Browse Topics</li>
-                        <li className='p-4 border-b border-gray-600'>Blog</li>
-                        <li className='p-4 border-b border-gray-600'>About</li>
+                        <li className='p-4 border-b cursor-pointer  border-gray-600'>Home</li>
+                        <li className='p-4 border-b cursor-pointer  border-gray-600'>Browse Topics</li>
+                        <li className='p-4 border-b cursor-pointer  border-gray-600'>Blog</li>
+                        <li className='p-4 border-b cursor-pointer  border-gray-600'>About</li>
                         <li className='p-4'>Contact</li>
                     </ul>
                 </div>

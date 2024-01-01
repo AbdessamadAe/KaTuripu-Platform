@@ -22,7 +22,8 @@ app.listen(port, () => {
   console.log(`App running on port ${port}.`)
 })
 
-app.get('/topics/:categoryid', db.getTopics)
+app.get('/topics/:categoryid', db.getTopicsForCateg)
 app.get('/categories', db.getCategories)
+app.get('/content/:topic_id', db.getContentWithTopicId)
 
 

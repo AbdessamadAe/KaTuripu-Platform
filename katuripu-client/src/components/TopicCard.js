@@ -5,8 +5,8 @@ export const TopicCard = ({topic}) => {
     return (
         //I did not style this! This styling was taken from https://tailwindcomponents.com/component/tailwind-css-card-with-link-by-material-tailwind
         <div class=" relative mt-6 flex w-96 flex-col rounded-xl font-amiri bg-white bg-clip-border text-gray-700 shadow-md">
-            <div class="p-6 text-right">
-                <h5 class="mb-2 block text-xl font-semibold leading-snug tracking-normal text-blue-gray-900 antialiased">
+            <div class=" p-[40px] text-right">
+                <h5 class="block mb-[20px] text-xl font-semibold leading-snug tracking-normal text-[#374047] antialiased">
                     {topic.topic_title}
                 </h5>
                 <p class="block text-base font-light leading-relaxed text-inherit antialiased">
@@ -23,6 +23,7 @@ export const TopicCard = ({topic}) => {
                         class="flex select-none items-center gap-2 rounded-lg py-2 px-4 text-end align-middle font-amiri text-xs font-bold uppercase text-pink-500 transition-all hover:bg-pink-500/10 active:bg-pink-500/30 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                         type="button"
                         data-ripple-dark="true"
+                        onClick={() => window.location.href = `/content/${topic.topic_id}`}
                     >
                         تعلم المزيد
                         <svg

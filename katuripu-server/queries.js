@@ -16,9 +16,19 @@ const getCategories = (request, response) => {
   })  
 }
 
-const getTopics = (request, response) => {
+const getTopicsForCateg = (request, response) => {
   const categoryID = request.params.categoryid
-  pool.query('SELECT topic.* FROM category NATURAL JOIN topic WHERE category_id = $1 ', [categoryID], (error, results) => {
+  pool.query('SELECT * FROM topic WHERE category_id = $1 ', [categoryID], (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
+
+const getContentWithTopicId = (request, response) => {
+  const topic_id = request.params.topic_id
+  pool.query('SELECT * FROM topic_content NATURAL JOIN topic WHERE topic_id = $1 ', [topic_id], (error, results) => {
     if (error) {
       throw error
     }
@@ -29,5 +39,6 @@ const getTopics = (request, response) => {
 
 module.exports = {
   getCategories,
-  getTopics,
+  getTopicsForCateg,
+  getContentWithTopicId
 }

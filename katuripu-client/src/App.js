@@ -1,10 +1,9 @@
 import { Home } from './components/Home';
-import Content from './components/Content';
+import ContentPage from './components/ContentPage';
 import {
   BrowserRouter as Router,
   Routes,
-  Route,
-  Link
+  Route
 } from "react-router-dom";
 
 function App() {
@@ -19,8 +18,8 @@ function App() {
           ></Route>
           <Route
             exact
-            path="/content"
-            element={<Content />}
+            path="/content/:topic_id"
+            element={<ContentPage />}
           ></Route>
         </Routes>
       </div>
