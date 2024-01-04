@@ -4,10 +4,11 @@ import { ContentHero } from './ContentHero';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { ContentDetails } from './ContentDetails';
+import { Footer } from './Footer';
 
 const ContentPage = () => {
     const { topic_id } = useParams();
-    const [content, setContent] = useState();
+    const [content, setContent] = useState([]);
 
     useEffect(() => {
         axios.get(`http://localhost:3001/content/${topic_id}`).then((res) => {
@@ -21,6 +22,7 @@ const ContentPage = () => {
             <Nav />
             <ContentHero content={content} />
             <ContentDetails content={content} />
+            <Footer/>
         </div>
     )
 }

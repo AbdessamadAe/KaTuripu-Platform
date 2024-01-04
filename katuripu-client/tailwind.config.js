@@ -18,7 +18,8 @@ module.exports = {
       fontFamily: {
         body: ['Open Sans', 'sans-serif'],
         title: ['Montserrat', 'sans-serif'],
-        amiri: ['Amiri', 'serif']
+        amiri: ['Amiri', 'serif'],
+        Noto: ['Noto Naskh Arabic', 'serif']
       },
       fontSize: {
         'h1': '58px',

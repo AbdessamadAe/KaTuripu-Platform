@@ -3,7 +3,7 @@ import { CiBookmark } from "react-icons/ci";
 import Math from '../images/Math.svg'
 
 export const ContentHero = ({ content }) => {
-    const topic_title = content ? content[0].topic_title : 'Loading...';
+    const topic_title = content.length > 0 ? content[0].topic_title : '...';
     return (
         <div className=' text-right font-amiri pt-[150px] pb-[80px] bg-gradient-to-bl from-white via-violet-300 to-violet-400'>
             <div className='flex flex-row justify-center h-[300px] mb-4'>
