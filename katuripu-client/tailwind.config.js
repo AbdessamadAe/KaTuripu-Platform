@@ -3,6 +3,10 @@ module.exports = {
   content: ["./src/**/*.{html,js}", './public/index.html'],
   theme: {
     extend: {
+      backgroundImage: {
+        'purple-text-bg': "url('/src/images/title.svg')",
+        'bulles-eye-bg' : "url('/src/images/Meteor.svg')"
+      },
       colors: {
         'white-color': '#ffffff',
         'primary-color': '#4F55C1',

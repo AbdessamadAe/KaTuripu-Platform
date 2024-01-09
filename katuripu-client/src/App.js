@@ -3,7 +3,7 @@ import ContentPage from './components/ContentPage';
 import { ContactUs } from './components/ContactUs';
 import { BrowseTopics } from './components/BrowseTopics';
 import { BookSession } from './components/BookSession';
-import { OurStory } from './components/OurStory';
+import { AboutUs } from './components/AboutUs';
 import {
   BrowserRouter as Router,
   Routes,
@@ -37,8 +37,8 @@ function App() {
           ></Route>
           <Route
           exact
-          path='/our-story'
-          element={<OurStory/>}
+          path='/about-us'
+          element={<AboutUs/>}
           ></Route>
           <Route
           exact

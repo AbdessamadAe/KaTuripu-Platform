@@ -18,11 +18,11 @@ const ContentPage = () => {
 
 
     return (
-        <div>
+        <div className=''>
             <Nav />
             <ContentHero content={content} />
             <ContentDetails content={content} />
-            <Footer/>
+            <Footer />
         </div>
     )
 }
