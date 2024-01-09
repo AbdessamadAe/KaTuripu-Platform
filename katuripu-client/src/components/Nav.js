@@ -32,7 +32,7 @@ const Nav = () => {
                         <a className='p-4 rounded-md cursor-pointer hover:text-primary-color ' href='/'>الرئيسية</a>
                         <a className='p-4 rounded-md cursor-pointer hover:text-primary-color ' href='/BrowseTopics'>تصفح المواضيع</a>
                         <a className='p-4 rounded-md cursor-pointer hover:text-primary-color ' href='/book-session'>إحجز حصة</a>
-                        <a className='p-4 rounded-md cursor-pointer hover:text-primary-color ' href='/our-story'>عنّا</a>
+                        <a className='p-4 rounded-md cursor-pointer hover:text-primary-color ' href='/about-us'>عنّا</a>
                         <a className='p-4 rounded-md cursor-pointer hover:text-primary-color ' href='/contact-us'>إتصل بنا</a>
                     </div>
                     <div className='flex items-center'>
@@ -57,7 +57,7 @@ const Nav = () => {
                             <a className='' href='/book-session'>إحجز حصة</a>
                         </div>
                         <div className='p-4 rounded-md cursor-pointer hover:text-primary-color border-b border-gray-600'>
-                            <a className='' href='/our-story'>عنّا</a>
+                            <a className='' href='/about-us'>عنّا</a>
                         </div>
                         <div className='p-4 rounded-md cursor-pointer hover:text-primary-color border-b border-gray-600'>
                             <a className='' href='/contact-us'>إتصل بنا</a>

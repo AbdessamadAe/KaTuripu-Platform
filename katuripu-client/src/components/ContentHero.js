@@ -8,7 +8,7 @@ export const ContentHero = ({ content }) => {
         <div className=' text-right font-amiri pt-[150px] pb-[80px] bg-gradient-to-bl from-white via-violet-300 to-violet-400'>
             <div className='flex flex-row justify-center h-[300px] mb-4'>
                 <div className='pl-2 pr-2 w-[300px] pt-0 pb-0'>
-                    <img src={Math} className='m-0' />
+                    <img src={Math} alt='math' className='m-0' />
                 </div>
                 <div className=' whitespace-pre-wrap flex flex-col justify-center pr-[12px] pl-[12px] pt-0 pb-0 w-[40%]'>
                     <p>الرئيسية \ {topic_title}</p>

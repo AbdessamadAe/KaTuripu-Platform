@@ -16,7 +16,7 @@ export const Footer = () => {
                 <a href="https://www.facebook.com/KaTuriipu/" class="text-gray-400 hover:text-gray-500">
                     <FaFacebook className='w-6 h-6' />      
                 </a>
-                <a href="#" class="text-gray-400 hover:text-gray-500">
+                <a href="https://www.instagram.com/katuriipu/" class="text-gray-400 hover:text-gray-500">
                     <FaInstagram  className='w-6 h-6' />
                 </a>
                 <a href="https://www.tiktok.com/@katuripu?lang=en" class="text-gray-400 hover:text-gray-500">
