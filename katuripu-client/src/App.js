@@ -4,6 +4,7 @@ import { ContactUs } from './components/ContactUs';
 import { BrowseTopics } from './components/BrowseTopics';
 import { BookSession } from './components/BookSession';
 import { AboutUs } from './components/AboutUs';
+import { MathJaxContext } from "better-react-mathjax";
 import {
   BrowserRouter as Router,
   Routes,
@@ -11,7 +12,19 @@ import {
 } from "react-router-dom";
 
 function App() {
+
+  const config = {
+    loader: { load: ["[tex]/html"] },
+    tex: {
+      packages: { "[+]": ["html"] },
+      inlineMath: [["$", "$"]],
+      displayMath: [["$$", "$$"]]
+    }
+  };
+
+  
   return (
+    <MathJaxContext config={config} version={3}>
     <Router>
       <div className="App">
         <Routes>
@@ -48,6 +61,7 @@ function App() {
         </Routes>
       </div>
     </Router>
+    </MathJaxContext>
   );
 }
 
