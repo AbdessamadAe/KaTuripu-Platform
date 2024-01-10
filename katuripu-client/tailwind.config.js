@@ -5,7 +5,7 @@ module.exports = {
     extend: {
       backgroundImage: {
         'purple-text-bg': "url('/src/images/title.svg')",
-        'bulles-eye-bg' : "url('/src/images/Meteor.svg')"
+        'meteor-bg' : "url('/src/images/Meteor.svg')",
       },
       colors: {
         'white-color': '#ffffff',

@@ -24,8 +24,7 @@ const Nav = () => {
 
     return (
         <div>
-            <nav className={!NavColorChanged ? 'top-0 fixed z-10 text-black w-full font-amiri text-menu flex justify-between items-center h-20 mx-auto px-4 pt-8 pb-8 uppercase bg-transparent'
-                : 'top-0 fixed z-10 text-black w-full font-amiri  text-menu flex justify-between shadow-sm items-center h-20 mx-auto px-4 pt-8 pb-8 uppercase bg-white'}>
+            <nav className={`top-0 fixed z-10 text-black w-full font-amiri text-menu flex justify-between items-center h-20 mx-auto px-4 pt-8 pb-8 uppercase ${!NavColorChanged ? 'bg-transparent' : 'shadow-sm  bg-white'}`}>
                 <div className='container flex justify-between items-center pl-14 pr-14'>
                     <img src={logo} alt="logo" onClick={() => window.location.href = `/`} className=' cursor-pointer w-[143px] h-auto' />
                     <div className='hidden md:flex items-center space-x-8 text-[18px]'>
@@ -36,13 +35,12 @@ const Nav = () => {
                         <a className='p-4 rounded-md cursor-pointer hover:text-primary-color ' href='/contact-us'>إتصل بنا</a>
                     </div>
                     <div className='flex items-center'>
-                        {/* <PiUserDuotone size={30} /> */}
                     </div>
                     <div onClick={toggleMenu} className='block md:hidden'>
-                        {!showMenu ? <AiOutlineClose size={20} /> : <AiOutlineMenu size={20} />}
+                        {!showMenu ? <AiOutlineClose size={25} /> : <AiOutlineMenu size={25} />}
                     </div>
                 </div>
-                <div className={!showMenu ? 'fixed left-0 top-0 w-[60%] border-r h-full border-r-gray-900 bg-[#ffff] ease-in-out duration-500' : 'fixed left-[-100%]'}>
+                <div className={!showMenu ? 'fixed left-0 top-0 w-[70%] border-r h-full border-r-gray-900 bg-[#ffff] ease-in-out duration-500' : 'fixed left-[-100%]'}>
                     <div>
                         <img src={logo} alt="logo" onClick={() => window.location.href = `/`} className=' cursor-pointer m-auto mt-6 w-[143px] h-auto' />
                     </div>

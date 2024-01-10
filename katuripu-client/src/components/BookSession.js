@@ -9,16 +9,16 @@ export const BookSession = () => {
     return (
         <div>
             < Nav />
-            <div className='animate-slide-fade-in p-4 pt-20 pb-0'>
+            <div className='animate-slide-fade-in sm:p-4 pt-6 sm:pt-20 pb-0'>
                 <div class=" relative mt-[80px] grid grid-flow-col grid-cols-1 items-center my-auto mx-auto max-w-[80%] bg-white font-amiri">
-                <img src={illust} className='absolute -top-20 right-10 w-[130px]'/> 
+                    <img src={illust} className=' hidden sm:block absolute -top-20 right-10 w-[130px]' />
                     <div className='grid grid-flow-row text-center'>
                         <div className='space-y-3' id="booking-section" dir="rtl" lang="ar" >
-                            <div className="text-h2 bg-purple-text-bg w-fit m-auto bg-no-repeat bg-center bg-cover px-8   ">
+                            <div className=" text-4xl sm:text-h2 bg-purple-text-bg w-fit my-4 mb-6 py-4 sm:py-auto mx-auto sm:m-auto bg-no-repeat bg-center bg-cover sm:px-8 px-12">
                                 إحجز حصة الآن
                             </div>
-                            <div className='px-24'>
-                                <p className='text-h6'>انضم إلينا للحصول على دروس تقوية أو استشارات متخصصة في الرياضيات وعلوم الحاسوب. خبراؤنا مستعدون لمساعدتك في مواجهة أي تحدي، كبيرًا كان أم صغيرًا.</p>
+                            <div className='sm:px-24'>
+                                <p className='text-[17px] sm:text-h6'>انضم إلينا للحصول على دروس تقوية أو استشارات متخصصة في الرياضيات وعلوم الحاسوب. خبراؤنا مستعدون لمساعدتك في مواجهة أي تحدي، كبيرًا كان أم صغيرًا.</p>
                             </div>
                             <div>
                                 <p className='text-h6'>ثمن الحصة: 50DH</p>
@@ -31,7 +31,7 @@ export const BookSession = () => {
 
                     </div>
                 </div>
-                
+
             </div>
             <Calendly />
             <Footer />
