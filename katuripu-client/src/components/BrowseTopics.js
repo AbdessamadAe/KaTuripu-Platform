@@ -30,7 +30,7 @@ export const BrowseTopics = () => {
         <div>
         <Nav/>
         <div className=' animate-slide-fade-in mt-[80px] flex flex-col items-center pt-4 font-amiri mb-12 rtl:ml-2'>
-            <h1 className='text-h2 font-semibold mb-12'>تصفح المواضيع</h1>
+            <h1 className='text-h1 font-semibold mb-12'>تصفح المواضيع</h1>
             <div className='text-h6 flex flex-row items-center '>
                 {categories?.map((category) => (
                     <div className='mr-[20px] ml-[20px]'>
