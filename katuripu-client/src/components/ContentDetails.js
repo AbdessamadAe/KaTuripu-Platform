@@ -1,17 +1,9 @@
 import React from 'react';
-import { MathJax, MathJaxContext } from 'better-react-mathjax';
+import { MathJax } from 'better-react-mathjax';
+import ReactMarkdown from "react-markdown";
 
 
 export const ContentDetails = ({ content }) => {
-
-  const config = {
-    loader: { load: ["[tex]/html"] },
-    tex: {
-      packages: { "[+]": ["html"] },
-      inlineMath: [["$", "$"]],
-      displayMath: [["$$", "$$"]]
-    }
-  };
 
   return (
     <div className='pt-[80px] mb-[80px]'>
@@ -23,11 +15,9 @@ export const ContentDetails = ({ content }) => {
           >
             <h1 className='mr-[12px] text-h3'>{contentItem.title}</h1>
             <div className='mr-[12px] text-h6 leading-10 text-[#464848]'>
-              <MathJaxContext config={config} version={3}>
-                <MathJax>
-                  {contentItem.content_body}
+                <MathJax dynamic hideUntilTypeset="every" >
+                  <ReactMarkdown>{contentItem.content_body}</ReactMarkdown>
                 </MathJax>
-              </MathJaxContext>
             </div>
           </div>
         ))}
