@@ -29,8 +29,8 @@ export const BrowseTopics = () => {
     return (
         <div>
         <Nav/>
-        <div className=' animate-slide-fade-in mt-[80px] flex flex-col items-center pt-4 font-amiri mb-12 rtl:ml-2'>
-            <h1 className='text-h2 font-semibold mb-12'>تصفح المواضيع</h1>
+        <div className='animate-slide-fade-in mt-[80px] flex flex-col items-center pt-8 sm:pt-4 font-amiri mb-12 rtl:ml-2'>
+            <h1 className=' text-4xl sm:text-h1 font-semibold mb-12'>تصفح المواضيع</h1>
             <div className='text-h6 flex flex-row items-center '>
                 {categories?.map((category) => (
                     <div className='mr-[20px] ml-[20px]'>

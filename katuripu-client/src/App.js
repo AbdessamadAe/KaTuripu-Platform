@@ -3,7 +3,7 @@ import ContentPage from './components/ContentPage';
 import { ContactUs } from './components/ContactUs';
 import { BrowseTopics } from './components/BrowseTopics';
 import { BookSession } from './components/BookSession';
-import { AboutUs } from './components/AboutUs';
+import { AboutUs } from './components/team';
 import { MathJaxContext } from "better-react-mathjax";
 import {
   BrowserRouter as Router,
@@ -50,7 +50,7 @@ function App() {
           ></Route>
           <Route
           exact
-          path='/about-us'
+          path='/team'
           element={<AboutUs/>}
           ></Route>
           <Route

@@ -15,24 +15,24 @@ const Hero = () => {
 
   return (
     <div>
-      <div className='pt-[50px] animate-slide-fade-in  w-full h-screen m-t-[-96px] mx-auto flex items-center justify-center space-x-[100px]'>
+      <div className='sm:pt-[50px] animate-slide-fade-in w-full flex flex-col-reverse sm:flex-row items-center justify-center h-screen space-x-0 sm:space-x-[100px]'>
         <div className='flex flex-col text-center items-center font-amiri'>
-          <h1 className=' text-[#1F2937] pb-6 font-bold text-h1 '>
+          <h1 className=' text-[#1F2937] pb-8 sm:pb-12 font-bold text-4xl sm:text-h1 '>
             إكتشف. تعلم. إستمتع
           </h1>
-          <div className='text-primary-color pb-8  font-bold text-h6'>
+          <div className='text-primary-color pb-8 sm:pb-8 font-bold text-2xl leading-10 sm:text-h5  '>
             أول منصة مغاربية لتعلم {texts.map((text, i) => (
               <div key={i} className={i === animationIndex ? 'fadeInSlide' : 'hidden'}>
                 {text}
               </div>
             ))}
           </div>
-          <button onClick={() => { window.location.href = '/BrowseTopics' }} class=" active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300 bg-[#7C3AED] w-fit items-center hover:bg-primary-color text-white py-[8px] px-[40px] rounded-full">
+          <button onClick={() => { window.location.href = '#mission' }} class=" active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300 bg-[#7C3AED] w-fit items-center hover:bg-primary-color text-white py-[8px] px-[40px] rounded-full">
             إقرأ المزيد
           </button>
         </div>
-        <div>
-          <img src={illustration} alt="illustration" className='w-[500px] h-[500px] mx-auto' />
+        <div className='mb-16 sm:m-auto'>
+          <img src={illustration} alt="illustration" className='sm:w-[500px] sm:h-[500px] w-[80%] mx-auto' />
         </div>
       </div>
     </div>
