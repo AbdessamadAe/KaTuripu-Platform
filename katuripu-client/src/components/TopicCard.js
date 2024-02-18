@@ -8,23 +8,23 @@ export const TopicCard = ({ topic }) => {
             <div class=" h-full p-5 border-2 border-[#A78BFA] transition duration-300 hover:scale-105 relative mt-6 flex flex-col rounded-xl font-amiri bg-white bg-clip-border text-gray-700">
                 <div class=" p-[40px] pt-[24px] text-right">
                     <h5 class="block mb-[10px] text-xl font-semibold tracking-normal text-[#374047]">
-                        {topic.topic_title}
+                        {topic.topicTitle}
                     </h5>
                     <p class="block font-light leading-relaxed">
-                        {topic.topic_overview}
+                        {topic.topicOverview}
                     </p>
                     <img src={Math} alt="" class="w-36 h-36 mt-4 m-auto" />
                 </div>
                 <div class="p-6 pt-0">
                     <a
                         class="!font-medium !text-blue-gray-900 !transition-colors hover:!text-pink-500"
-                        href={`/content/${topic.topic_id}`}
+                        href={`/content/${topic.topicId}`}
                     >
                         <button
                             class="flex select-none items-center gap-2 rounded-lg py-2 px-4 text-end align-middle font-amiri text-xs font-bold uppercase text-pink-500 transition-all hover:bg-pink-500/10 active:bg-pink-500/30 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                             type="button"
                             data-ripple-dark="true"
-                            onClick={() => window.location.href = `/content/${topic.topic_id}`}
+                            onClick={() => window.location.href = `/content/${topic.topicId}`}
                         >
                             تعلم المزيد
                             <svg
