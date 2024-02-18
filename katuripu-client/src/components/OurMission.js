@@ -11,7 +11,7 @@ export const OurMission = () => {
             <div className='mt-12 sm:mt-16 flex flex-col-reverse sm:grid sm:grid-flow-col sm:grid-cols-2 mx-8 sm:mx-12'>
                 <img alt='team' src={screenshot} className='m-auto -rotate-3 border-[1px] sm:mt-auto mt-12 border-[#A78BFA] w-[90%] rounded-3xl  ' />
                 <div>
-                    <div dir='rtl' className='font-amiri leading-10 mx-auto text-[17px] sm:text-h5 text-gray-700'>نسعى لتوفير المحتوى التعليمي باللغات منخفضة الموارد باستخدام المرئيات التفاعلية. نركز حاليًا على إنشاء محتوى الرياضيات عبر جميع مستويات المناهج المدرسية المغربية، باستخدام اللغة الدارجة، لكننا نخطط للتوسع عبر مواضيع علمية أخرى ودعم المزيد من اللغات في المستقبل بإذن الله...</div>
+                    <div dir='rtl' className='font-amiri leading-10 mx-auto text-[17px] sm:text-h5 text-gray-700'>نسعى لتوفير المحتوى التعليمي باللغات منخفضة الموارد باستخدام المرئيات التفاعلية. نركز حاليًا على إنشاء محتوى الخوارزميات والرياضيات عبر جميع مستويات المناهج المدرسية المغربية، باستخدام الدارجة واللغة العربية، لكننا نخطط للتوسع عبر مواضيع علمية أخرى ودعم المزيد من اللغات في المستقبل بإذن الله..</div>
                 </div>
             </div>
         </div>

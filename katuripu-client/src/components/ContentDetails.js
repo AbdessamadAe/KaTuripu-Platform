@@ -16,7 +16,7 @@ export const ContentDetails = ({ content }) => {
             <h1 className='mr-[12px] text-h3'>{contentItem.title}</h1>
             <div className='mr-[12px] text-h6 leading-10 text-[#464848]'>
                 <MathJax dynamic hideUntilTypeset="every" >
-                  <ReactMarkdown>{contentItem.content_body}</ReactMarkdown>
+                  <ReactMarkdown>{contentItem.contentBody}</ReactMarkdown>
                 </MathJax>
             </div>
           </div>

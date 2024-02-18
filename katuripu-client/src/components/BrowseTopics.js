@@ -6,38 +6,40 @@ import { Footer } from './Footer'
 
 export const BrowseTopics = () => {
 
-    const [categories, setCategories] = useState();
+    const [subjects, setsubjects] = useState([]);
     const [topics, setTopics] = useState([]);
-    const [category_id, setCategory_id] = useState(1);
+    const [subject_id, setsubject_id] = useState(1);
 
     useEffect(() => {
-        axios.get('http://localhost:3001/categories').then((res) => {
-            setCategories(res.data);
+        axios.get('http://localhost:3001/subjects').then((res) => {
+            setsubjects(res.data);
+            console.log(subjects);
+
         })
-    }, [])
+    }, [subjects])
 
     useEffect(() => {
-        axios.get(`http://localhost:3001/topics/${category_id}`).then((res) => {
+        axios.get(`http://localhost:3001/topics/${subject_id}`).then((res) => {
             setTopics(res.data);
         })
-    }, [category_id])
+    }, [subject_id])
 
-    const handleCategoryChange = (newcategory_id) => {
-        setCategory_id(newcategory_id);
+    const handlesubjectChange = (newsubject_id) => {
+        setsubject_id(newsubject_id);
     }
 
     return (
         <div>
         <Nav/>
         <div className='animate-slide-fade-in mt-[80px] flex flex-col items-center pt-8 sm:pt-4 font-amiri mb-12 rtl:ml-2'>
-            <h1 className=' text-4xl sm:text-h1 font-semibold mb-12'>تصفح المواضيع</h1>
+            <h1 className=' text-4xl sm:text-h2 font-semibold mb-12'>تصفح المواضيع</h1>
             <div className='text-h6 flex flex-row items-center '>
-                {categories?.map((category) => (
+                {subjects?.map((subject) => (
                     <div className='mr-[20px] ml-[20px]'>
-                        <div onClick={() => handleCategoryChange(category.category_id)} className={`text-[#374047] cursor-pointer hover:text-primary-color ${category_id === category.category_id ? 'border-b-[2px]' : ''
+                        <div onClick={() => handlesubjectChange(subject.subjectId)} className={`text-[#374047] cursor-pointer hover:text-primary-color ${subject_id === subject.subjectId ? 'border-b-[2px]' : ''
                             }`}
                         >
-                            {category.category_name}
+                            {subject.subjectName}
                         </div>
                     </div>
                 ))}

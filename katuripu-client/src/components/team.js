@@ -21,9 +21,9 @@ export const AboutUs = () => {
                                 <div dir='rtl' class="items-center self-center flex-1 p-6">
                                     <div class="mb-1 text-2xl font-semibold text-gray-800">عبد الصمد أيت المودن</div>
                                     <span class="inline-block mb-4 text-base font-medium text-blue-500">
-                                        مبرمج</span>
+                                        صديق بائع القهوة</span>
                                     <p class="mb-4 text-sm leading-7 text-gray-500">
-                                        طالب بكلية العلوم القانونية والاقتصادية والاجتماعية بمراكش، قسم القانون الخاص، مهتم بالبرمجة والتقنية بشكل عام، وبالتصميم والتصوير بشكل خاص، وأحب القراءة والكتابة والتعلم والتطوير الذاتي.
+                                        طالب بسلك البكالوريوس بجامعة الأخوين بإفران، تخصص علوم الحاسوب والرياضيات.
                                     </p>
                                     <div class="flex items-center justify-start">
                                         <a class="inline-block mr-5 text-coolGray-300 hover:text-coolGray-400" href="#">
@@ -48,7 +48,7 @@ export const AboutUs = () => {
                                     <span class="inline-block mb-4 text-base font-medium text-blue-500">
                                         بائع قهوة</span>
                                     <p class="mb-4 text-sm leading-7 text-gray-500">
-                                        طالب بكلية العلوم القانونية والاقتصادية والاجتماعية بمراكش، قسم القانون الخاص، مهتم بالبرمجة والتقنية بشكل عام، وبالتصميم والتصوير بشكل خاص، وأحب القراءة والكتابة والتعلم والتطوير الذاتي.
+                                    طالب بسلك الماستر بجامعة الأخوين بإفران، تخصص تحليلات البيانات الضخمة. 
                                     </p>
                                     <div class="flex items-center justify-start">
                                         <a class="inline-block mr-5 text-coolGray-300 hover:text-coolGray-400" href="#">
