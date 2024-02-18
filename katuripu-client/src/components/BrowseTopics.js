@@ -11,7 +11,7 @@ export const BrowseTopics = () => {
     const [subject_id, setsubject_id] = useState(1);
 
     useEffect(() => {
-        axios.get('http://localhost:3001/subjects').then((res) => {
+        axios.get(`${process.env.REACT_APP_API_URL}/subjects`).then((res) => {
             setsubjects(res.data);
             console.log(subjects);
 
@@ -19,7 +19,7 @@ export const BrowseTopics = () => {
     }, [subjects])
 
     useEffect(() => {
-        axios.get(`http://localhost:3001/topics/${subject_id}`).then((res) => {
+        axios.get(`${process.env.REACT_APP_API_URL}/topics/${subject_id}`).then((res) => {
             setTopics(res.data);
         })
     }, [subject_id])

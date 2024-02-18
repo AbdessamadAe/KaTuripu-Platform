@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
-const uri = "mongodb+srv://katuripu:kat@cluster0.m9d6zyv.mongodb.net/Platform";
 
-const connectDB = async () => {
+const connectDB = async (uri) => {
+  if (!uri) {
+    console.error('MongoDB URI is not defined in environment variables');
+    process.exit(1);
+  }
   try {
     await mongoose.connect(uri);
     console.log('MongoDB connected');

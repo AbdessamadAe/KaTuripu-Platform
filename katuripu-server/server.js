@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
@@ -6,14 +7,15 @@ const topicRouters = require('./routes/TopicRouters');
 const contentRouters = require('./routes/ContentRouters');
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
+
 
 // Connect to MongoDB
-connectDB();
+const uri = process.env.MONGODB_URI;
+connectDB(uri);
 
-
-app.use(cors()); // Enable CORS
 // Middleware
+app.use(cors({ origin: process.env.FRONTEND_URL }));
 app.use(express.json());
 
 // Routes

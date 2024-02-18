@@ -11,7 +11,7 @@ const ContentPage = () => {
     const [content, setContent] = useState([]);
 
     useEffect(() => {
-        axios.get(`http://localhost:3001/content/${topic_id}`).then((res) => {
+        axios.get(`${process.env.REACT_APP_API_URL}/content/${topic_id}`).then((res) => {
             setContent(res.data);
         })
     }, [topic_id])
