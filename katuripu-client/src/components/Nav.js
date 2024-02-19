@@ -25,7 +25,7 @@ const Nav = () => {
     return (
         <div>
             <nav className={`top-0 fixed z-10 text-black w-full font-amiri text-menu flex justify-between items-center h-20 mx-auto px-4 pt-8 pb-8 uppercase ${!NavColorChanged ? 'bg-transparent' : 'shadow-sm  bg-white'}`}>
-                <div className='container flex justify-between items-center pl-14 pr-14'>
+                <div className='container flex justify-between items-center px-4 sm:px-14 '>
                     <img src={logo} alt="logo" onClick={() => window.location.href = `/`} className=' cursor-pointer w-[143px] h-auto' />
                     <div className='hidden md:flex items-center space-x-8 text-[18px]'>
                         <a className='p-4 rounded-md cursor-pointer hover:text-primary-color ' href='/'>الرئيسية</a>
