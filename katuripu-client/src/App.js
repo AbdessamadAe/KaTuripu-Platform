@@ -60,6 +60,7 @@ function App() {
           element={<ContactUs />}
           ></Route>
         </Routes>
+        <SpeedInsights />
       </div>
     </Router>
     </MathJaxContext>
