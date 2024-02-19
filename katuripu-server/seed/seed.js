@@ -1,18 +1,20 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
 const subject = require('../models/subject');
 const Topic = require('../models/topic');
 const TopicContent = require('../models/TopicContent');
 const connectDB = require('../config/db');
 
-connectDB();
+const uri = process.env.MONGODB_URI;
+connectDB(uri);
 
 const categories = [
-  { subjectId: 1, subjectName: 'Calculus' },
-  { subjectId: 2, subjectName: 'Algebra' },
+  { subjectId: 1, subjectName: 'حساب التفاضل والتكامل' },
+  { subjectId: 2, subjectName: 'الجبر' },
 ];
 
 const topics = [
-  { topicId: 1, subjectId: 1, topicTitle: 'Continuity', topicOverview: 'A fundamental aspect of calculus.', topicContent: 'Content about the definition and importance of continuity in calculus.', topicImageUrl: 'image_url_of_continuity_graph', topicAdditionalResources: 'link_to_continuity_resources' },
+  { topicId: 1, subjectId: 1, topicTitle: 'الإتصال', topicOverview: 'درس مهم في حساب التفاضل والتكامل', topicContent: 'Content about the definition and importance of continuity in calculus.', topicImageUrl: 'image_url_of_continuity_graph', topicAdditionalResources: 'link_to_continuity_resources' },
 ];
 
 const topicContents = [
