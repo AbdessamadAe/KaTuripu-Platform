@@ -2,6 +2,7 @@ import React from 'react'
 import Nav from './Nav'
 import { Footer } from './Footer'
 import achraf from '../images/achraf.jpg'
+import abdessamad from '../images/abdessamad.jpeg'
 import { FaLinkedin, FaGithub, FaFacebook } from "react-icons/fa";
 
 
@@ -16,7 +17,7 @@ export const AboutUs = () => {
                         <div class="grid grid-cols-1 gap-4 lg:gap-8 sm:gap-4 sm:grid-cols-2 lg:grid-cols-2">
                             <div class="flex flex-wrap mb-0 overflow-hidden bg-white rounded shadow">
                                 <div class="relative w-full overflow-hidden lg:w-2/5 h-72">
-                                    <img class="object-cover w-full h-full transition-all hover:scale-110" src="https://media.licdn.com/dms/image/D4E03AQEMt9cZWJkQRg/profile-displayphoto-shrink_800_800/0/1671122307018?e=1710374400&v=beta&t=kmMz-l8oL3y5e4u_NFP5kzFl7Ra8-KT1raHZfxNVF04" alt="" />
+                                    <img class="object-cover w-full h-full transition-all hover:scale-110" src={abdessamad} alt="" />
                                 </div>
                                 <div dir='rtl' class="items-center self-center flex-1 p-6">
                                     <div class="mb-1 text-2xl font-semibold text-gray-800">عبد الصمد أيت المودن</div>
