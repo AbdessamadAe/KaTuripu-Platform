@@ -19,7 +19,8 @@
     "react-calendly": "^4.3.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "react-icons": "5.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
