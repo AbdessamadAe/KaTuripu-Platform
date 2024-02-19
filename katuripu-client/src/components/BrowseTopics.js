@@ -3,20 +3,22 @@ import axios from 'axios'
 import { TopicCard } from './TopicCard'
 import Nav from './Nav'
 import { Footer } from './Footer'
+import { PacmanLoader } from 'react-spinners'
 
 export const BrowseTopics = () => {
 
     const [subjects, setsubjects] = useState([]);
     const [topics, setTopics] = useState([]);
     const [subject_id, setsubject_id] = useState(1);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        setIsLoading(true);
         axios.get(`${process.env.REACT_APP_API_URL}/subjects`).then((res) => {
             setsubjects(res.data);
-            console.log(subjects);
-
+            setIsLoading(false);
         })
-    }, [subjects])
+    }, [])
 
     useEffect(() => {
         axios.get(`${process.env.REACT_APP_API_URL}/topics/${subject_id}`).then((res) => {
@@ -30,29 +32,33 @@ export const BrowseTopics = () => {
 
     return (
         <div>
-        <Nav/>
-        <div className='animate-slide-fade-in mt-[80px] flex flex-col items-center pt-8 sm:pt-4 font-amiri mb-12 rtl:ml-2'>
-            <h1 className=' text-4xl sm:text-h2 font-semibold mb-12'>تصفح المواضيع</h1>
-            <div className='text-h6 flex flex-row items-center '>
-                {subjects?.map((subject) => (
-                    <div className='mr-[20px] ml-[20px]'>
-                        <div onClick={() => handlesubjectChange(subject.subjectId)} className={`text-[#374047] cursor-pointer hover:text-primary-color ${subject_id === subject.subjectId ? 'border-b-[2px]' : ''
-                            }`}
-                        >
-                            {subject.subjectName}
-                        </div>
+            <Nav />
+            <div className='animate-slide-fade-in mt-[100px] flex flex-col items-center pt-8 sm:pt-4 font-amiri mb-12 rtl:ml-2'>
+                <h1 className=' text-4xl sm:text-h2 font-semibold mb-12'>تصفح المواضيع</h1>
+                <div className={` mt-6 ${isLoading ? 'block' : 'hidden'}`}>
+                    <PacmanLoader color="#A78BFA" />
+                    <p dir='rtl' className='mt-6 font-amiri text-h6'>في طور التحميل...</p>
                     </div>
-                ))}
-            </div>
-            <div className={` justify-center border-t-[1px] border-t-[#ecf3f2] mt-4  pl-[12px] pr-[12px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-[96%]`}>
-                {topics?.map((topic) => (
-                    <div className=''>
-                        <TopicCard topic={topic} />
+                <div className='text-h6 flex flex-row items-center '>
+                    {subjects?.map((subject) => (
+                        <div className='mr-[20px] ml-[20px]'>
+                            <div onClick={() => handlesubjectChange(subject.subjectId)} className={`text-[#374047] cursor-pointer hover:text-primary-color ${subject_id === subject.subjectId ? 'border-b-[2px]' : ''
+                                }`}
+                            >
+                                {subject.subjectName}
+                            </div>
                         </div>
-                ))}
+                    ))}
+                </div>
+                <div className={` justify-center border-t-[1px] border-t-[#ecf3f2] mt-4  pl-[12px] pr-[12px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-[96%]`}>
+                    {topics?.map((topic) => (
+                        <div className=''>
+                            <TopicCard topic={topic} />
+                        </div>
+                    ))}
+                </div>
             </div>
-        </div>
-        <Footer/>
+            <Footer />
         </div>
     )
 }
