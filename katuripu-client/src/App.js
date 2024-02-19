@@ -1,3 +1,4 @@
+import { SpeedInsights } from "@vercel/speed-insights/react"
 import { Home } from './components/Home';
 import ContentPage from './components/ContentPage';
 import { ContactUs } from './components/ContactUs';
