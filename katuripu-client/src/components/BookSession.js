@@ -21,8 +21,8 @@ export const BookSession = () => {
                                 <p className='text-[17px] sm:text-h6'>انضم إلينا للحصول على دروس تقوية أو استشارات متخصصة في الرياضيات وعلوم الحاسوب. خبراؤنا مستعدون لمساعدتك في مواجهة أي تحدي، كبيرًا كان أم صغيرًا.</p>
                             </div>
                             <div>
-                                <p className='text-h6'>ثمن الحصة: 100DH</p>
-                                <p className='my-4 text-h6'>احجز الآن لتأمين مكانك واتخذ الخطوة التالية في رحلتك الأكاديمية!</p>
+/*                                 <p className='text-h6'>ثمن الحصة: 100DH</p>
+ */                                <p className='my-4 text-h6'>احجز الآن لتأمين مكانك واتخذ الخطوة التالية في رحلتك الأكاديمية!</p>
                                 <button onClick={() => { window.location.href = '#booking-form' }} class=" my-3 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300 bg-[#7C3AED] w-fit items-center hover:bg-primary-color text-white py-[8px] px-[40px] rounded-full">
                                     احجز الآن
                                 </button>
