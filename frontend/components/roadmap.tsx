@@ -6,7 +6,7 @@ import "@xyflow/react/dist/style.css";
 import ExerciseSidebar from "./sidebar";
 
 // Type definitions
-type Exercise = {
+export type Exercise = {
   id: string;
   name: string;
   difficulty: string;
@@ -14,7 +14,7 @@ type Exercise = {
   completed?: boolean;
 };
 
-type RoadmapNodeType = {
+export type RoadmapNodeType = {
   id: string;
   label: string;
   description: string;
@@ -22,7 +22,7 @@ type RoadmapNodeType = {
   position: { x: number; y: number };
 };
 
-type RoadmapData = {
+export type RoadmapData = {
   title: string;
   description: string;
   nodes: RoadmapNodeType[];
@@ -33,64 +33,45 @@ type RoadmapData = {
   }[];
 };
 
-const Roadmap = () => {
-  const [roadmapData, setRoadmapData] = useState<RoadmapData | null>(null);
+interface RoadmapProps {
+  roadmapData: RoadmapData;
+}
+
+const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
   const [nodes, setNodes] = useState<RoadmapNodeType[]>([]);
   const [flowNodes, setFlowNodes] = useState<Node[]>([]);
   const [flowEdges, setFlowEdges] = useState<Edge[]>([]);
   const [selectedNode, setSelectedNode] = useState<RoadmapNodeType | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  // Fetch roadmap data
+  // Initialize nodes and flow elements from props
   useEffect(() => {
-    const fetchRoadmapData = async () => {
-      try {
-        setIsLoading(true);
-        // In a real app, this would be a fetch call to an API endpoint
-        // For now, we'll import the JSON directly
-        const response = await fetch('/data/roadmap-data.json');
-        if (!response.ok) {
-          throw new Error('Failed to fetch roadmap data');
-        }
-        const data: RoadmapData = await response.json();
-        setRoadmapData(data);
-        setNodes(data.nodes);
-        
-        // Create flow nodes and edges
-        const reactFlowNodes = data.nodes.map((node) => ({
-          id: node.id,
-          position: node.position,
-          data: { label: node.label },
-          style: { 
-            background: "#192C88", 
-            color: "white", 
-            padding: "10px", 
-            borderRadius: "5px", 
-            cursor: "pointer"
-          },
-        }));
+    setNodes(roadmapData.nodes);
+    
+    // Create flow nodes and edges
+    const reactFlowNodes = roadmapData.nodes.map((node) => ({
+      id: node.id,
+      position: node.position,
+      data: { label: node.label },
+      style: { 
+        background: "#192C88", 
+        color: "white", 
+        padding: "10px", 
+        borderRadius: "5px", 
+        cursor: "pointer"
+      },
+    }));
 
-        const reactFlowEdges = data.edges.map((edge) => ({
-          id: edge.id,
-          source: edge.source,
-          target: edge.target,
-          animated: true,
-          style: { stroke: "white" }
-        }));
+    const reactFlowEdges = roadmapData.edges.map((edge) => ({
+      id: edge.id,
+      source: edge.source,
+      target: edge.target,
+      animated: true,
+      style: { stroke: "white" }
+    }));
 
-        setFlowNodes(reactFlowNodes);
-        setFlowEdges(reactFlowEdges);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unknown error occurred');
-        console.error('Error fetching roadmap data:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchRoadmapData();
-  }, []);
+    setFlowNodes(reactFlowNodes);
+    setFlowEdges(reactFlowEdges);
+  }, [roadmapData]);
   
   // Load saved progress from localStorage
   useEffect(() => {
@@ -168,22 +149,6 @@ const Roadmap = () => {
       console.error("Error saving progress:", e);
     }
   };
-
-  if (isLoading) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center bg-gray-900 text-white">
-        <div className="text-xl">Loading roadmap...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center bg-gray-900 text-white">
-        <div className="text-xl text-red-500">Error: {error}</div>
-      </div>
-    );
-  }
 
   return (
     <div style={{ width: "100%", height: "100vh", backgroundColor: "#0D1117", padding: "20px", display: "flex" }}>
