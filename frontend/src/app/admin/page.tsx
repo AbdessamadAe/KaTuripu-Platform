@@ -1,4 +1,5 @@
 'use client';
+
 import { useState, useEffect } from 'react';
 import { getSubjects, getTopics, createSubject, updateSubject, deleteSubject, createTopic, updateTopic, deleteTopic } from '../../lib/api';
 import Link from 'next/link';
