@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getAllRoadmaps } from "../../../lib/api";
+import { getAllRoadmaps } from "@/lib/api";
 
 export default async function RoadmapsList() {
   const roadmaps = await getAllRoadmaps();

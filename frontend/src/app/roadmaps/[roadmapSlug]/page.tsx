@@ -1,21 +1,22 @@
 import { notFound } from "next/navigation";
-import { RoadmapData } from "../../../../components/client/RoadmapViewer";
+import { RoadmapData } from "@/components/client/RoadmapViewer";
 import ClientRoadmapWrapper from "./client-wrapper";
-import { getRoadmapBySlug } from "../../../../lib/api"; // Import the slug function
+import { getRoadmapBySlug } from "@/lib/api";
 
-// This is a server component
-export default async function RoadmapPage({ params }: { params: { roadmapId: string } }) {
-  const slug = params.roadmapId;
-  
+export default async function RoadmapPage({
+  params,
+}: { params?: { roadmapSlug?: string } }) {
+  if (!params?.roadmapSlug) {
+    return <div>Loading...</div>;
+  }
+
   try {
-    // Use the slug to get the roadmap
-    const data = await getRoadmapBySlug(slug);
-    
+    const data = await getRoadmapBySlug(params.roadmapSlug);
+
     if (!data) {
       return notFound();
     }
-    
-    // Pass the pre-fetched data to the client component
+
     return (
       <div>
         <h1 className="sr-only">{data.title} Roadmap</h1>
@@ -23,7 +24,7 @@ export default async function RoadmapPage({ params }: { params: { roadmapId: str
       </div>
     );
   } catch (error) {
-    console.error('Error fetching roadmap data:', error);
+    console.error("Error fetching roadmap data:", error);
     return (
       <div className="w-full h-screen flex items-center justify-center bg-gray-900 text-white">
         <div className="text-xl text-red-500">Error loading roadmap</div>

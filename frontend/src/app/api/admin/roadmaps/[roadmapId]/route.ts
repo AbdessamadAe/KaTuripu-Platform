@@ -1,30 +1,26 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-import { RoadmapData } from '../../../../../../components/client/RoadmapViewer';
-
-// This simulates saving to a database, but is actually saving to the filesystem
-// In production, you'd connect to a proper database
+import { getRoadmap, saveRoadmap, createRoadmap } from '../../../../../lib/api';
+import { RoadmapData } from '../../../../../components/client/RoadmapViewer';
+import { generateSlug } from '../../../../../lib/utils';
 
 export async function GET(
   request: Request,
   { params }: { params: { roadmapId: string } }
 ) {
   try {
-    const roadmapsDir = path.join(process.cwd(), 'public', 'data', 'roadmaps');
-    const filePath = path.join(roadmapsDir, `${params.roadmapId}.json`);
+    const roadmapData = await getRoadmap(params.roadmapId);
     
-    if (!fs.existsSync(filePath)) {
+    if (!roadmapData) {
       return new NextResponse(null, { status: 404 });
     }
-    
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    const roadmapData = JSON.parse(fileContents);
     
     return NextResponse.json(roadmapData);
   } catch (error) {
     console.error('Error fetching roadmap:', error);
-    return new NextResponse(null, { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: 'Failed to fetch roadmap' }), 
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
   }
 }
 
@@ -34,20 +30,21 @@ export async function PUT(
 ) {
   try {
     const data: RoadmapData = await request.json();
-    const roadmapsDir = path.join(process.cwd(), 'public', 'data', 'roadmaps');
     
-    // Create directory if it doesn't exist
-    if (!fs.existsSync(roadmapsDir)) {
-      fs.mkdirSync(roadmapsDir, { recursive: true });
+    // Ensure slug exists
+    if (!data.slug) {
+      data.slug = generateSlug(data.title);
     }
     
-    const filePath = path.join(roadmapsDir, `${params.roadmapId}.json`);
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+    await saveRoadmap(params.roadmapId, data);
     
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error saving roadmap:', error);
-    return new NextResponse(null, { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: 'Failed to save roadmap' }), 
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
   }
 }
 
@@ -55,26 +52,25 @@ export async function POST(
   request: Request
 ) {
   try {
-    const data: RoadmapData = await request.json();
-    const roadmapsDir = path.join(process.cwd(), 'public', 'data', 'roadmaps');
+    let data: RoadmapData = await request.json();
     
-    // Create directory if it doesn't exist
-    if (!fs.existsSync(roadmapsDir)) {
-      fs.mkdirSync(roadmapsDir, { recursive: true });
+    // Generate slug if not provided
+    if (!data.slug) {
+      data.slug = generateSlug(data.title);
     }
     
-    // Generate a new ID based on the title
-    const roadmapId = data.title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
+    const newRoadmap = await createRoadmap(data);
     
-    const filePath = path.join(roadmapsDir, `${roadmapId}.json`);
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
-    
-    return NextResponse.json({ success: true, roadmapId });
+    return NextResponse.json({ 
+      success: true, 
+      roadmapId: newRoadmap.id,
+      slug: newRoadmap.slug
+    });
   } catch (error) {
     console.error('Error creating roadmap:', error);
-    return new NextResponse(null, { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: 'Failed to create roadmap' }), 
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
   }
 }

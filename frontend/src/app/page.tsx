@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { getSubjects } from '../../lib/api';
+import { getSubjects } from '../lib/api';
 import Link from 'next/link';
 
 export default function HomePage() {

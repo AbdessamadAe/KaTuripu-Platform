@@ -3,18 +3,24 @@
 import { useCallback, useState, useEffect } from 'react';
 import { ReactFlow, Background, Controls, useNodesState, useEdgesState, addEdge, Connection, Edge, Node } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { NodeEditPanel } from '../../../../../../components/admin/NodeEditPanel';
+import { NodeEditPanel } from '@/components/admin/NodeEditPanel';
 import { useRouter } from 'next/navigation';
-import { RoadmapData, RoadmapNodeType } from '../../../../../components/roadmap';
+import { RoadmapData, RoadmapNodeType } from '@/components/client/RoadmapViewer';
+import { getRoadmap, createRoadmap, saveRoadmap } from '@/lib/api';
+import { generateSlug } from '@/lib/utils';
+import { use } from 'react';
 
 export default function RoadmapEditor({ params }: { params: { id: string } }) {
   const router = useRouter();
+  const resolvedParams = use(params);
+  const roadmapId = resolvedParams.id;
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [roadmapTitle, setRoadmapTitle] = useState('');
   const [roadmapDescription, setRoadmapDescription] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   // Load existing roadmap data
   useEffect(() => {
@@ -22,42 +28,42 @@ export default function RoadmapEditor({ params }: { params: { id: string } }) {
       try {
         setIsLoading(true);
         
-        // In production, this would be an API call
-        let data: RoadmapData | null = null;
-        
         // If not creating a new roadmap, try to load existing one
-        if (params.id !== 'new') {
+        if (roadmapId !== 'new') {
           try {
-            const response = await fetch(`/data/roadmaps/${params.id}.json`);
-            if (response.ok) {
-              data = await response.json();
+            const data = await getRoadmap(roadmapId);
+            if (data) {
+              // Set roadmap metadata
+              setRoadmapTitle(data.title);
+              setRoadmapDescription(data.description);
+              
+              // Transform nodes for ReactFlow
+              const flowNodes = data.nodes.map(node => ({
+                id: node.id,
+                type: 'default',
+                position: node.position,
+                data: { 
+                  label: node.label,
+                  description: node.description,
+                  exercises: node.exercises
+                },
+                style: { 
+                  background: "#192C88", 
+                  color: "white", 
+                  padding: "10px", 
+                  borderRadius: "5px" 
+                }
+              }));
+              
+              // Set the flow elements
+              setNodes(flowNodes);
+              setEdges(data.edges);
             }
           } catch (error) {
             console.error('Error loading roadmap:', error);
+            setError('Failed to load roadmap data');
           }
-        }
-        
-        if (data) {
-          // Set roadmap metadata
-          setRoadmapTitle(data.title);
-          setRoadmapDescription(data.description);
-          
-          // Transform nodes for ReactFlow
-          const flowNodes = data.nodes.map(node => ({
-            id: node.id,
-            type: 'default',
-            position: node.position,
-            data: { 
-              label: node.label,
-              description: node.description,
-              exercises: node.exercises
-            }
-          }));
-          
-          // Set the flow elements
-          setNodes(flowNodes);
-          setEdges(data.edges);
-        } else if (params.id === 'new') {
+        } else {
           // Initialize with default values for new roadmap
           setRoadmapTitle('New Roadmap');
           setRoadmapDescription('Roadmap description goes here...');
@@ -68,13 +74,14 @@ export default function RoadmapEditor({ params }: { params: { id: string } }) {
         }
       } catch (err) {
         console.error('Error setting up editor:', err);
+        setError('An error occurred while setting up the editor');
       } finally {
         setIsLoading(false);
       }
     };
     
     fetchRoadmapData();
-  }, [params.id, setNodes, setEdges]);
+  }, [roadmapId, setNodes, setEdges]);
   
   // Handle node click to edit
   const onNodeClick = useCallback((_, node) => {
@@ -94,6 +101,15 @@ export default function RoadmapEditor({ params }: { params: { id: string } }) {
   // Add a new node
   const addNewNode = useCallback(() => {
     const id = `node-${Date.now()}`;
+    
+    // Calculate a position that's not on top of existing nodes
+    // Basic approach: offset by number of existing nodes to avoid stacking
+    const nodeCount = nodes.length;
+    const position = {
+      x: 100 + (nodeCount % 4) * 200,  // Distribute horizontally every 200px, 4 columns
+      y: 100 + Math.floor(nodeCount / 4) * 150  // New row every 4 nodes, 150px apart
+    };
+    
     const newNode = {
       id,
       type: 'default',
@@ -102,17 +118,22 @@ export default function RoadmapEditor({ params }: { params: { id: string } }) {
         description: 'Node description...',
         exercises: []
       },
-      position: { x: 100, y: 100 },
+      position,
       style: { 
         background: "#192C88", 
         color: "white", 
         padding: "10px", 
-        borderRadius: "5px" 
-      }
+        borderRadius: "5px",
+        width: 180,  // Set explicit width to ensure proper rendering
+      },
+      dragHandle: '.drag-handle',  // Add this if you want to use a specific drag handle
     };
     
     setNodes(nds => [...nds, newNode]);
-  }, [setNodes]);
+    
+    // Optionally select the newly created node for immediate editing
+    setSelectedNode(newNode);
+  }, [nodes, setNodes, setSelectedNode]);
   
   // Handle saving the roadmap
   const handleSave = useCallback(async () => {
@@ -127,6 +148,7 @@ export default function RoadmapEditor({ params }: { params: { id: string } }) {
       const roadmapData: RoadmapData = {
         title: roadmapTitle,
         description: roadmapDescription,
+        slug: generateSlug(roadmapTitle),
         nodes: nodes.map(n => ({
           id: n.id,
           label: n.data.label,
@@ -141,20 +163,22 @@ export default function RoadmapEditor({ params }: { params: { id: string } }) {
         }))
       };
       
-      // In a real app, this would be an API call
-      // For now, we'll just log the data
-      console.log('Roadmap data to save:', roadmapData);
+      // Save the roadmap
+      if (roadmapId === 'new') {
+        await createRoadmap(roadmapData);
+      } else {
+        await saveRoadmap(roadmapId, roadmapData);
+      }
       
-      // Simulate successful save
-      alert('Roadmap saved successfully! In a real app, this would save to the database.');
+      alert('Roadmap saved successfully!');
       
       // Redirect to roadmaps admin page
       router.push('/admin/roadmaps');
     } catch (error) {
       console.error('Failed to save roadmap:', error);
-      alert('Error saving roadmap');
+      alert('Error saving roadmap: ' + (error instanceof Error ? error.message : 'Unknown error'));
     }
-  }, [nodes, edges, roadmapTitle, roadmapDescription, router]);
+  }, [nodes, edges, roadmapTitle, roadmapDescription, router, roadmapId]);
   
   if (isLoading) {
     return (
@@ -164,6 +188,14 @@ export default function RoadmapEditor({ params }: { params: { id: string } }) {
     );
   }
   
+  if (error) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <div className="text-xl text-red-600">{error}</div>
+      </div>
+    );
+  }
+
   return (
     <div className="h-screen flex flex-col">
       {/* Toolbar */}
@@ -187,13 +219,13 @@ export default function RoadmapEditor({ params }: { params: { id: string } }) {
         <div className="space-x-2">
           <button 
             onClick={addNewNode}
-            className="bg-green-600 text-white px-4 py-2 rounded"
+            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
           >
             Add Node
           </button>
           <button 
             onClick={handleSave}
-            className="bg-blue-600 text-white px-4 py-2 rounded"
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
           >
             Save Roadmap
           </button>
