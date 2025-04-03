@@ -8,7 +8,7 @@ const roadmaps = [
 export default function RoadmapsList() {
   return (
     <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-6 text-center">Available Learning Roadmaps</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">Roadmaps</h1>
       
       <div className="grid md:grid-cols-2 gap-6 mt-8">
         {roadmaps.map((roadmap) => (

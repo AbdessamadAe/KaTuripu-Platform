@@ -9,9 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.49.4",
     "@xyflow/react": "^12.5.3",
     "axios": "^1.8.4",
     "better-react-mathjax": "^2.1.0",
+    "dotenv": "^16.4.7",
     "next": "15.2.4",
     "react": "^19.0.0",
     "react-calendly": "^4.3.1",
