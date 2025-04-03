@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { RoadmapData } from "../../../../components/roadmap";
+import { RoadmapData } from "../../../../components/client/roadmap";
 import ClientRoadmapWrapper from "./client-wrapper";
 
 // This is a server component

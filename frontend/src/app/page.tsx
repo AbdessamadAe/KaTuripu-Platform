@@ -1,7 +1,7 @@
 "use client";
 import React from 'react'
-import Nav from '../../components/Nav'
-import { Footer } from '../../components/Footer'
+import Nav from '../../components/client/Nav'
+import { Footer } from '../../components/client/Footer'
 
 export const Home: React.FC = () => {
   return (
