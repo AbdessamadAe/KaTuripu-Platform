@@ -23,7 +23,7 @@ export default function AdminPage() {
   const [error, setError] = useState<string | null>(null);
   const [newSubjectName, setNewSubjectName] = useState('');
   const [editingSubject, setEditingSubject] = useState<Subject | null>(null);
-
+  
   useEffect(() => {
     async function fetchData() {
       try {
