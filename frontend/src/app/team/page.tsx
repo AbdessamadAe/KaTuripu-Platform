@@ -1,6 +1,6 @@
 import React from 'react'
-import Nav from './Nav'
-import { Footer } from './Footer'
+import Nav from '../../components/client/Nav'
+import { Footer } from '../../components/client/Footer'
 // import achraf from '../images/achraf.jpg'
 // import abdessamad from '../images/abdessamad.jpeg'
 import { FaLinkedin, FaGithub, FaFacebook } from "react-icons/fa";
@@ -47,7 +47,7 @@ export const Team: React.FC = () => {
         <div>
             <Nav />
             <div className='font-amiri animate-slide-fade-in mt-[80px] p-8 md:px-6'>
-                <div className='text-center text-h1 font-semibold mb-8 font-amiri bg-purple-text-bg w-fit m-auto bg-no-repeat bg-center bg-cover px-16'> فريقنا </div>
+                <div className='text-center text-4xl font-semibold mb-8 font-amiri bg-purple-text-bg w-fit m-auto bg-no-repeat bg-center bg-cover px-16'> فريقنا </div>
                 <div className="flex items-center xl:h-scree">
                     <div className="p-4 mx-auto max-w-7xl">
                         <div className="grid grid-cols-1 gap-4 lg:gap-8 sm:gap-4 sm:grid-cols-2 lg:grid-cols-2">

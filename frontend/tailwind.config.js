@@ -3,8 +3,8 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        'purple-text-bg': "url('/src/images/title.svg')",
-        'meteor-bg': "url('/src/images/Meteor.svg')",
+        'purple-text-bg': "url('/images/title.svg')",
+        'meteor-bg': "url('/images/Meteor.svg')",
       },
       colors: {
         'white-color': '#ffffff',

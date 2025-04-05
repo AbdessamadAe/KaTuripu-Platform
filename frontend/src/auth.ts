@@ -14,8 +14,8 @@ const config: NextAuthConfig = {
       },
       async authorize(credentials) {
         const allowedUser = {
-          email: "admin@example.com",
-          password: "supersecurepassword",
+          email: "admin@katuripu.com",
+          password: "AbdessamadNadi",
         };
 
         if (

@@ -1,77 +1,86 @@
-import React, { useState, useEffect } from 'react'
-import { AiOutlineMenu, AiOutlineClose } from 'react-icons/ai'
+import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
+import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
-// You'll need to import the logo image properly in Next.js
-// import logo from '../images/Logo.png'
+const navigation = [
+  { name: 'Concours', href: '/#concours', current: true },
+  { name: 'Team', href: '/team', current: false },
+]
 
-const Nav: React.FC = () => {
-    const [showMenu, setShowMenu] = useState<boolean>(true)
-    const [navColorChanged, setNavColorChanged] = useState<boolean>(false);
-
-    const toggleMenu = (): void => {
-        setShowMenu(!showMenu)
-    }
-
-    const changeNavColor = (): void => {
-        if (window.scrollY >= 40) {
-            setNavColorChanged(true);
-        } else {
-            setNavColorChanged(false);
-        }
-    }
-    
-    useEffect(() => {
-        window.addEventListener('scroll', changeNavColor);
-        
-        // Cleanup function
-        return () => {
-            window.removeEventListener('scroll', changeNavColor);
-        };
-    }, []);
-
-    return (
-        <div>
-            <nav className={`top-0 fixed z-10 text-black w-full font-amiri text-menu flex justify-between items-center h-20 mx-auto px-4 pt-8 pb-8 uppercase ${!navColorChanged ? 'bg-transparent' : 'shadow-sm  bg-white'}`}>
-                <div className='container flex justify-between items-center px-4 sm:px-14 '>
-                    <img src="/images/Logo.png" alt="logo" onClick={() => window.location.href = `/`} className=' cursor-pointer w-[143px] h-auto' />
-                    <div className='hidden md:flex items-center space-x-8 text-[18px]'>
-                        <a className='p-4 rounded-md cursor-pointer hover:text-primary-color ' href='/'>الرئيسية</a>
-                        <a className='p-4 rounded-md cursor-pointer hover:text-primary-color ' href='/browse-topics'>تصفح المواضيع</a>
-                        <a className='p-4 rounded-md cursor-pointer hover:text-primary-color ' href='/book-session'>إحجز حصة</a>
-                        <a className='p-4 rounded-md cursor-pointer hover:text-primary-color ' href='/team'>فريقنا</a>
-                        <a className='p-4 rounded-md cursor-pointer hover:text-primary-color ' href='/contact-us'>إتصل بنا</a>
-                    </div>
-                    <div className='flex items-center'>
-                    </div>
-                    <div onClick={toggleMenu} className='block md:hidden'>
-                        {!showMenu ? <AiOutlineClose size={25} /> : <AiOutlineMenu size={25} />}
-                    </div>
-                </div>
-                <div className={!showMenu ? 'fixed left-0 top-0 w-[70%] border-r h-full border-r-gray-900 bg-[#ffff] ease-in-out duration-500' : 'fixed left-[-100%]'}>
-                    <div>
-                        <img src="/images/Logo.png" alt="logo" onClick={() => window.location.href = `/`} className=' cursor-pointer m-auto mt-6 w-[143px] h-auto' />
-                    </div>
-                    <div className='uppercase p-4 flex flex-col text-right'>
-                        <div className='p-4 rounded-md cursor-pointer hover:text-primary-color border-b border-gray-600'>
-                            <a className='' href='/'>الرئيسية</a>
-                        </div>
-                        <div className='p-4 rounded-md cursor-pointer hover:text-primary-color border-b border-gray-600'>
-                            <a className='' href='/browse-topics'>تصفح المواضيع</a>
-                        </div>
-                        <div className='p-4 rounded-md cursor-pointer hover:text-primary-color border-b border-gray-600'>
-                            <a className='' href='/book-session'>إحجز حصة</a>
-                        </div>
-                        <div className='p-4 rounded-md cursor-pointer hover:text-primary-color border-b border-gray-600'>
-                            <a className='' href='/team'>فريقنا</a>
-                        </div>
-                        <div className='p-4 rounded-md cursor-pointer hover:text-primary-color border-b border-gray-600'>
-                            <a className='' href='/contact-us'>إتصل بنا</a>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        </div>
-    )
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ')
 }
 
-export default Nav;
+export default function Example() {
+  return (
+    <Disclosure as="nav" className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+        <div className="relative flex h-16 items-center justify-between">
+          <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+            {/* Mobile menu button*/}
+            <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-200 hover:text-black focus:ring-2 focus:ring-black focus:outline-hidden focus:ring-inset">
+              <span className="absolute -inset-0.5" />
+              <span className="sr-only">Open main menu</span>
+              <Bars3Icon aria-hidden="true" className="block size-6 group-data-open:hidden" />
+              <XMarkIcon aria-hidden="true" className="hidden size-6 group-data-open:block" />
+            </DisclosureButton>
+          </div>
+          <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+            <div className="flex shrink-0 items-center">
+              <img
+                alt="katuripu"
+                src="/images/logo.png"
+                className="h-8 w-auto"
+              />
+            </div>
+            <div className="hidden sm:ml-14 sm:block">
+              <div className="flex space-x-4">
+                {navigation.map((item) => (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    aria-current={item.current ? 'page' : undefined}
+                    className={classNames(
+                      item.current ? 'text-black border-b-2 border-b-purple-300' : ' hover:text-black',
+                      'rounded-md px-3 py-2 text-sm font-medium',
+                    )}
+                  >
+                    {item.name}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+            <button
+              type="button"
+              className="relative rounded-full bg-white p-1 text-gray-500 hover:text-black focus:ring-2 focus:ring-black focus:ring-offset-2 focus:ring-offset-white focus:outline-hidden"
+            >
+              <span className="absolute -inset-1.5" />
+              <span className="sr-only">View notifications</span>
+              <BellIcon aria-hidden="true" className="size-6" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <DisclosurePanel className="sm:hidden">
+        <div className="space-y-1 px-2 pt-2 pb-3">
+          {navigation.map((item) => (
+            <DisclosureButton
+              key={item.name}
+              as="a"
+              href={item.href}
+              aria-current={item.current ? 'page' : undefined}
+              className={classNames(
+                item.current ? 'bg-gray-700 text-white' : 'text-gray-600 hover:bg-gray-200 hover:text-black',
+                'block rounded-md px-3 py-2 text-base font-medium',
+              )}
+            >
+              {item.name}
+            </DisclosureButton>
+          ))}
+        </div>
+      </DisclosurePanel>
+    </Disclosure>
+  )
+}
