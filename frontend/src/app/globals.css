@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=Montserrat&family=Amiri&family=Noto+Naskh+Arabic&display=swap');
+
+:root {
+  --white-color: #ffffff;
+  --primary-color: #4F55C1;
+  --secondary-color: #aa74fa;
+  --custom-btn-bg-hover-color: #7B2CBC;
+
+  --fs-h1: 58px;
+  --fs-h5: 24px;
+
+  --fw-bold: 700;
+}
+
+.font-amiri {
+  font-family: 'Amiri', serif;
+}
+
+.fadeInSlide {
+  animation: fadeSlideIn 1s ease-in-out;
+}
+
+@keyframes fadeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}

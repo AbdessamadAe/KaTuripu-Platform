@@ -1,0 +1,76 @@
+import { NextResponse } from 'next/server';
+import { getRoadmap, saveRoadmap, createRoadmap } from '../../../../../lib/api';
+import { RoadmapData } from '../../../../../components/client/RoadmapViewer';
+import { generateSlug } from '../../../../../lib/utils';
+
+export async function GET(
+  request: Request,
+  { params }: { params: { roadmapId: string } }
+) {
+  try {
+    const roadmapData = await getRoadmap(params.roadmapId);
+    
+    if (!roadmapData) {
+      return new NextResponse(null, { status: 404 });
+    }
+    
+    return NextResponse.json(roadmapData);
+  } catch (error) {
+    console.error('Error fetching roadmap:', error);
+    return new NextResponse(
+      JSON.stringify({ error: 'Failed to fetch roadmap' }), 
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+}
+
+export async function PUT(
+  request: Request,
+  { params }: { params: { roadmapId: string } }
+) {
+  try {
+    const data: RoadmapData = await request.json();
+    
+    // Ensure slug exists
+    if (!data.slug) {
+      data.slug = generateSlug(data.title);
+    }
+    
+    await saveRoadmap(params.roadmapId, data);
+    
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error saving roadmap:', error);
+    return new NextResponse(
+      JSON.stringify({ error: 'Failed to save roadmap' }), 
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+}
+
+export async function POST(
+  request: Request
+) {
+  try {
+    let data: RoadmapData = await request.json();
+    
+    // Generate slug if not provided
+    if (!data.slug) {
+      data.slug = generateSlug(data.title);
+    }
+    
+    const newRoadmap = await createRoadmap(data);
+    
+    return NextResponse.json({ 
+      success: true, 
+      roadmapId: newRoadmap.id,
+      slug: newRoadmap.slug
+    });
+  } catch (error) {
+    console.error('Error creating roadmap:', error);
+    return new NextResponse(
+      JSON.stringify({ error: 'Failed to create roadmap' }), 
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+}
