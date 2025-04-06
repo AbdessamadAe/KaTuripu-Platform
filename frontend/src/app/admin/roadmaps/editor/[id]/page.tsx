@@ -5,23 +5,32 @@ import { ReactFlow, Background, Controls, useNodesState, useEdgesState, addEdge,
 import '@xyflow/react/dist/style.css';
 import { NodeEditPanel } from '@/components/admin/NodeEditPanel';
 import { useRouter } from 'next/navigation';
-import { RoadmapData, RoadmapNodeType } from '@/components/client/RoadmapViewer';
+import { RoadmapData, RoadmapNodeType, Exercise } from '@/components/client/RoadmapViewer';
 import { getRoadmap, createRoadmap, saveRoadmap } from '@/lib/api';
 import { generateSlug } from '@/lib/utils';
 import { use } from 'react';
 
-export default function RoadmapEditor({ params }: { params: { id: string } }) {
+export default function RoadmapEditor({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
-  const resolvedParams = use(params);
-  const roadmapId = resolvedParams.id;
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [roadmapId, setRoadmapId] = useState<string | null>(null);
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [roadmapTitle, setRoadmapTitle] = useState('');
   const [roadmapDescription, setRoadmapDescription] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
+  // Resolve params and set roadmapId
+  useEffect(() => {
+    params.then((resolvedParams) => {
+      setRoadmapId(resolvedParams.id);
+    }).catch((err) => {
+      console.error('Failed to resolve params:', err);
+      setError('Failed to resolve route parameters');
+    });
+  }, [params]);
+
   // Load existing roadmap data
   useEffect(() => {
     const fetchRoadmapData = async () => {
@@ -31,14 +40,14 @@ export default function RoadmapEditor({ params }: { params: { id: string } }) {
         // If not creating a new roadmap, try to load existing one
         if (roadmapId !== 'new') {
           try {
-            const data = await getRoadmap(roadmapId);
+            const data = await getRoadmap(roadmapId as string);
             if (data) {
               // Set roadmap metadata
               setRoadmapTitle(data.title);
               setRoadmapDescription(data.description);
               
               // Transform nodes for ReactFlow
-              const flowNodes = data.nodes.map(node => ({
+              const flowNodes = data.nodes.map((node: RoadmapNodeType) => ({
                 id: node.id,
                 type: 'default',
                 position: node.position,
@@ -84,7 +93,7 @@ export default function RoadmapEditor({ params }: { params: { id: string } }) {
   }, [roadmapId, setNodes, setEdges]);
   
   // Handle node click to edit
-  const onNodeClick = useCallback((_, node) => {
+  const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
     setSelectedNode(node);
   }, []);
   
@@ -95,7 +104,9 @@ export default function RoadmapEditor({ params }: { params: { id: string } }) {
       id: `edge-${params.source}-${params.target}`,
       animated: true 
     };
-    setEdges((eds) => addEdge(newEdge, eds));
+    setEdges((eds) =>
+      addEdge({ ...newEdge, animated: newEdge.animated ?? false }, eds) as Edge[]
+    );    
   }, [setEdges]);
   
   // Add a new node
@@ -129,7 +140,7 @@ export default function RoadmapEditor({ params }: { params: { id: string } }) {
       dragHandle: '.drag-handle',  // Add this if you want to use a specific drag handle
     };
     
-    setNodes(nds => [...nds, newNode]);
+    setNodes(nds => [...nds, newNode as Node]);
     
     // Optionally select the newly created node for immediate editing
     setSelectedNode(newNode);
@@ -149,12 +160,12 @@ export default function RoadmapEditor({ params }: { params: { id: string } }) {
         title: roadmapTitle,
         description: roadmapDescription,
         slug: generateSlug(roadmapTitle),
-        nodes: nodes.map(n => ({
+        nodes: nodes.map((n: Node): RoadmapNodeType => ({
           id: n.id,
-          label: n.data.label,
-          description: n.data.description || '',
-          exercises: n.data.exercises || [],
-          position: n.position
+          label: n.data.label as string,
+          description: (n.data.description as string) || '',
+          exercises: (n.data.exercises as Exercise[]) || [],
+          position: n.position,
         })),
         edges: edges.map(e => ({
           id: e.id,
@@ -167,7 +178,11 @@ export default function RoadmapEditor({ params }: { params: { id: string } }) {
       if (roadmapId === 'new') {
         await createRoadmap(roadmapData);
       } else {
-        await saveRoadmap(roadmapId, roadmapData);
+        if (roadmapId) {
+          await saveRoadmap(roadmapId, roadmapData);
+        } else {
+          throw new Error('Roadmap ID is null');
+        }
       }
       
       alert('Roadmap saved successfully!');

@@ -17,7 +17,7 @@ interface TeamMember {
     }
 }
 
-export const Team: React.FC = () => {
+export default function Team () {
     const teamMembers: TeamMember[] = [
         {
             name: "عبد الصمد أيت المودن",
@@ -92,5 +92,3 @@ export const Team: React.FC = () => {
         </div>
     )
 }
-
-export default Team;

@@ -25,6 +25,7 @@ export type RoadmapNodeType = {
 export type RoadmapData = {
   title: string;
   description: string;
+  slug: string;
   nodes: RoadmapNodeType[];
   edges: {
     id: string;

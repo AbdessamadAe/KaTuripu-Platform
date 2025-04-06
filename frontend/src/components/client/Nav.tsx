@@ -6,7 +6,7 @@ const navigation = [
   { name: 'Team', href: '/team', current: false },
 ]
 
-function classNames(...classes) {
+function classNames(...classes: (string | undefined | false | null)[]) {
   return classes.filter(Boolean).join(' ')
 }
 

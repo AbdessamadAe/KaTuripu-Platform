@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { getAllRoadmaps } from "@/lib/api";
 import Nav from "@/components/client/Nav";
-import CourseCard from "@/components/client/TopicCard";
+import RoadmapCard from "@/components/client/RoadmapCard";
 
 export default async function HomePage() {
     const roadmaps = await getAllRoadmaps();
@@ -24,7 +24,7 @@ export default async function HomePage() {
                                 key={roadmap.id}
                                 className="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 transition-colors"
                             >
-                                <TopicCard topic={roadmap.title} />
+                                <RoadmapCard roadmap={roadmap} />
                             </Link>
                         ))}
                     </div>

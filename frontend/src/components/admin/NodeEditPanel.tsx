@@ -16,14 +16,14 @@ interface NodeEditPanelProps {
 }
 
 export function NodeEditPanel({ node, onChange }: NodeEditPanelProps) {
-  const [label, setLabel] = useState(node.data?.label || '');
-  const [description, setDescription] = useState(node.data?.description || '');
-  const [exercises, setExercises] = useState<Exercise[]>(node.data?.exercises || []);
+  const [label, setLabel] = useState<string>(typeof node.data?.label === 'string' ? node.data.label : '');
+  const [description, setDescription] = useState<string>(node.data?.description as string || '');
+  const [exercises, setExercises] = useState<Exercise[]>(Array.isArray(node.data?.exercises) ? node.data.exercises : []);
   
   useEffect(() => {
-    setLabel(node.data?.label || '');
-    setDescription(node.data?.description || '');
-    setExercises(node.data?.exercises || []);
+    setLabel(typeof node.data?.label === 'string' ? node.data.label : '');
+    setDescription(node.data?.description as string || '');
+    setExercises(Array.isArray(node.data?.exercises) ? node.data.exercises : []);
   }, [node.id, node.data]);
 
   const handleUpdateNode = () => {
@@ -72,7 +72,7 @@ export function NodeEditPanel({ node, onChange }: NodeEditPanelProps) {
         <label className="block text-sm font-medium mb-1">Node Label</label>
         <input
           type="text"
-          value={label}
+          value={label || ''}
           onChange={(e) => setLabel(e.target.value)}
           onBlur={handleUpdateNode}
           className="w-full p-2 border rounded"
@@ -82,7 +82,7 @@ export function NodeEditPanel({ node, onChange }: NodeEditPanelProps) {
       <div className="mb-4">
         <label className="block text-sm font-medium mb-1">Description</label>
         <textarea
-          value={description}
+          value={description as string}
           onChange={(e) => setDescription(e.target.value)}
           onBlur={handleUpdateNode}
           className="w-full p-2 border rounded min-h-[100px]"

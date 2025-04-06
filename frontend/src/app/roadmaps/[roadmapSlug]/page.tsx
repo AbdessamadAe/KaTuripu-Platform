@@ -3,15 +3,19 @@ import { RoadmapData } from "@/components/client/RoadmapViewer";
 import ClientRoadmapWrapper from "./client-wrapper";
 import { getRoadmapBySlug } from "@/lib/api";
 
-export default async function RoadmapPage({
-  params,
-}: { params?: { roadmapSlug?: string } }) {
-  if (!params?.roadmapSlug) {
+// Define Params as a Promise
+type Params = Promise<{ roadmapSlug: string }>;
+
+export default async function RoadmapPage({ params }: { params: Params }) {
+  // Wait for the Promise to resolve
+  const resolvedParams = await params;
+
+  if (!resolvedParams?.roadmapSlug) {
     return <div>Loading...</div>;
   }
 
   try {
-    const data = await getRoadmapBySlug(params.roadmapSlug);
+    const data = await getRoadmapBySlug(resolvedParams.roadmapSlug);
 
     if (!data) {
       return notFound();

@@ -1,8 +1,9 @@
 // src/middleware.ts
 import { auth } from "@/auth";
+import { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-export async function middleware(req) {
+export async function middleware(req: NextRequest) {
   const session = await auth();
 
   if (!session?.user || session.user.email !== "admin@example.com") {
