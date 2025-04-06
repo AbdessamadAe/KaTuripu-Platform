@@ -23,7 +23,6 @@ export default function RoadmapsAdmin() {
         const data = await getAllRoadmaps();
         setRoadmaps(data);
       } catch (err) {
-        console.error("Error fetching roadmaps:", err);
         setError("Failed to load roadmaps. Please try again later.");
       } finally {
         setIsLoading(false);

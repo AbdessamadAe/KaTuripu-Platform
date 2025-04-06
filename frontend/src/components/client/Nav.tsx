@@ -26,11 +26,13 @@ export default function Example() {
           </div>
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             <div className="flex shrink-0 items-center">
-              <img
-                alt="katuripu"
-                src="/images/logo.png"
-                className="h-8 w-auto"
-              />
+              <a href="/">
+                <img
+                  alt="katuripu"
+                  src="/images/logo.png"
+                  className="h-8 w-auto"
+                />
+              </a>
             </div>
             <div className="hidden sm:ml-14 sm:block">
               <div className="flex space-x-4">
@@ -40,7 +42,6 @@ export default function Example() {
                     href={item.href}
                     aria-current={item.current ? 'page' : undefined}
                     className={classNames(
-                      item.current ? 'text-black border-b-2 border-b-purple-300' : ' hover:text-black',
                       'rounded-md px-3 py-2 text-sm font-medium',
                     )}
                   >

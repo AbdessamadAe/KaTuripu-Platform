@@ -32,7 +32,9 @@ export async function getAllRoadmaps() {
 }
 
 // Function to get a single roadmap
-export async function getRoadmap(id: string) {
+export async function getRoadmap(id: any) {
+  console.log('Fetching roadmap with ID:', id);
+
   const { data, error } = await supabase
     .from('roadmaps')
     .select('*')

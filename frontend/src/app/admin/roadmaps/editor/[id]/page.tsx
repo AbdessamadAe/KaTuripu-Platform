@@ -26,7 +26,6 @@ export default function RoadmapEditor({ params }: { params: Promise<{ id: string
     params.then((resolvedParams) => {
       setRoadmapId(resolvedParams.id);
     }).catch((err) => {
-      console.error('Failed to resolve params:', err);
       setError('Failed to resolve route parameters');
     });
   }, [params]);
@@ -38,9 +37,9 @@ export default function RoadmapEditor({ params }: { params: Promise<{ id: string
         setIsLoading(true);
         
         // If not creating a new roadmap, try to load existing one
-        if (roadmapId !== 'new') {
+        if (roadmapId !== 'new' && roadmapId) {
           try {
-            const data = await getRoadmap(roadmapId as string);
+            const data = await getRoadmap(roadmapId as any);
             if (data) {
               // Set roadmap metadata
               setRoadmapTitle(data.title);
@@ -49,7 +48,6 @@ export default function RoadmapEditor({ params }: { params: Promise<{ id: string
               // Transform nodes for ReactFlow
               const flowNodes = data.nodes.map((node: RoadmapNodeType) => ({
                 id: node.id,
-                type: 'default',
                 position: node.position,
                 data: { 
                   label: node.label,
@@ -69,8 +67,8 @@ export default function RoadmapEditor({ params }: { params: Promise<{ id: string
               setEdges(data.edges);
             }
           } catch (error) {
-            console.error('Error loading roadmap:', error);
             setError('Failed to load roadmap data');
+            console.error('Error loading roadmap data:', error);
           }
         } else {
           // Initialize with default values for new roadmap

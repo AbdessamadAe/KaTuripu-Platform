@@ -1,62 +1,37 @@
-import React from 'react'
-// import Math from '../images/Math.svg'
-
 interface Roadmap {
     title: string;
     description: string;
     slug: string;
-}
-
-interface roadmapCardProps {
+  }
+  
+  interface RoadmapCardProps {
     roadmap: Roadmap;
-}
-
-export const roadmapCard: React.FC<roadmapCardProps> = ({ roadmap }) => {
+    progress: number;
+  }
+  
+  const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
     return (
-        <div className='relative ml-0 mr-0 sm:mr-10'>
-            <span className="absolute top-0 left-0 w-full h-full mt-1 ml-1 bg-[#A78BFA] rounded-lg"></span>
-            <div className=" h-full p-5 border-2 border-[#A78BFA] transition duration-300 hover:scale-105 relative mt-6 flex flex-col rounded-xl font-amiri bg-white bg-clip-border text-gray-700">
-                <div className=" p-[40px] pt-[24px] text-right">
-                    <h5 className="block mb-[10px] text-xl font-semibold tracking-normal text-[#374047]">
-                        {roadmap.title}
-                    </h5>
-                    <p className="block font-light leading-relaxed">
-                        {roadmap.description}
-                    </p>
-                    <img src="/images/Math.svg" alt="" className="w-36 h-36 mt-4 m-auto" />
-                </div>
-                <div className="p-6 pt-0">
-                    <a
-                        className="!font-medium !text-blue-gray-900 !transition-colors hover:!text-pink-500"
-                        href={`/roadmaps/${roadmap.slug}`}
-                    >
-                        <button
-                            className="flex select-none items-center gap-2 rounded-lg py-2 px-4 text-end align-middle font-amiri text-xs font-bold uppercase text-pink-500 transition-all hover:bg-pink-500/10 active:bg-pink-500/30 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                            type="button"
-                            data-ripple-dark="true"
-                        >
-                            تعلم المزيد
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth="2"
-                                stroke="currentColor"
-                                aria-hidden="true"
-                                className="h-4 w-4"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
-                                ></path>
-                            </svg>
-                        </button>
-                    </a>
-                </div>
-            </div>
+      <div className="w-60 h-80 bg-neutral-800 rounded-3xl text-neutral-300 p-4 flex flex-col items-start justify-center gap-3 hover:bg-gray-900 hover:shadow-2xl hover:shadow-sky-400 transition-shadow">
+        <div className="w-52 h-40 bg-sky-300 rounded-2xl" />
+        <div className="w-full">
+          <p className="font-extrabold">{roadmap.title}</p>
+          <p className="text-sm text-neutral-400">{roadmap.description}</p>
         </div>
-    )
-}
-
-export default roadmapCard;
+        <div className="w-full mt-2">
+          <div className="h-2 w-full bg-neutral-700 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-green-500 transition-all"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+          <p className="text-xs mt-1 text-neutral-400">{progress}% complete</p>
+        </div>
+        <button className="bg-sky-700 font-extrabold p-2 px-6 rounded-xl hover:bg-sky-500 transition-colors">
+          Dkhel lcours
+        </button>
+      </div>
+    );
+  };
+  
+  export default RoadmapCard;
+  

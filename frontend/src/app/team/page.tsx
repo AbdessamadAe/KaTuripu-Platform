@@ -21,7 +21,7 @@ export default function Team () {
     const teamMembers: TeamMember[] = [
         {
             name: "عبد الصمد أيت المودن",
-            title: "صديق بائع القهوة",
+            title: "صاحب مول القهوة",
             bio: "طالب بسلك البكالوريوس بجامعة الأخوين بإفران، تخصص علوم الحاسوب والرياضيات.",
             image: "/images/abdessamad.jpeg",
             socialLinks: {
@@ -32,8 +32,8 @@ export default function Team () {
         },
         {
             name: "أشرف أجغوغ",
-            title: "بائع قهوة",
-            bio: "طالب بسلك الماستر بجامعة الأخوين بإفران، تخصص تحليلات البيانات الضخمة.",
+            title: "مول القهوة",
+            bio: "خريج سلك الماستر بجامعة الأخوين بإفران، تخصص تحليل البيانات الضخمة.",
             image: "/images/achraf.jpg",
             socialLinks: {
                 linkedin: "#",
