@@ -2,7 +2,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
 const navigation = [
-  { name: 'Concours', href: '/#concours', current: true },
+  { name: 'Concours', href: '/roadmaps', current: true },
   { name: 'Team', href: '/team', current: false },
 ]
 
@@ -10,13 +10,12 @@ function classNames(...classes: (string | undefined | false | null)[]) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Example() {
+export default function Nav() {
   return (
-    <Disclosure as="nav" className="bg-white border-b border-gray-200 shadow-sm">
-      <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+    <Disclosure as="nav" className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
-          <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-            {/* Mobile menu button*/}
+          <div className="absolute inset-y-0 right-0 flex items-center lg:hidden">
             <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-200 hover:text-black focus:ring-2 focus:ring-black focus:outline-hidden focus:ring-inset">
               <span className="absolute -inset-0.5" />
               <span className="sr-only">Open main menu</span>
@@ -24,9 +23,9 @@ export default function Example() {
               <XMarkIcon aria-hidden="true" className="hidden size-6 group-data-open:block" />
             </DisclosureButton>
           </div>
-          <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+          <div className="flex flex-1 items-center justify-center lg:items-stretch lg:justify-start">
             <div className="flex shrink-0 items-center">
-              <a href="/">
+              <a href="/" className="flex items-center">
                 <img
                   alt="katuripu"
                   src="/images/logo.png"
@@ -34,7 +33,7 @@ export default function Example() {
                 />
               </a>
             </div>
-            <div className="hidden sm:ml-14 sm:block">
+            <div className="hidden lg:ml-14 lg:block">
               <div className="flex space-x-4">
                 {navigation.map((item) => (
                   <a
@@ -42,7 +41,8 @@ export default function Example() {
                     href={item.href}
                     aria-current={item.current ? 'page' : undefined}
                     className={classNames(
-                      'rounded-md px-3 py-2 text-sm font-medium',
+                      'rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200',
+                      item.current ? 'bg-gray-100 text-black' : 'text-gray-600 hover:bg-gray-100 hover:text-black'
                     )}
                   >
                     {item.name}
@@ -51,10 +51,10 @@ export default function Example() {
               </div>
             </div>
           </div>
-          <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-2 lg:static lg:inset-auto lg:ml-6 lg:pl-0">
             <button
               type="button"
-              className="relative rounded-full bg-white p-1 text-gray-500 hover:text-black focus:ring-2 focus:ring-black focus:ring-offset-2 focus:ring-offset-white focus:outline-hidden"
+              className="relative rounded-full bg-white p-1 text-gray-500 hover:text-black focus:ring-2 focus:ring-black focus:ring-offset-2 focus:ring-offset-white focus:outline-hidden transition-colors duration-200"
             >
               <span className="absolute -inset-1.5" />
               <span className="sr-only">View notifications</span>
@@ -64,7 +64,7 @@ export default function Example() {
         </div>
       </div>
 
-      <DisclosurePanel className="sm:hidden">
+      <DisclosurePanel className="lg:hidden">
         <div className="space-y-1 px-2 pt-2 pb-3">
           {navigation.map((item) => (
             <DisclosureButton
@@ -73,8 +73,8 @@ export default function Example() {
               href={item.href}
               aria-current={item.current ? 'page' : undefined}
               className={classNames(
-                item.current ? 'bg-gray-700 text-white' : 'text-gray-600 hover:bg-gray-200 hover:text-black',
-                'block rounded-md px-3 py-2 text-base font-medium',
+                item.current ? 'bg-gray-100 text-black' : 'text-gray-600 hover:bg-gray-100 hover:text-black',
+                'block rounded-md px-3 py-2 text-base font-medium transition-colors duration-200'
               )}
             >
               {item.name}

@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-
 export const metadata: Metadata = {
   title: "KaTuripu",
   description: "KaTuripu - Roadmaps",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
 };
 
 export default function RootLayout({
@@ -14,10 +14,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar">
-      <body
-        className={`antialiased`}
-      >
+    <html lang="en">
+      <body className={`antialiased min-h-screen w-full overflow-x-hidden`}>
         {children}
       </body>
     </html>

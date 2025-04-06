@@ -197,8 +197,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
     <div
       style={{
         width: "100%",
-        height: "100vh",
-        backgroundColor: "#0D1117",
+        height: "calc(100vh - 65px)",
         padding: "20px",
         display: "flex",
       }}

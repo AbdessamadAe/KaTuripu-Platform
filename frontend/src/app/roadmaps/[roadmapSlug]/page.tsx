@@ -23,7 +23,6 @@ export default async function RoadmapPage({ params }: { params: Params }) {
 
     return (
       <div>
-        <h1 className="sr-only">{data.title} Roadmap</h1>
         <ClientRoadmapWrapper roadmapData={data as RoadmapData} />
       </div>
     );
