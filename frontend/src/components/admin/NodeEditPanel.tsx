@@ -2,12 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import { Node } from '@xyflow/react';
+import supabase from '@/lib/db';
+import { MathJax } from 'better-react-mathjax';
+import ReactMarkdown from 'react-markdown';
+import { ExerciseEditModal } from './ExerciseEditModal';
 
 type Exercise = {
   id: string;
   name: string;
   difficulty: string;
+  hints: string[];
   solution?: string;
+  video_url?: string;
 };
 
 interface NodeEditPanelProps {
@@ -19,6 +25,8 @@ export function NodeEditPanel({ node, onChange }: NodeEditPanelProps) {
   const [label, setLabel] = useState<string>(typeof node.data?.label === 'string' ? node.data.label : '');
   const [description, setDescription] = useState<string>(node.data?.description as string || '');
   const [exercises, setExercises] = useState<Exercise[]>(Array.isArray(node.data?.exercises) ? node.data.exercises : []);
+  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
+  const [isExerciseModalOpen, setIsExerciseModalOpen] = useState(false);
   
   useEffect(() => {
     setLabel(typeof node.data?.label === 'string' ? node.data.label : '');
@@ -38,30 +46,113 @@ export function NodeEditPanel({ node, onChange }: NodeEditPanelProps) {
     });
   };
 
-  const addExercise = () => {
-    const newExercise: Exercise = {
-      id: `exercise-${Date.now()}`,
-      name: 'New Exercise',
-      difficulty: 'medium',
-    };
-    setExercises([...exercises, newExercise]);
-    handleUpdateNode();
-  };
+  const addExercise = async () => {
+    try {
+      const exerciseId = `exercise-${Date.now()}`;
+      
+      // First create the exercise in the database
+      const { data: newExercise, error } = await supabase
+        .from('exercises')
+        .insert({
+          id: exerciseId,
+          name: 'New Exercise',
+          difficulty: 'medium',
+          hints: [],
+          solution: '',
+          video_url: ''
+        })
+        .select()
+        .single();
 
-  const updateExercise = (index: number, field: keyof Exercise, value: string) => {
-    const updatedExercises = exercises.map((ex, i) => {
-      if (i === index) {
-        return { ...ex, [field]: value };
+      if (error) {
+        console.error('Exercise creation error:', error);
+        throw error;
       }
-      return ex;
-    });
-    setExercises(updatedExercises);
+
+      // Create the node-exercise relationship
+      const { error: relError } = await supabase
+        .from('node_exercises')
+        .insert({
+          node_id: node.id,
+          exercise_id: exerciseId
+        });
+
+      if (relError) {
+        console.error('Relationship creation error:', relError);
+        throw relError;
+      }
+
+      const updatedExercises = [...exercises, newExercise];
+      setExercises(updatedExercises);
+      
+      // Update the node with the new exercise
+      onChange({
+        ...node,
+        data: {
+          ...node.data,
+          exercises: updatedExercises,
+        }
+      });
+
+      // Open the new exercise in the modal
+      setSelectedExercise(newExercise);
+      setIsExerciseModalOpen(true);
+    } catch (error) {
+      console.error('Failed to create exercise:', error);
+      alert('Failed to create exercise. Please try again.');
+    }
   };
 
-  const removeExercise = (index: number) => {
-    const updatedExercises = exercises.filter((_, i) => i !== index);
+  const updateExercise = (updatedExercise: Exercise) => {
+    console.log('Updating exercise:', updatedExercise); // Debug log
+    
+    // Ensure all fields are properly preserved without nesting
+    const exerciseToUpdate = {
+      id: updatedExercise.id,
+      name: updatedExercise.name,
+      difficulty: updatedExercise.difficulty,
+      hints: updatedExercise.hints || [],
+      solution: updatedExercise.solution, // Don't use || '' here
+      video_url: updatedExercise.video_url || ''
+    };
+    
+    console.log('Exercise to update:', exerciseToUpdate); // Debug log
+    
+    const updatedExercises = exercises.map(ex => 
+      ex.id === updatedExercise.id ? exerciseToUpdate : ex
+    );
+    
     setExercises(updatedExercises);
     handleUpdateNode();
+  };
+
+  const removeExercise = (id: string) => {
+    if (!confirm("Are you sure you want to remove this exercise?")) return;
+    const updatedExercises = exercises.filter(ex => ex.id !== id);
+    setExercises(updatedExercises);
+    handleUpdateNode();
+  };
+
+  const openExerciseModal = (exercise: Exercise) => {
+    setSelectedExercise(exercise);
+    setIsExerciseModalOpen(true);
+  };
+
+  // Get difficulty display with color
+  const getDifficultyBadge = (difficulty: string) => {
+    const colorClasses = {
+      easy: 'bg-green-100 text-green-800',
+      medium: 'bg-yellow-100 text-yellow-800',
+      hard: 'bg-red-100 text-red-800'
+    };
+    
+    const color = colorClasses[difficulty as keyof typeof colorClasses] || colorClasses.medium;
+    
+    return (
+      <span className={`text-xs px-2 py-1 rounded ${color}`}>
+        {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+      </span>
+    );
   };
 
   return (
@@ -103,55 +194,50 @@ export function NodeEditPanel({ node, onChange }: NodeEditPanelProps) {
         {exercises.length === 0 ? (
           <p className="text-sm text-gray-500">No exercises added yet.</p>
         ) : (
-          <div className="space-y-4">
-            {exercises.map((exercise, index) => (
-              <div key={exercise.id} className="border p-3 rounded">
-                <div className="mb-2">
-                  <label className="block text-xs font-medium mb-1">Name</label>
-                  <input
-                    type="text"
-                    value={exercise.name}
-                    onChange={(e) => updateExercise(index, 'name', e.target.value)}
-                    onBlur={handleUpdateNode}
-                    className="w-full p-1 border rounded text-sm"
-                  />
+          <div className="space-y-2">
+            {exercises.map((exercise) => (
+              <div 
+                key={exercise.id} 
+                className="border rounded p-3 flex justify-between items-center cursor-pointer hover:bg-gray-50"
+                onClick={() => openExerciseModal(exercise)}
+              >
+                <div>
+                  <div className="font-medium">{exercise.name}</div>
+                  <div className="mt-1">{getDifficultyBadge(exercise.difficulty)}</div>
                 </div>
-                
-                <div className="mb-2">
-                  <label className="block text-xs font-medium mb-1">Difficulty</label>
-                  <select
-                    value={exercise.difficulty}
-                    onChange={(e) => updateExercise(index, 'difficulty', e.target.value)}
-                    onBlur={handleUpdateNode}
-                    className="w-full p-1 border rounded text-sm"
+                <div className="flex space-x-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openExerciseModal(exercise);
+                    }}
+                    className="text-xs bg-blue-500 text-white px-2 py-1 rounded"
                   >
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                  </select>
+                    Edit
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeExercise(exercise.id);
+                    }}
+                    className="text-xs bg-red-500 text-white px-2 py-1 rounded"
+                  >
+                    Delete
+                  </button>
                 </div>
-                
-                <div className="mb-2">
-                  <label className="block text-xs font-medium mb-1">Solution (optional)</label>
-                  <textarea
-                    value={exercise.solution || ''}
-                    onChange={(e) => updateExercise(index, 'solution', e.target.value)}
-                    onBlur={handleUpdateNode}
-                    className="w-full p-1 border rounded text-sm min-h-[80px]"
-                  />
-                </div>
-                
-                <button
-                  onClick={() => removeExercise(index)}
-                  className="text-xs bg-red-500 text-white px-2 py-1 rounded mt-2"
-                >
-                  Remove Exercise
-                </button>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* Exercise Edit Modal */}
+      <ExerciseEditModal
+        exercise={selectedExercise}
+        isOpen={isExerciseModalOpen}
+        onClose={() => setIsExerciseModalOpen(false)}
+        onSave={updateExercise}
+      />
     </div>
   );
 }

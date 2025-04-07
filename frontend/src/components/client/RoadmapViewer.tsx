@@ -11,35 +11,37 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import ExerciseSidebar from "./sidebar";
+import { Exercise, RoadmapNodeType, RoadmapData } from "@/lib/types";
 
-// Type definitions
-export type Exercise = {
-  id: string;
-  name: string;
-  difficulty: string;
-  solution?: string;
-  completed?: boolean;
-};
+// // Type definitions
+// export type Exercise = {
+//   id: string;
+//   name: string;
+//   difficulty: string;
+//   solution?: string;
+//   hints?: string[];
+//   completed?: boolean;
+// };
 
-export type RoadmapNodeType = {
-  id: string;
-  label: string;
-  description: string;
-  exercises: Exercise[];
-  position: { x: number; y: number };
-};
+// export type RoadmapNodeType = {
+//   id: string;
+//   label: string;
+//   description: string;
+//   exercises: Exercise[];
+//   position: { x: number; y: number };
+// };
 
-export type RoadmapData = {
-  title: string;
-  description: string;
-  slug: string;
-  nodes: RoadmapNodeType[];
-  edges: {
-    id: string;
-    source: string;
-    target: string;
-  }[];
-};
+// export type RoadmapData = {
+//   title: string;
+//   description: string;
+//   slug: string;
+//   nodes: RoadmapNodeType[];
+//   edges: {
+//     id: string;
+//     source: string;
+//     target: string;
+//   }[];
+// };
 
 interface RoadmapProps {
   roadmapData: RoadmapData;

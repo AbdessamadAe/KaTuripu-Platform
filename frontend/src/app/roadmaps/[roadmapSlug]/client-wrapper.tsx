@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import Roadmap, { RoadmapData } from "@/components/client/RoadmapViewer";
+import { RoadmapData } from "@/lib/types";
+import Roadmap from "@/components/client/RoadmapViewer";
 import Nav from "@/components/client/Nav";
 
 interface ClientRoadmapWrapperProps {

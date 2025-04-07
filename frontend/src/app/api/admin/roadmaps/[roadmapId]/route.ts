@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { getRoadmap, saveRoadmap, createRoadmap } from '../../../../../lib/api';
-import { RoadmapData } from '../../../../../components/client/RoadmapViewer';
-import { generateSlug } from '../../../../../lib/utils';
+import { getRoadmap, updateRoadmap, createRoadmap } from '@/lib/api';
+import { RoadmapData } from '@/lib/types';
+import { generateSlug } from '@/lib/utils';
 
 export async function GET(request: Request) {
   try {
@@ -44,7 +44,7 @@ export async function PUT(request: Request) {
       data.slug = generateSlug(data.title);
     }
 
-    await saveRoadmap(roadmapId, data);
+    await updateRoadmap(roadmapId, data);
 
     return NextResponse.json({ success: true });
   } catch (error) {

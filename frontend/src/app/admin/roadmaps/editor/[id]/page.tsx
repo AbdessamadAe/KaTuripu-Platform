@@ -5,8 +5,8 @@ import { ReactFlow, Background, Controls, useNodesState, useEdgesState, addEdge,
 import '@xyflow/react/dist/style.css';
 import { NodeEditPanel } from '@/components/admin/NodeEditPanel';
 import { useRouter } from 'next/navigation';
-import { RoadmapData, RoadmapNodeType, Exercise } from '@/components/client/RoadmapViewer';
-import { getRoadmap, createRoadmap, saveRoadmap } from '@/lib/api';
+import { RoadmapData, RoadmapNodeType, Exercise } from '@/lib/types';
+import { getRoadmap, createRoadmap, updateRoadmap } from '@/lib/api';
 import { generateSlug } from '@/lib/utils';
 import { use } from 'react';
 
@@ -52,7 +52,10 @@ export default function RoadmapEditor({ params }: { params: Promise<{ id: string
                 data: { 
                   label: node.label,
                   description: node.description,
-                  exercises: node.exercises
+                  exercises: node.exercises.map(ex => ({
+                    ...ex,
+                    hints: ex.hints || [], // Ensure hints is always an array
+                  }))
                 },
                 style: { 
                   background: "#192C88", 
@@ -132,17 +135,33 @@ export default function RoadmapEditor({ params }: { params: Promise<{ id: string
         background: "#192C88", 
         color: "white", 
         padding: "10px", 
-        borderRadius: "5px",
-        width: 180,  // Set explicit width to ensure proper rendering
+        borderRadius: "5px"
       },
-      dragHandle: '.drag-handle',  // Add this if you want to use a specific drag handle
     };
     
     setNodes(nds => [...nds, newNode as Node]);
     
     // Optionally select the newly created node for immediate editing
     setSelectedNode(newNode);
-  }, [nodes, setNodes, setSelectedNode]);
+  }, [nodes, setNodes]);
+  
+  // Add keyboard shortcut for adding nodes
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Add node on "n" key press (if not in an input/textarea)
+      if (e.key === 'n' && 
+          !(e.target instanceof HTMLInputElement) && 
+          !(e.target instanceof HTMLTextAreaElement)) {
+        e.preventDefault();
+        addNewNode();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [addNewNode]);
   
   // Handle saving the roadmap
   const handleSave = useCallback(async () => {
@@ -162,7 +181,10 @@ export default function RoadmapEditor({ params }: { params: Promise<{ id: string
           id: n.id,
           label: n.data.label as string,
           description: (n.data.description as string) || '',
-          exercises: (n.data.exercises as Exercise[]) || [],
+          exercises: (n.data.exercises as Exercise[]).map(ex => ({
+            ...ex,
+            hints: ex.hints || [], // Ensure hints is always an array
+          })),
           position: n.position,
         })),
         edges: edges.map(e => ({
@@ -177,7 +199,7 @@ export default function RoadmapEditor({ params }: { params: Promise<{ id: string
         await createRoadmap(roadmapData);
       } else {
         if (roadmapId) {
-          await saveRoadmap(roadmapId, roadmapData);
+          await updateRoadmap(roadmapId, roadmapData);
         } else {
           throw new Error('Roadmap ID is null');
         }
@@ -229,7 +251,10 @@ export default function RoadmapEditor({ params }: { params: Promise<{ id: string
             className="w-full p-2 border rounded"
           />
         </div>
-        <div className="space-x-2">
+        <div className="space-x-2 flex items-center">
+          <div className="text-xs text-gray-500 mr-2">
+            Press <kbd className="bg-gray-200 px-1 py-0.5 rounded">N</kbd> to add a new node
+          </div>
           <button 
             onClick={addNewNode}
             className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
@@ -258,7 +283,6 @@ export default function RoadmapEditor({ params }: { params: Promise<{ id: string
             snapToGrid={true}
             snapGrid={[15, 15]}
             fitView
-            nodeTypes={{}}
           >
             <Background color="#aaa" gap={16} />
             <Controls />

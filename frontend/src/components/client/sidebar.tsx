@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 
 type ExerciseSidebarProps = {
   title: string;
@@ -59,7 +60,7 @@ const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
 
   return (
     <div 
-      className={`fixed top-0 right-0 w-4/5 h-full bg-gray-900 text-white p-6 shadow-lg overflow-y-auto transform transition-transform duration-300 ease-in-out ${
+      className={`fixed top-0 right-0 w-4/5 bg-gray-900 text-white p-6 h-full shadow-lg overflow-y-auto transform transition-transform duration-300 ease-in-out mt-[65px] ${
         isVisible ? 'translate-x-0' : 'translate-x-full'
       }`}
     >
@@ -112,7 +113,7 @@ const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
                 </td>
                 <td className="py-2 px-2 text-center text-yellow-300">⭐</td>
                 <td className="py-2 px-4 truncate">
-                  <a href="#" className="text-blue-400 hover:text-blue-300 hover:underline">{problem.name}</a>
+                  <Link href={`/exercises/${problem.id}`} className="text-blue-400 hover:text-blue-300 hover:underline">{problem.name}</Link>
                 </td>
                 <td className={`py-2 px-4 text-center ${difficultyColors[problem.difficulty] || "text-white"} font-medium`}>
                   {problem.difficulty}
