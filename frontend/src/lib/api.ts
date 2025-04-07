@@ -231,43 +231,25 @@ export async function updateRoadmap(id: string, roadmapData: RoadmapData) {
         // Update existing exercise
         console.log('Updating exercise in database:', exercise); // Debug log
         
-        // First, get the current exercise to compare
-        const { data: currentExercise, error: fetchErr } = await supabase
+        // Create update data with the latest values
+        const updateData = {
+          name: exercise.name,
+          difficulty: exercise.difficulty,
+          hints: exercise.hints || [],
+          solution: exercise.solution || '',
+          video_url: exercise.video_url || ''
+        };
+        
+        console.log('Updating exercise with data:', updateData); // Debug log
+        
+        const { error: exUpdateErr } = await supabase
           .from('exercises')
-          .select('*')
-          .eq('id', exercise.id)
-          .single();
+          .update(updateData)
+          .eq('id', exercise.id);
 
-        if (fetchErr) {
-          console.error('Error fetching current exercise:', fetchErr);
-          throw new Error(`Failed to fetch current exercise: ${fetchErr.message}`);
-        }
-
-        // Only update if there are changes
-        if (currentExercise) {
-          // Create a clean update object with only the changed fields
-          const updateData: Partial<Exercise> = {};
-          
-          if (exercise.name !== currentExercise.name) updateData.name = exercise.name;
-          if (exercise.difficulty !== currentExercise.difficulty) updateData.difficulty = exercise.difficulty;
-          if (JSON.stringify(exercise.hints) !== JSON.stringify(currentExercise.hints)) updateData.hints = exercise.hints;
-          if (exercise.solution !== currentExercise.solution) updateData.solution = exercise.solution;
-          if (exercise.video_url !== currentExercise.video_url) updateData.video_url = exercise.video_url;
-          
-          // Only update if there are actual changes
-          if (Object.keys(updateData).length > 0) {
-            console.log('Updating exercise with data:', updateData); // Debug log
-            
-            const { error: exUpdateErr } = await supabase
-              .from('exercises')
-              .update(updateData)
-              .eq('id', exercise.id);
-
-            if (exUpdateErr) {
-              console.error('Exercise update error:', exUpdateErr);
-              throw new Error(`Failed to update exercise: ${exUpdateErr.message}`);
-            }
-          }
+        if (exUpdateErr) {
+          console.error('Exercise update error:', exUpdateErr);
+          throw new Error(`Failed to update exercise: ${exUpdateErr.message}`);
         }
       }
     }
@@ -309,4 +291,51 @@ export async function getRoadmapBySlug(slug: string) {
   }
 
   return getRoadmap(data.id);
+}
+
+// Delete a roadmap and all its related data
+export async function deleteRoadmap(id: string) {
+  // Delete edges first (due to foreign key constraints)
+  const { error: edgesError } = await supabase
+    .from('roadmap_edges')
+    .delete()
+    .eq('roadmap_id', id);
+
+  if (edgesError) throw new Error(`Failed to delete roadmap edges: ${edgesError.message}`);
+
+  // Get all nodes to delete their exercises relationships
+  const { data: nodes, error: nodesQueryError } = await supabase
+    .from('roadmap_nodes')
+    .select('id')
+    .eq('roadmap_id', id);
+
+  if (nodesQueryError) throw new Error(`Failed to query roadmap nodes: ${nodesQueryError.message}`);
+
+  // Delete node-exercise relationships
+  for (const node of nodes || []) {
+    const { error: nodeExercisesError } = await supabase
+      .from('node_exercises')
+      .delete()
+      .eq('node_id', node.id);
+
+    if (nodeExercisesError) throw new Error(`Failed to delete node exercises: ${nodeExercisesError.message}`);
+  }
+
+  // Delete nodes
+  const { error: nodesError } = await supabase
+    .from('roadmap_nodes')
+    .delete()
+    .eq('roadmap_id', id);
+
+  if (nodesError) throw new Error(`Failed to delete roadmap nodes: ${nodesError.message}`);
+
+  // Finally delete the roadmap
+  const { error: roadmapError } = await supabase
+    .from('roadmaps')
+    .delete()
+    .eq('id', id);
+
+  if (roadmapError) throw new Error(`Failed to delete roadmap: ${roadmapError.message}`);
+
+  return true;
 }

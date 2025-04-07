@@ -121,7 +121,7 @@ const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
                 <td className="py-2 px-2 text-center">
                   {problem.solution ? (
                     <a 
-                      href={problem.solution} 
+                      href={`/exercises/${problem.id}`}
                       target="_blank"
                       className="text-xl hover:text-blue-300 transition-colors duration-200"
                     >

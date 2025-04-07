@@ -65,19 +65,19 @@ const ExerciseDetailPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-6">
+    <div className="min-h-screen bg-gray-900 text-white p-6" dir="rtl">
       <button 
         onClick={() => router.back()}
         className="bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-700 mb-6"
       >
-        Back to Roadmap
+        العودة إلى الخريطة
       </button>
 
       <div className="max-w-5xl mx-auto">
         {/* Problem Header */}
         <div className="border-b border-gray-700 pb-4 mb-6">
           <div className="flex justify-between items-start">
-            <h1 className="text-2xl font-bold">{exercise.name}</h1>
+            <h1 className="text-2xl font-bold text-right">{exercise.name}</h1>
             <span className={`px-3 py-1 rounded-full text-sm font-medium ${
               exercise.difficulty === 'Easy' ? 'bg-green-900 text-green-300' :
               exercise.difficulty === 'Medium' ? 'bg-yellow-900 text-yellow-300' : 
@@ -90,51 +90,35 @@ const ExerciseDetailPage = () => {
 
         {/* Problem Description */}
         <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Description</h2>
+          <h2 className="text-xl font-semibold mb-4 text-right">وصف المشكلة</h2>
           <div className="bg-gray-800 rounded-md p-4">
-            <p className="whitespace-pre-line">{exercise.description}</p>
-          </div>
-        </div>
-
-        {/* Examples */}
-        {exercise.examples && exercise.examples.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">Examples</h2>
-            <div className="space-y-4">
-              {exercise.examples.map((example, idx) => (
-                <div key={idx} className="bg-gray-800 rounded-md p-4">
-                  <p className="font-medium mb-2">Example {idx + 1}:</p>
-                  <div className="mb-2">
-                    <p className="text-gray-400">Input: </p>
-                    <pre className="bg-gray-900 p-2 rounded">{example.input}</pre>
-                  </div>
-                  <div>
-                    <p className="text-gray-400">Output: </p>
-                    <pre className="bg-gray-900 p-2 rounded">{example.output}</pre>
-                  </div>
-                </div>
-              ))}
+            <div className="whitespace-pre-line" dir="ltr">
+              <MathJax>
+                <ReactMarkdown>
+                  {exercise.description}
+                </ReactMarkdown>
+              </MathJax>
             </div>
           </div>
-        )}
+        </div>
 
         {/* Hints */}
         {exercise.hints && exercise.hints.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">Hints</h2>
+            <h2 className="text-xl font-semibold mb-4 text-right">تلميحات</h2>
             <div className="space-y-4">
               {exercise.hints.map((hint, idx) => (
                 <div key={idx} className="bg-gray-800 rounded-md p-4">
                   <button 
                     onClick={() => setShowHint(showHint === idx ? null : idx)}
-                    className="w-full text-left font-medium flex justify-between items-center"
+                    className="w-full text-right font-medium flex justify-between items-center"
                   >
-                    <span>Hint {idx + 1}</span>
+                    <span>تلميح {idx + 1}</span>
                     <span>{showHint === idx ? '▼' : '▶'}</span>
                   </button>
                   {showHint === idx && (
                     <div className="mt-2 pt-2 border-t border-gray-700">
-                      <p className="whitespace-pre-line">{hint}</p>
+                      <p className="whitespace-pre-line text-right">{hint}</p>
                     </div>
                   )}
                 </div>
@@ -145,20 +129,20 @@ const ExerciseDetailPage = () => {
 
         {/* Solution */}
         <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Solution</h2>
+          <h2 className="text-xl font-semibold mb-4 text-right">الحل</h2>
           <div className="bg-gray-800 rounded-md p-4">
             <button 
               onClick={() => setShowSolution(!showSolution)}
-              className="w-full text-left font-medium flex justify-between items-center"
+              className="w-full text-right font-medium flex justify-between items-center"
             >
-              <span>View Solution</span>
+              <span>عرض الحل</span>
               <span>{showSolution ? '▼' : '▶'}</span>
             </button>
             {showSolution && (
               <div className="mt-4 pt-4 border-t border-gray-700">
                 <div className="bg-gray-900 p-4 rounded overflow-x-auto">
                   <MathJax>
-                    <div className="math-solution whitespace-pre-line text-gray-200">
+                    <div className="math-solution whitespace-pre-line text-gray-200" dir="ltr">
                       <ReactMarkdown>
                         {exercise.solution}
                       </ReactMarkdown>
@@ -173,17 +157,19 @@ const ExerciseDetailPage = () => {
         {/* Video Solution */}
         {exercise.video_url && (
           <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">Video Explanation</h2>
-            <div className="aspect-w-16 aspect-h-9">
-              <iframe
-                src={`https://www.youtube.com/embed/${getYoutubeVideoId(exercise.video_url)}`}
-                title="YouTube video player"
-                className="w-full rounded-md"
-                height="480"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
+            <h2 className="text-xl font-semibold mb-4 text-right">شرح بالفيديو</h2>
+            <div className="bg-gray-800 rounded-md p-4">
+              <div className="aspect-w-16 aspect-h-9">
+                <iframe
+                  src={`https://www.youtube.com/embed/${getYoutubeVideoId(exercise.video_url)}`}
+                  title="YouTube video player"
+                  className="w-full rounded-md"
+                  height="480"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
             </div>
           </div>
         )}

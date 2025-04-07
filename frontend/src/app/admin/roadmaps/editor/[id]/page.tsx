@@ -8,7 +8,8 @@ import { useRouter } from 'next/navigation';
 import { RoadmapData, RoadmapNodeType, Exercise } from '@/lib/types';
 import { getRoadmap, createRoadmap, updateRoadmap } from '@/lib/api';
 import { generateSlug } from '@/lib/utils';
-import { use } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function RoadmapEditor({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
@@ -72,6 +73,7 @@ export default function RoadmapEditor({ params }: { params: Promise<{ id: string
           } catch (error) {
             setError('Failed to load roadmap data');
             console.error('Error loading roadmap data:', error);
+            toast.error('Failed to load roadmap data');
           }
         } else {
           // Initialize with default values for new roadmap
@@ -85,6 +87,7 @@ export default function RoadmapEditor({ params }: { params: Promise<{ id: string
       } catch (err) {
         console.error('Error setting up editor:', err);
         setError('An error occurred while setting up the editor');
+        toast.error('Failed to set up editor');
       } finally {
         setIsLoading(false);
       }
@@ -168,7 +171,7 @@ export default function RoadmapEditor({ params }: { params: Promise<{ id: string
     try {
       // Validate the data
       if (!roadmapTitle.trim()) {
-        alert('Please provide a roadmap title');
+        toast.error('Please provide a roadmap title');
         return;
       }
       
@@ -197,21 +200,21 @@ export default function RoadmapEditor({ params }: { params: Promise<{ id: string
       // Save the roadmap
       if (roadmapId === 'new') {
         await createRoadmap(roadmapData);
+        toast.success('New roadmap created successfully!');
       } else {
         if (roadmapId) {
           await updateRoadmap(roadmapId, roadmapData);
+          toast.success('Roadmap updated successfully!');
         } else {
           throw new Error('Roadmap ID is null');
         }
       }
       
-      alert('Roadmap saved successfully!');
-      
       // Redirect to roadmaps admin page
       router.push('/admin/roadmaps');
     } catch (error) {
       console.error('Failed to save roadmap:', error);
-      alert('Error saving roadmap: ' + (error instanceof Error ? error.message : 'Unknown error'));
+      toast.error('Error saving roadmap: ' + (error instanceof Error ? error.message : 'Unknown error'));
     }
   }, [nodes, edges, roadmapTitle, roadmapDescription, router, roadmapId]);
   
@@ -233,6 +236,7 @@ export default function RoadmapEditor({ params }: { params: Promise<{ id: string
 
   return (
     <div className="h-screen flex flex-col">
+      <ToastContainer position="top-right" autoClose={3000} />
       {/* Toolbar */}
       <div className="bg-white border-b p-4 flex justify-between items-center">
         <div className="space-y-2 w-1/2">

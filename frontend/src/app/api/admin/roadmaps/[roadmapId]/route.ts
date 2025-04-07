@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getRoadmap, updateRoadmap, createRoadmap } from '@/lib/api';
+import { getRoadmap, updateRoadmap, createRoadmap, deleteRoadmap } from '@/lib/api';
 import { RoadmapData } from '@/lib/types';
 import { generateSlug } from '@/lib/utils';
 
@@ -76,6 +76,27 @@ export async function POST(request: Request) {
     console.error('Error creating roadmap:', error);
     return new NextResponse(
       JSON.stringify({ error: 'Failed to create roadmap' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const roadmapId = searchParams.get('roadmapId');
+
+    if (!roadmapId) {
+      return new NextResponse(null, { status: 400 });
+    }
+
+    await deleteRoadmap(roadmapId);
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting roadmap:', error);
+    return new NextResponse(
+      JSON.stringify({ error: 'Failed to delete roadmap' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }
