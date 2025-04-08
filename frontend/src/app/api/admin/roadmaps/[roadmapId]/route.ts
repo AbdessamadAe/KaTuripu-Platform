@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getRoadmap, updateRoadmap, createRoadmap, deleteRoadmap } from '@/lib/api';
-import { RoadmapData } from '@/lib/types';
+import { RoadmapData } from '@/types/types';
 import { generateSlug } from '@/lib/utils';
 
 export async function GET(request: Request) {

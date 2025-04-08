@@ -5,7 +5,7 @@ import { ReactFlow, Background, Controls, useNodesState, useEdgesState, addEdge,
 import '@xyflow/react/dist/style.css';
 import { NodeEditPanel } from '@/components/admin/NodeEditPanel';
 import { useRouter } from 'next/navigation';
-import { RoadmapData, RoadmapNodeType, Exercise } from '@/lib/types';
+import { RoadmapData, RoadmapNodeType, Exercise } from '@/types/types';
 import { getRoadmap, createRoadmap, updateRoadmap } from '@/lib/api';
 import { generateSlug } from '@/lib/utils';
 import { ToastContainer, toast } from 'react-toastify';

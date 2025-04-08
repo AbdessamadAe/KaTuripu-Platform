@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { RoadmapData } from "@/lib/types";
+import { RoadmapData } from "@/types/types";
 import ClientRoadmapWrapper from "./client-wrapper";
 import { getRoadmapBySlug } from "@/lib/api";
 

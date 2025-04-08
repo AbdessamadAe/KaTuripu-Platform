@@ -1,5 +1,5 @@
 import supabase from './db';
-import { RoadmapData, RoadmapNodeType, Exercise } from './types';
+import { RoadmapData, RoadmapNodeType, Exercise } from '../types/types';
 import { v4 as uuidv4 } from 'uuid';
 
 // Fetch roadmap with all nodes and exercises

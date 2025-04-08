@@ -1,6 +1,6 @@
 import React from 'react'
-import Nav from './Nav'
-import { Footer } from './Footer'
+import Nav from '@/components/client/Nav'
+import { Footer } from '@/components/client/Footer'
 // import contact from '../images/contact.svg'
 
 export const ContactUs: React.FC = () => {
