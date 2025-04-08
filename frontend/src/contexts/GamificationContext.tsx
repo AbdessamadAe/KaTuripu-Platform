@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useSession } from "next-auth/react";
 
 // Define types for gamification elements
 export type Achievement = {
@@ -88,7 +89,7 @@ const PREDEFINED_ACHIEVEMENTS: Achievement[] = [
 
 type GamificationContextType = {
   state: GamificationState;
-  addPoints: (points: number, reason?: string) => void;
+  addPoints: (points: number, reason: string) => void;
   completeExercise: (exerciseId: string) => void;
   startRoadmap: (roadmapId: string) => void;
   completeRoadmap: (roadmapId: string) => void;
@@ -117,24 +118,60 @@ const GamificationContext = createContext<GamificationContextType | undefined>(u
 
 // Provider component
 export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { data: session } = useSession();
   const [state, setState] = useState<GamificationState>(initialState);
   const [badgeEvent, setBadgeEvent] = useState<BadgeEventType | null>(null);
 
-  // Load state from localStorage on initial render
+  // Load initial state from localStorage or database
   useEffect(() => {
-    const savedState = localStorage.getItem('gamificationState');
-    if (savedState) {
-      setState(JSON.parse(savedState));
-    }
-    
-    // Check for streak update on initial load
-    updateStreak();
-  }, []);
+    const loadState = async () => {
+      if (session?.user) {
+        // Load from database for authenticated users
+        try {
+          const response = await fetch('/api/gamification/state');
+          if (response.ok) {
+            const data = await response.json();
+            setState(data);
+          }
+        } catch (error) {
+          console.error('Failed to load gamification state:', error);
+        }
+      } else {
+        // Load from localStorage for guest users
+        const savedState = localStorage.getItem('gamificationState');
+        if (savedState) {
+          setState(JSON.parse(savedState));
+        }
+      }
+    };
 
-  // Save state to localStorage whenever it changes
+    loadState();
+  }, [session]);
+
+  // Save state to localStorage or database
   useEffect(() => {
-    localStorage.setItem('gamificationState', JSON.stringify(state));
-  }, [state]);
+    const saveState = async () => {
+      if (session?.user) {
+        // Save to database for authenticated users
+        try {
+          await fetch('/api/gamification/state', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(state),
+          });
+        } catch (error) {
+          console.error('Failed to save gamification state:', error);
+        }
+      } else {
+        // Save to localStorage for guest users
+        localStorage.setItem('gamificationState', JSON.stringify(state));
+      }
+    };
+
+    saveState();
+  }, [state, session]);
 
   // Get current level based on points
   const getCurrentLevel = (): Level => {
@@ -211,7 +248,7 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
   };
 
   // Add points and check for level up
-  const addPoints = (points: number, reason?: string) => {
+  const addPoints = (points: number, reason: string) => {
     const prevLevel = getCurrentLevel().level;
     
     setState(prev => {

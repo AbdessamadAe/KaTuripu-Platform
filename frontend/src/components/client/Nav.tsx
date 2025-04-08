@@ -60,24 +60,13 @@ export default function Nav() {
             </div>
           </div>
           <div className="absolute inset-y-0 left-0 flex items-center pl-2 lg:static lg:inset-auto lg:ml-6 lg:pl-0">
-            {/* Level Indicator */}
-            {session && (
-              <div className="mr-4">
-                <LevelIndicator />
-              </div>
-            )}
+            {/* Level Indicator - Always visible */}
+            <div className="mr-4">
+              <LevelIndicator />
+            </div>
             
-            {/* Notification Button */}
-            {session && (
-              <button
-                type="button"
-                className="relative rounded-full bg-blue-800 p-1 text-gray-300 hover:text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-900 focus:outline-hidden transition-colors duration-200"
-              >
-                <span className="absolute -inset-1.5" />
-                <span className="sr-only">View notifications</span>
-                <BellIcon aria-hidden="true" className="size-6" />
-              </button>
-            )}
+            {/* Notification Button - Always visible */}
+            
 
             {/* Auth Buttons */}
             <div className="ml-4">
@@ -156,12 +145,10 @@ export default function Nav() {
             </DisclosureButton>
           ))}
           
-          {/* Level Indicator for Mobile */}
-          {session && (
-            <div className="px-3 py-3 border-t border-blue-800 mt-2">
-              <LevelIndicator />
-            </div>
-          )}
+          {/* Level Indicator for Mobile - Always visible */}
+          <div className="px-3 py-3 border-t border-blue-800 mt-2">
+            <LevelIndicator />
+          </div>
         </div>
       </DisclosurePanel>
     </Disclosure>
