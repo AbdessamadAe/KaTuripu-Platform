@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Node } from '@xyflow/react';
-import supabase from '@/lib/db';
+import supabase from '@/lib/supabase';
 import { MathJax } from 'better-react-mathjax';
 import ReactMarkdown from 'react-markdown';
 import { Modal } from './Modal';

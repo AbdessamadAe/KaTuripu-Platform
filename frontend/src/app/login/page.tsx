@@ -1,6 +1,5 @@
 "use client";
 
-import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -11,25 +10,7 @@ export default function LoginPage() {
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    // Sign in with credentials
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false, // Disable automatic redirect
-    });
-
-    // Handle the result of the sign-in attempt
-    if (result?.error) {
-      console.log(email, password)
-      console.log(result)
-      setError("Invalid credentials. Please try again.");
-    } else {
-      // If no error, redirect to admin page
-      router.push("/admin");
-    }
+    console.log("");
   };
 
   return (

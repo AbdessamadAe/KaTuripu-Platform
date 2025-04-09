@@ -1,4 +1,4 @@
-import supabase from './db';
+import supabase from './supabase';
 import { RoadmapData, RoadmapNodeType, Exercise } from '../types/types';
 import { v4 as uuidv4 } from 'uuid';
 

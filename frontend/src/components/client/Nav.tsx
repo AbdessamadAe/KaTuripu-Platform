@@ -1,8 +1,12 @@
+"use client";
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { SignInButton } from '@/components/client/sing-in-button'
+import supabase from '@/lib/supabase'
+import { useEffect, useState } from 'react'
 
 const navigation = [
-  { name: 'Concours', href: '/roadmaps', current: true },
+  { name: 'Concours', href: '/roadmap', current: true },
   { name: 'Team', href: '/team', current: false },
 ]
 
@@ -11,6 +15,25 @@ function classNames(...classes: (string | undefined | false | null)[]) {
 }
 
 export default function Nav() {
+
+  const [session, setSession] = useState(null);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setSession(session?.user);
+      
+      if (session?.user) {
+        const { data: user } = await supabase.auth.getUser();
+        console.log(user.user?.user_metadata.name);
+        setUser(user);
+      }
+    }
+
+    fetchSession();
+  }, []);
+
   return (
     <Disclosure as="nav" className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -52,14 +75,19 @@ export default function Nav() {
             </div>
           </div>
           <div className="absolute inset-y-0 left-0 flex items-center pl-2 lg:static lg:inset-auto lg:ml-6 lg:pl-0">
-            <button
-              type="button"
-              className="relative rounded-full bg-white p-1 text-gray-500 hover:text-black focus:ring-2 focus:ring-black focus:ring-offset-2 focus:ring-offset-white focus:outline-hidden transition-colors duration-200"
-            >
-              <span className="absolute -inset-1.5" />
-              <span className="sr-only">View notifications</span>
-              <BellIcon aria-hidden="true" className="size-6" />
-            </button>
+            {/* Conditionally render the user's profile if logged in */}
+            {session ? (
+              <div className="flex items-center space-x-4">
+                <img
+                  src={user?.user?.user_metadata?.avatar_url || '/default-avatar.png'} // Fallback if no avatar is present
+                  alt="User Avatar"
+                  className="h-8 w-8 rounded-full"
+                />
+                <span>{user?.user?.user_metadata?.full_name || 'User'}</span>
+              </div>
+            ) : (
+              <SignInButton />
+            )}
           </div>
         </div>
       </div>

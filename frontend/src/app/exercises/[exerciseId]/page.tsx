@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import supabase from '@/lib/db';
+import supabase from '@/lib/supabase';
 import { Exercise } from '@/lib/types';
 import { MathJax } from 'better-react-mathjax';
 import ReactMarkdown from 'react-markdown';
