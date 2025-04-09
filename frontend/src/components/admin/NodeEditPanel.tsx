@@ -104,7 +104,6 @@ export function NodeEditPanel({ node, onChange }: NodeEditPanelProps) {
   };
 
   const updateExercise = (updatedExercise: Exercise) => {
-    console.log('Updating exercise:', updatedExercise); // Debug log
     
     // Ensure all fields are properly preserved without nesting
     const exerciseToUpdate = {
@@ -116,7 +115,6 @@ export function NodeEditPanel({ node, onChange }: NodeEditPanelProps) {
       video_url: updatedExercise.video_url || ''
     };
     
-    console.log('Exercise to update:', exerciseToUpdate); // Debug log
     
     const updatedExercises = exercises.map(ex => 
       ex.id === updatedExercise.id ? exerciseToUpdate : ex

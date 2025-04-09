@@ -51,7 +51,6 @@ export function ExerciseEditModal({ exercise, isOpen, onClose, onSave }: Exercis
       video_url: videoUrl
     };
     
-    console.log('Saving exercise with solution:', updatedExercise.solution);
     onSave(updatedExercise);
     onClose();
   };

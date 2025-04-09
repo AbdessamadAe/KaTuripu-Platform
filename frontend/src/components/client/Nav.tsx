@@ -16,7 +16,7 @@ function classNames(...classes: (string | undefined | false | null)[]) {
 
 export default function Nav() {
 
-  const [session, setSession] = useState(null);
+  const [session, setSession] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
@@ -26,7 +26,6 @@ export default function Nav() {
       
       if (session?.user) {
         const { data: user } = await supabase.auth.getUser();
-        console.log(user.user?.user_metadata.name);
         setUser(user);
       }
     }

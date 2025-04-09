@@ -11,7 +11,7 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import ExerciseSidebar from "./sidebar";
-import { Exercise, RoadmapNodeType, RoadmapData } from "@/lib/types";
+import { Exercise, RoadmapNodeType, RoadmapData } from "@/types/types";
 
 interface RoadmapProps {
   roadmapData: RoadmapData;

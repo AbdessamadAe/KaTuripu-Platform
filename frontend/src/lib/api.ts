@@ -229,7 +229,6 @@ export async function updateRoadmap(id: string, roadmapData: RoadmapData) {
         }
       } else {
         // Update existing exercise
-        console.log('Updating exercise in database:', exercise); // Debug log
         
         // Create update data with the latest values
         const updateData = {
@@ -240,7 +239,6 @@ export async function updateRoadmap(id: string, roadmapData: RoadmapData) {
           video_url: exercise.video_url || ''
         };
         
-        console.log('Updating exercise with data:', updateData); // Debug log
         
         const { error: exUpdateErr } = await supabase
           .from('exercises')
