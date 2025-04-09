@@ -2,15 +2,10 @@
 
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
 import { type NextAuthConfig } from "next-auth";
 
 const config: NextAuthConfig = {
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -31,7 +26,6 @@ const config: NextAuthConfig = {
             id: "1",
             name: "Admin",
             email: allowedUser.email,
-            role: "admin",
           };
         }
 
@@ -39,20 +33,6 @@ const config: NextAuthConfig = {
       },
     }),
   ],
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.role = user.role || "user";
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.role = token.role;
-      }
-      return session;
-    },
-  },
   session: {
     strategy: "jwt",
   },

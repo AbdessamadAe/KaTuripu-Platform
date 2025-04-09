@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 export async function middleware(req: NextRequest) {
   const session = await auth();
 
-  if (!session?.user || session.user.role !== "admin") {
+  if (!session?.user || session.user.email !== "admin@example.com") {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 

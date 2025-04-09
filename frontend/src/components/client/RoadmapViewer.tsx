@@ -11,9 +11,7 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import ExerciseSidebar from "./sidebar";
-import { Exercise, RoadmapNodeType, RoadmapData } from "@/types/types";
-import { useGamification } from "@/contexts/GamificationContext";
-import ConfettiExplosion from "react-confetti-explosion";
+import { Exercise, RoadmapNodeType, RoadmapData } from "@/lib/types";
 
 // // Type definitions
 // export type Exercise = {
@@ -56,10 +54,8 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
   const [selectedNode, setSelectedNode] = useState<RoadmapNodeType | null>(
     null
   );
-  const [isExploding, setIsExploding] = useState(false);
-  const { startRoadmap, completeRoadmap, state } = useGamification();
 
-  // Load roadmapData into state and mark roadmap as started
+  // Load roadmapData into state
   useEffect(() => {
     setNodes(roadmapData.nodes);
     setFlowEdges(
@@ -71,12 +67,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
         style: { stroke: "white" },
       }))
     );
-
-    // Mark roadmap as started in gamification context
-    if (roadmapData.id) {
-      startRoadmap(roadmapData.id);
-    }
-  }, [roadmapData, startRoadmap]);
+  }, [roadmapData]);
 
   // Load saved progress from localStorage and apply it to nodes
   useEffect(() => {
@@ -141,52 +132,23 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
                     }}
                   />
                 </div>
-                <div className="text-center mt-1">
-                  {completed}/{total}
-                </div>
               </div>
             </div>
           ),
         },
         style: {
-          background: progress === 100 ? "#15803d" : "#192C88",
+          background: "#192C88",
           color: "white",
           padding: "10px",
           borderRadius: "8px",
           width: 180,
           cursor: "pointer",
-          border: progress === 100 ? "2px solid #4ade80" : "none"
         },
       };
     });
 
     setFlowNodes(reactFlowNodes);
   }, [nodes]);
-
-  // Check if roadmap is completed
-  useEffect(() => {
-    if (nodes.length === 0 || !roadmapData.id) return;
-    
-    // Calculate if all exercises are completed
-    const totalExercises = nodes.reduce(
-      (total, node) => total + node.exercises.length,
-      0
-    );
-    
-    const completedExercises = nodes.reduce(
-      (count, node) => count + node.exercises.filter(ex => ex.completed).length,
-      0
-    );
-    
-    // If all exercises are completed and the roadmap is not already completed in state
-    if (totalExercises > 0 && 
-        completedExercises === totalExercises && 
-        !state.roadmapsCompleted.includes(roadmapData.id)) {
-      completeRoadmap(roadmapData.id);
-      setIsExploding(true);
-      setTimeout(() => setIsExploding(false), 3000);
-    }
-  }, [nodes, roadmapData.id, completeRoadmap, state.roadmapsCompleted]);
 
   const handleNodeClick = (_: any, node: any) => {
     const clickedNode = nodes.find((n) => n.id === node.id);
@@ -242,30 +204,6 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
         display: "flex",
       }}
     >
-      {isExploding && (
-        <div style={{ 
-          position: 'fixed', 
-          top: '50%', 
-          left: '50%', 
-          transform: 'translate(-50%, -50%)',
-          zIndex: 1000 
-        }}>
-          <ConfettiExplosion
-            force={0.8}
-            duration={3000}
-            particleCount={150}
-            width={1600}
-          />
-        </div>
-      )}
-      
-      {/* Roadmap Progress Banner */}
-      {roadmapData.id && state.roadmapsCompleted.includes(roadmapData.id) && (
-        <div className="fixed top-16 left-0 right-0 bg-green-600 text-white py-2 text-center font-bold z-10">
-          🏆 أكملت هذه الخريطة! مبروك على إنجازك! 🎉
-        </div>
-      )}
-
       {/* Roadmap Graph */}
       <div style={{ flex: 3 }}>
         <ReactFlowProvider>

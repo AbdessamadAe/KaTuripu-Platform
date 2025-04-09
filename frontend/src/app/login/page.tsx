@@ -3,7 +3,6 @@
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -19,18 +18,18 @@ export default function LoginPage() {
     const result = await signIn("credentials", {
       email,
       password,
-      redirect: false,
+      redirect: false, // Disable automatic redirect
     });
 
+    // Handle the result of the sign-in attempt
     if (result?.error) {
+      console.log(email, password)
+      console.log(result)
       setError("Invalid credentials. Please try again.");
     } else {
+      // If no error, redirect to admin page
       router.push("/admin");
     }
-  };
-
-  const handleGoogleSignIn = async () => {
-    await signIn("google", { callbackUrl: "/dashboard" });
   };
 
   return (
@@ -63,6 +62,19 @@ export default function LoginPage() {
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
+          <div className="flex items-center justify-between">
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              />
+              <span className="ml-2 text-sm text-gray-600">Remember me</span>
+            </label>
+            <a href="#" className="text-sm text-indigo-600 hover:text-indigo-500">
+              Forgot password?
+            </a>
+          </div>
+
           <button
             type="submit"
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition-colors"
@@ -71,28 +83,11 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div className="mt-6">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or continue with</span>
-            </div>
-          </div>
-
-          <button
-            onClick={handleGoogleSignIn}
-            className="mt-4 w-full flex items-center justify-center gap-2 bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
-          >
-            <Image
-              src="/google.svg"
-              alt="Google"
-              width={20}
-              height={20}
-            />
-            Sign in with Google
-          </button>
+        <div className="mt-6 text-center text-sm text-gray-600">
+          Don't have an account?{" "}
+          <a href="#" className="text-indigo-600 hover:text-indigo-500 font-medium">
+            Sign up
+          </a>
         </div>
       </div>
     </div>
