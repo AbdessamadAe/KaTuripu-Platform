@@ -18,6 +18,7 @@ export default function Nav() {
 
   const [session, setSession] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
+  const [logged, setlogged] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -25,8 +26,11 @@ export default function Nav() {
       setSession(session?.user);
       
       if (session?.user) {
-        const { data: user } = await supabase.auth.getUser();
-        setUser(user);
+        const { data: userdata } = await supabase.auth.getUser();
+        setUser(userdata);
+        if (userdata != null) {
+          setlogged(true);
+        }
       }
     }
 
@@ -75,7 +79,7 @@ export default function Nav() {
           </div>
           <div className="absolute inset-y-0 left-0 flex items-center pl-2 lg:static lg:inset-auto lg:ml-6 lg:pl-0">
             {/* Conditionally render the user's profile if logged in */}
-            {session ? (
+            {logged ? (
               <div className="flex items-center space-x-4">
                 <img
                   src={user?.user?.user_metadata?.avatar_url || '/default-avatar.png'} // Fallback if no avatar is present

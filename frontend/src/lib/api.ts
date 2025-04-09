@@ -2,6 +2,20 @@ import supabase from './supabase';
 import { RoadmapData, RoadmapNodeType, Exercise } from '../types/types';
 import { v4 as uuidv4 } from 'uuid';
 
+
+
+export async function updateUser(user:any) {
+  const {error: userErr} = await supabase
+    .from('users')
+    .update({
+      completedExercices: user.completedExercices,
+      xp: user.xp
+    })
+    .eq('id', user.id);
+
+    if (userErr) throw new Error(`Failed to update user: ${userErr.message}`);
+  
+}
 // Fetch roadmap with all nodes and exercises
 export async function getRoadmap(id: string): Promise<RoadmapData> {
   const { data: roadmap, error } = await supabase

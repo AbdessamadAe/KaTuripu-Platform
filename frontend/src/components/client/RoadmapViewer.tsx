@@ -12,20 +12,39 @@ import {
 import "@xyflow/react/dist/style.css";
 import ExerciseSidebar from "./sidebar";
 import { Exercise, RoadmapNodeType, RoadmapData } from "@/types/types";
+import supabase from '@/lib/supabase'
+import { updateUser } from "@/lib/api";
 
 interface RoadmapProps {
   roadmapData: RoadmapData;
 }
 
 const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
+  
+  const [session, setSession] = useState<any>(null);
+  const [user, setUser] = useState<any>(null);
+
+  // Fetch session and user data
+  useEffect(() => {
+    const fetchSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setSession(session?.user);
+      
+      if (session?.user) {
+        const { data: userData } = await supabase.auth.getUser();
+        setUser(userData?.user?.user_metadata);
+      }
+    }
+
+    fetchSession();
+  }, []);
+
   const [nodes, setNodes] = useState<RoadmapNodeType[]>([]);
   const [flowNodes, setFlowNodes] = useState<Node[]>([]);
   const [flowEdges, setFlowEdges] = useState<Edge[]>([]);
-  const [selectedNode, setSelectedNode] = useState<RoadmapNodeType | null>(
-    null
-  );
+  const [selectedNode, setSelectedNode] = useState<RoadmapNodeType | null>(null);
 
-  // Load roadmapData into state
+  // Load roadmap data into state
   useEffect(() => {
     setNodes(roadmapData.nodes);
     setFlowEdges(
@@ -69,7 +88,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
     }
   }, [nodes.length]);
 
-  // Generate flow nodes with progress bars from updated nodes
+  // Generate flow nodes with progress bars
   useEffect(() => {
     const reactFlowNodes = nodes.map((node) => {
       const total = node.exercises.length;
@@ -120,14 +139,29 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
     setFlowNodes(reactFlowNodes);
   }, [nodes]);
 
+  // Define difficulty and XP calculation function (Assumed structure)
+  const difficulty = "easy"; // You can replace this with the actual logic to determine difficulty
+  const getXPForDifficulty = (difficulty: string) => {
+    switch (difficulty) {
+      case "easy":
+        return 10;
+      case "medium":
+        return 20;
+      case "hard":
+        return 30;
+      default:
+        return 0;
+    }
+  };
+
   const handleNodeClick = (_: any, node: any) => {
     const clickedNode = nodes.find((n) => n.id === node.id);
     if (clickedNode) setSelectedNode(clickedNode);
   };
 
-  const handleProblemToggle = (problemId: string, completed: boolean) => {
-    if (!selectedNode) return;
-
+  const handleProblemToggle = async (problemId: string, completed: boolean) => {
+    if (!selectedNode || !user) return;
+  
     const updatedNodes = nodes.map((node) => {
       if (node.id === selectedNode.id) {
         return {
@@ -139,31 +173,36 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
       }
       return node;
     });
-
+  
     setNodes(updatedNodes);
-
+  
     const updatedSelectedNode = updatedNodes.find(
       (node) => node.id === selectedNode.id
     );
     if (updatedSelectedNode) {
       setSelectedNode(updatedSelectedNode);
     }
-
-    const savedProgress = localStorage.getItem("roadmapProgress") || "{}";
-    try {
-      const progressData = JSON.parse(savedProgress);
-      const nodeProgress = progressData[selectedNode.id] || {};
-
-      progressData[selectedNode.id] = {
-        ...nodeProgress,
-        [problemId]: completed,
-      };
-
-      localStorage.setItem("roadmapProgress", JSON.stringify(progressData));
-    } catch (e) {
-      console.error("Error saving progress:", e);
+  
+    // Add XP if the problem is completed
+    if (completed) {
+      try {
+        const xpToAdd = getXPForDifficulty(difficulty); // Get XP for the problem's difficulty
+  
+        // Ensure user.completedExercises is initialized as an array
+        const completedExercises = user.completedExercises || [];
+  
+        // Add XP only if the exercise is completed for the first time
+        if (!completedExercises.includes(problemId)) {
+          user.xp += xpToAdd;
+          user.completedExercises = [...completedExercises, problemId]; // Mark this problem as completed
+          await updateUser(user); // Update the user in the database
+        }
+      } catch (error) {
+        console.error("Error updating XP:", error);
+      }
     }
   };
+  
 
   return (
     <div
