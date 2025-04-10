@@ -7,6 +7,8 @@ interface AuthContextType {
     user: any;
     loading: boolean;
     isAuthenticated: boolean;
+    loginWithGoogle: () => Promise<void>;
+    logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -15,6 +17,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    const loginWithGoogle = async () => {
+        try {
+            setLoading(true);
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: `${window.location.origin}/dashboard`
+                }
+            });
+            
+            if (error) {
+                console.error("Error logging in with Google:", error);
+                throw error;
+            }
+        } catch (error) {
+            console.error("Error during Google login:", error);
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const logout = async () => {
+        try {
+            setLoading(true);
+            await supabase.auth.signOut();
+            setUser(null);
+            setIsAuthenticated(false);
+        } catch (error) {
+            console.error("Error logging out:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         let mounted = true;
@@ -99,7 +136,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, loading, isAuthenticated }}>
+        <AuthContext.Provider value={{ user, loading, isAuthenticated, loginWithGoogle, logout }}>
             {children}
         </AuthContext.Provider>
     );

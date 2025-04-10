@@ -6,10 +6,11 @@ import '@xyflow/react/dist/style.css';
 import { NodeEditPanel } from '@/components/admin/NodeEditPanel';
 import { useRouter } from 'next/navigation';
 import { RoadmapData, RoadmapNodeType, Exercise } from '@/types/types';
-import { getRoadmap, createRoadmap, updateRoadmap } from '@/lib/api';
+import { getRoadmap, createRoadmap, updateRoadmap } from '@/lib/roadmapService';
 import { generateSlug } from '@/lib/utils';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function RoadmapEditor({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
@@ -105,7 +106,7 @@ export default function RoadmapEditor({ params }: { params: Promise<{ id: string
   const onConnect = useCallback((params: Connection) => {
     const newEdge = { 
       ...params, 
-      id: `edge-${params.source}-${params.target}`,
+      id: `edge-${uuidv4()}`,
       animated: true 
     };
     setEdges((eds) =>
@@ -115,7 +116,7 @@ export default function RoadmapEditor({ params }: { params: Promise<{ id: string
   
   // Add a new node
   const addNewNode = useCallback(() => {
-    const id = `node-${Date.now()}`;
+    const id = `node-${uuidv4()}`; // Using UUID for more reliable IDs
     
     // Calculate a position that's not on top of existing nodes
     // Basic approach: offset by number of existing nodes to avoid stacking
@@ -175,6 +176,36 @@ export default function RoadmapEditor({ params }: { params: Promise<{ id: string
         return;
       }
       
+      // Check if there are any nodes
+      if (nodes.length === 0) {
+        toast.error('Your roadmap must contain at least one node');
+        return;
+      }
+      
+      // Validate nodes have valid data
+      for (const node of nodes) {
+        if (!node.data.label || (node.data.label as string).trim() === '') {
+          toast.error(`One of your nodes is missing a label`);
+          return;
+        }
+        
+        // Validate exercises have names if they exist
+        const exercises = node.data.exercises as Exercise[];
+        if (exercises && exercises.length > 0) {
+          for (const exercise of exercises) {
+            if (!exercise.name || exercise.name.trim() === '') {
+              toast.error(`Node "${node.data.label}" has an exercise missing a name`);
+              return;
+            }
+            
+            // Ensure exercise has an ID
+            if (!exercise.id) {
+              exercise.id = `ex-${uuidv4()}`;
+            }
+          }
+        }
+      }
+      
       // Prepare the data
       const roadmapData: RoadmapData = {
         title: roadmapTitle,
@@ -197,22 +228,30 @@ export default function RoadmapEditor({ params }: { params: Promise<{ id: string
         }))
       };
       
+      // Show a saving indicator
+      toast.info('Saving roadmap...', { autoClose: false, toastId: 'saving' });
+      
       // Save the roadmap
       if (roadmapId === 'new') {
-        await createRoadmap(roadmapData);
-        toast.success('New roadmap created successfully!');
+        const result = await createRoadmap(roadmapData);
+        toast.dismiss('saving');
+        toast.success(`New roadmap "${result.title}" created successfully!`);
       } else {
         if (roadmapId) {
           await updateRoadmap(roadmapId, roadmapData);
+          toast.dismiss('saving');
           toast.success('Roadmap updated successfully!');
         } else {
           throw new Error('Roadmap ID is null');
         }
       }
       
-      // Redirect to roadmaps admin page
-      router.push('/admin/roadmaps');
+      // Redirect to roadmaps admin page after a short delay
+      setTimeout(() => {
+        router.push('/admin/roadmaps');
+      }, 1000);
     } catch (error) {
+      toast.dismiss('saving');
       console.error('Failed to save roadmap:', error);
       toast.error('Error saving roadmap: ' + (error instanceof Error ? error.message : 'Unknown error'));
     }

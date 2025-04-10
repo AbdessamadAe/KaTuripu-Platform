@@ -13,7 +13,7 @@ const Hero: React.FC = () => {
   }, [texts.length]);
 
   return (
-    <div className="w-full flex flex-col-reverse lg:flex-row items-center justify-center lg:pt-[50px] space-x-0 lg:space-x-[100px] px-4 sm:px-6 lg:px-8">
+    <div className="w-full mt-24 md:mt-0 flex flex-col-reverse lg:flex-row items-center justify-center lg:pt-[50px] space-x-0 lg:space-x-[100px] px-4 sm:px-6 lg:px-8">
       <div className="mb-8 lg:mb-0 lg:m-auto w-full lg:w-1/2 flex justify-center">
         <img
           src="/images/problem-solving.svg"

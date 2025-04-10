@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { getAllRoadmaps } from "@/lib/api";
+import { getAllRoadmaps, deleteRoadmap } from "@/lib/roadmapService";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -41,19 +41,20 @@ export default function RoadmapsAdmin() {
     }
 
     try {
-      const response = await fetch(`/api/admin/roadmaps/${id}?roadmapId=${id}`, {
-        method: 'DELETE',
-      });
+      toast.info('Deleting roadmap...', { autoClose: false, toastId: 'deleting' });
+      const success = await deleteRoadmap(id);
 
-      if (!response.ok) {
+      if (success) {
+        toast.dismiss('deleting');
+        toast.success('Roadmap deleted successfully');
+        fetchRoadmaps(); // Refresh the list
+      } else {
         throw new Error('Failed to delete roadmap');
       }
-
-      toast.success('Roadmap deleted successfully');
-      fetchRoadmaps(); // Refresh the list
     } catch (err) {
+      toast.dismiss('deleting');
       console.error('Error deleting roadmap:', err);
-      toast.error('Failed to delete roadmap');
+      toast.error('Failed to delete roadmap: ' + (err instanceof Error ? err.message : 'Unknown error'));
     }
   };
 
@@ -118,7 +119,7 @@ export default function RoadmapsAdmin() {
                         Edit
                       </Link>
                       <Link 
-                        href={`/roadmaps/${roadmap.slug}`} 
+                        href={`/roadmap/${roadmap.slug}`} 
                         target="_blank"
                         className="text-green-600 hover:text-green-900"
                       >
