@@ -23,6 +23,9 @@ export type Exercise = {
     title: string;
     description: string;
     slug: string;
+    category?: any;
+    created_at?: any;
+    updated_at?: any;
     nodes: RoadmapNodeType[];
     edges: {
       id: string;

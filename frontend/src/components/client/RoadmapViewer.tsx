@@ -49,8 +49,8 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
 
   // Replace standard state with ReactFlow hooks
   const [nodes, setNodes] = useState<RoadmapNodeType[]>([]);
-  const [flowNodes, setFlowNodes, onNodesChange] = useNodesState<Node[]>([]);
-  const [flowEdges, setFlowEdges, onEdgesChange] = useEdgesState<Edge[]>([]);
+  const [flowNodes, setFlowNodes, onNodesChange] = useNodesState<any>([]);
+  const [flowEdges, setFlowEdges, onEdgesChange] = useEdgesState<any>([]);
   const [selectedNode, setSelectedNode] = useState<RoadmapNodeType | null>(null);
   const [userProgress, setUserProgress] = useState<string[]>([]);
   const [currentProgress, setCurrentProgress] = useState<number>(0);
@@ -501,11 +501,10 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
             preventScrolling={false}
             // Crucial for preserving node positions:
             autoPanOnNodeDrag={false}
-            autoConnect={false}
             minZoom={0.1}
             maxZoom={2}
           >
-            <Background color="#2B2B2B" />
+            <Background />
             <Controls />
           </ReactFlow>
         </ReactFlowProvider>
