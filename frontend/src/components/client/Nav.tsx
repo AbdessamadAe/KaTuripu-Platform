@@ -9,8 +9,7 @@ import supabase from '@/lib/supabase'
 const navigation = [
   { name: 'Concours', href: '/roadmap', current: true },
   { name: 'Équipe', href: '/team', current: false },
-  { name: 'Contact', href: '/contact-us', current: false },
-  { name: 'Tableau de bord', href: '/dashboard', current: false }, // Added dashboard link
+  { name: 'Contact', href: '/contact-us', current: false }
 ]
 
 function classNames(...classes: (string | undefined | false | null)[]) {
@@ -90,6 +89,20 @@ export default function Nav() {
                   leaveTo="transform opacity-0 scale-95"
                 >
                   <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                    <Menu.Item>
+                      {({ active }) => (
+                        <a
+                          href="/dashboard"
+                          className={classNames(
+                            active ? 'bg-gray-100' : '',
+                            'flex items-center px-4 py-2 text-sm text-gray-700'
+                          )}
+                        >
+                          <UserIcon className="w-4 h-4 mr-2" />
+                          Tableau de bord
+                        </a>
+                      )}
+                    </Menu.Item>
                     <Menu.Item>
                       {({ active }) => (
                         <a
