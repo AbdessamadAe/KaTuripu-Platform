@@ -76,9 +76,14 @@ const Dashboard = () => {
             };
             
             exercises.forEach((exercise) => {
+              // Use type guard to ensure difficulty is a valid key
               const difficulty = exercise.difficulty?.toLowerCase() || 'easy';
-              if (byDifficulty[difficulty] !== undefined) {
-                byDifficulty[difficulty]++;
+              // Check if the difficulty is one of our valid keys
+              if (difficulty === 'easy' || difficulty === 'medium' || difficulty === 'hard') {
+                byDifficulty[difficulty as keyof typeof byDifficulty]++;
+              } else {
+                // Default to 'easy' if an unknown difficulty is encountered
+                byDifficulty.easy++;
               }
             });
             
@@ -112,9 +117,9 @@ const Dashboard = () => {
   }, [userId]);
 
   // Helper function to extract exercises from roadmap data
-  const extractExercisesFromRoadmap = (roadmap) => {
+  const extractExercisesFromRoadmap = (roadmap: any) => {
     // Output variable to store all exercise IDs found
-    const exerciseIds = [];
+    const exerciseIds: (string | number)[] = [];
     
     try {
       // Case 1: Direct exercises array on roadmap object

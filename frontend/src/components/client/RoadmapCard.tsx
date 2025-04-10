@@ -5,7 +5,7 @@ interface Roadmap {
   title: string;
   description: string;
   slug: string;
-  category?: string;
+  category?: string[] | string;
   thumbnailUrl?: string;
   level?: 'beginner' | 'intermediate' | 'advanced';
 }
@@ -18,9 +18,35 @@ interface RoadmapCardProps {
 const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
   const [isHovered, setIsHovered] = useState(false);
   
+  // Get primary category from array or use the string value
+  const getPrimaryCategory = (): string => {
+    if (Array.isArray(roadmap.category) && roadmap.category.length > 0) {
+      return roadmap.category[0].toLowerCase();
+    }
+    
+    if (typeof roadmap.category === 'string') {
+      return roadmap.category.toLowerCase();
+    }
+    
+    return '';
+  };
+  
+  // Extract all categories as an array
+  const getCategories = (): string[] => {
+    if (Array.isArray(roadmap.category)) {
+      return roadmap.category;
+    }
+    
+    if (typeof roadmap.category === 'string') {
+      return [roadmap.category];
+    }
+    
+    return [];
+  };
+  
   // Determine background color based on category or default
   const getCategoryColor = () => {
-    const category = roadmap.category?.toLowerCase() || '';
+    const category = getPrimaryCategory();
     
     switch (category) {
       case 'mathematics':
@@ -38,6 +64,10 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
         return 'bg-indigo-100';
       case 'languages':
         return 'bg-pink-100';
+      case 'science':
+        return 'bg-teal-100';
+      case 'engineering':
+        return 'bg-amber-100';
       default:
         return 'bg-blue-100';
     }
@@ -45,7 +75,7 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
   
   // Get appropriate emoji/icon based on category
   const getCategoryEmoji = () => {
-    const category = roadmap.category?.toLowerCase() || '';
+    const category = getPrimaryCategory();
     
     switch (category) {
       case 'mathematics':
@@ -63,9 +93,21 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
         return '💻';
       case 'languages':
         return '🔤';
+      case 'science':
+        return '🔬';
+      case 'engineering':
+        return '⚙️';
       default:
         return '📚';
     }
+  };
+
+  // Format categories for display
+  const formatCategories = () => {
+    if (Array.isArray(roadmap.category)) {
+      return roadmap.category.join(', ');
+    }
+    return roadmap.category || '';
   };
 
   // Get badge color based on level
@@ -118,9 +160,17 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
           </span>
         )}
         
+        {/* Display categories as individual tags */}
         {roadmap.category && (
-          <div className="absolute bottom-2 left-2 bg-white/80 backdrop-blur-sm px-2 py-1 rounded-md text-xs font-medium">
-            {roadmap.category}
+          <div className="absolute bottom-2 left-2 flex flex-wrap gap-1 max-w-[90%]">
+            {getCategories().map((category, index) => (
+              <span 
+                key={index} 
+                className="bg-white/80 backdrop-blur-sm px-2 py-1 rounded-md text-xs font-medium"
+              >
+                {category}
+              </span>
+            ))}
           </div>
         )}
       </div>

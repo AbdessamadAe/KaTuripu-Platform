@@ -67,16 +67,45 @@ const RoadmapsPage = () => {
         loadData();
     }, []);
 
+    // Helper function to extract all categories from a roadmap
+    const getCategoriesFromRoadmap = (roadmap: any): string[] => {
+        if (Array.isArray(roadmap.category)) {
+            return roadmap.category;
+        }
+        
+        if (typeof roadmap.category === 'string') {
+            return [roadmap.category];
+        }
+        
+        return ['uncategorized'];
+    };
+
     // Filter roadmaps based on search and category
     const filteredRoadmaps = roadmaps.filter(roadmap => {
+        // Check if title or description matches search term
         const matchesSearch = roadmap.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                              roadmap.description.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesCategory = category === 'all' || roadmap.category === category;
+        
+        // Check if category matches - accounting for array categories
+        let matchesCategory = category === 'all';
+        if (!matchesCategory) {
+            const roadmapCategories = getCategoriesFromRoadmap(roadmap);
+            matchesCategory = roadmapCategories.some(cat => 
+                cat.toLowerCase() === category.toLowerCase()
+            );
+        }
+        
         return matchesSearch && matchesCategory;
     });
 
-    // Get unique categories
-    const categories = ['all', ...new Set(roadmaps.map(roadmap => roadmap.category || 'uncategorized'))];
+    // Get unique categories from all roadmaps
+    const allCategories = new Set<string>(['all']);
+    roadmaps.forEach(roadmap => {
+        getCategoriesFromRoadmap(roadmap).forEach(cat => {
+            if (cat) allCategories.add(cat);
+        });
+    });
+    const categories = Array.from(allCategories);
 
     // Animation variants
     const containerVariants = {
@@ -132,9 +161,9 @@ const RoadmapsPage = () => {
                 </div>
             </div>
 
-            <div className="container mx-auto px-24 pb-16">
+            <div className="container mx-auto px-4 md:px-8 lg:px-16 pb-16">
                 {/* Improved Search and Filter Section with better flex layout */}
-                <div className="mb-10 flex flex-wrap gap-4 justify-center">
+                <div className="mb-10 flex flex-wrap gap-4">
                     {/* Search input that grows appropriately on different screens */}
                     <div className="relative flex-grow max-w-md">
                         <input
@@ -149,7 +178,7 @@ const RoadmapsPage = () => {
                         </svg>
                     </div>
                     
-                    {/* Category filters that don't wrap unnecessarily */}
+                    {/* Category filters with horizontal scrolling for small screens */}
                     <div className="flex flex-nowrap overflow-x-auto gap-2 pb-1 -mx-1 px-1 scrollbar-hide">
                         {categories.map((cat) => (
                             <button
