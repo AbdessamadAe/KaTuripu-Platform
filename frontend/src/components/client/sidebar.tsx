@@ -99,9 +99,9 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
       {/* Exercises */}
       <div className="flex-grow">
         <div className="flex justify-between items-center mb-2">
-          <h3 className="text-lg font-semibold text-white">Exercises</h3>
+          <h3 className="text-lg font-semibold text-white">Exercices</h3>
           <span className="text-gray-400 text-sm">
-            {problems.filter(p => p.completed).length}/{problems.length} completed
+            {problems.filter(p => p.completed).length}/{problems.length} terminés
           </span>
         </div>
         
@@ -132,7 +132,9 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
                     </Link>
                     <div className="flex mt-2 items-center space-x-2">
                       <span className={`px-2 py-0.5 rounded-full text-xs ${getDifficultyColor(problem.difficulty)}`}>
-                        {problem.difficulty}
+                        {problem.difficulty === "easy" ? "Facile" : 
+                         problem.difficulty === "medium" ? "Moyen" :
+                         problem.difficulty === "hard" ? "Difficile" : problem.difficulty}
                       </span>
                       {problem.xp && (
                         <span className="px-2 py-0.5 rounded-full text-xs bg-blue-600 text-white">

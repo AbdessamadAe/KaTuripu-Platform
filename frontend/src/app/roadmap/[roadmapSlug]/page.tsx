@@ -11,7 +11,7 @@ export default async function RoadmapPage({ params }: { params: Params }) {
   const resolvedParams = await params;
 
   if (!resolvedParams?.roadmapSlug) {
-    return <div>Loading...</div>;
+    return <div>Chargement...</div>;
   }
 
   try {
@@ -27,10 +27,10 @@ export default async function RoadmapPage({ params }: { params: Params }) {
       </div>
     );
   } catch (error) {
-    console.error("Error fetching roadmap data:", error);
+    console.error("Erreur lors du chargement des données de la feuille de route:", error);
     return (
       <div className="w-full h-screen flex items-center justify-center bg-gray-900 text-white">
-        <div className="text-xl text-red-500">Error loading roadmap</div>
+        <div className="text-xl text-red-500">Erreur lors du chargement de la feuille de route</div>
       </div>
     );
   }

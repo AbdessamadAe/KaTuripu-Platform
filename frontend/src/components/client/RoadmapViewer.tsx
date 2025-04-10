@@ -272,7 +272,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
         }
       }
     } catch (error) {
-      console.error("Error updating exercise completion status:", error);
+      console.error("Erreur lors de la mise à jour du statut d'achèvement de l'exercice:", error);
     }
   };
 
@@ -293,7 +293,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
           className="absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-4 py-2 rounded-full shadow-lg z-20"
         >
           <div className="flex items-center space-x-2">
-            <span className="text-sm">Progress:</span>
+            <span className="text-sm">Progression:</span>
             <span className="font-bold text-lg">{currentProgress}%</span>
           </div>
         </motion.div>

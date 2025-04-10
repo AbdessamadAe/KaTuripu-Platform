@@ -8,8 +8,9 @@ import supabase from '@/lib/supabase'
 
 const navigation = [
   { name: 'Concours', href: '/roadmap', current: true },
-  { name: 'Team', href: '/team', current: false },
-  {name: 'Contact', href: '/contact-us', current: false},
+  { name: 'Équipe', href: '/team', current: false },
+  { name: 'Contact', href: '/contact-us', current: false },
+  { name: 'Tableau de bord', href: '/dashboard', current: false }, // Added dashboard link
 ]
 
 function classNames(...classes: (string | undefined | false | null)[]) {
@@ -99,7 +100,7 @@ export default function Nav() {
                           )}
                         >
                           <UserIcon className="w-4 h-4 mr-2" />
-                          Profile
+                          Profil
                         </a>
                       )}
                     </Menu.Item>
@@ -113,7 +114,7 @@ export default function Nav() {
                           )}
                         >
                           <ArrowRightOnRectangleIcon className="w-4 h-4 mr-2" />
-                          Log out
+                          Déconnexion
                         </button>
                       )}
                     </Menu.Item>

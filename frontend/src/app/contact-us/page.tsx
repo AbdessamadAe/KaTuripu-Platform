@@ -16,7 +16,7 @@ const ContactUs = () => {
             <input
               type="text"
               name="name"
-              placeholder="Name"
+              placeholder="Nom"
               required
               className="w-full rounded-md py-3 px-4 bg-gray-100 text-sm outline-blue-500"
             />
@@ -30,7 +30,7 @@ const ContactUs = () => {
             <input
               type="text"
               name="subject"
-              placeholder="Subject"
+              placeholder="Sujet"
               className="w-full rounded-md py-3 px-4 bg-gray-100 text-sm outline-blue-500"
             />
             <textarea
@@ -44,13 +44,13 @@ const ContactUs = () => {
               type="submit"
               className="text-neutral-50 bg-[#A78BFA] hover:bg-blue-600 font-semibold rounded-md text-sm px-4 py-3 w-full"
             >
-              Send
+              Envoyer
             </button>
           </form>
         </div>
         <img
           src="/images/contact.svg"
-          alt="Contact illustration"
+          alt="Illustration de contact"
           className="hidden sm:block w-[450px] h-[450px] mx-auto"
         />
       </div>
