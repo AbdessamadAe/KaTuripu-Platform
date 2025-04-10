@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getAllRoadmaps } from "@/lib/api";
-import Nav from "@/components/client/Nav";
 import RoadmapCard from "@/components/client/RoadmapCard";
 
 const RoadmapsPage = () => {
@@ -44,7 +43,6 @@ const RoadmapsPage = () => {
     if (loading) {
         return (
             <>
-                <Nav/>
                 <div className="flex justify-center items-center h-screen">
                     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
                 </div>
@@ -54,7 +52,6 @@ const RoadmapsPage = () => {
 
     return (
         <>
-            <Nav/>
             <div className="min-h-screen bg-gray-50">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     <div className="text-center mb-12">
@@ -69,7 +66,7 @@ const RoadmapsPage = () => {
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 justify-items-center px-12">
                             {roadmaps.map((roadmap) => (
-                                <Link href={`/roadmaps/${roadmap.slug}`} key={roadmap.id} className="w-full">
+                                <Link href={`/roadmap/${roadmap.slug}`} key={roadmap.id} className="w-full">
                                     <RoadmapCard
                                         roadmap={roadmap}
                                         progress={progressMap[roadmap.slug] || 0}

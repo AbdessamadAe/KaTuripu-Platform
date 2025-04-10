@@ -1,12 +1,10 @@
 // pages/contact.tsx
 import React from 'react'
-import Nav from '@/components/client/Nav'
 import { Footer } from '@/components/client/Footer'
 
 const ContactUs = () => {
   return (
     <div>
-      <Nav />
       <div className='flex flex-col sm:grid sm:grid-flow-col sm:grid-cols-2 items-center mt-28 sm:mt-[80px] sm:pt-0 sm:p-6'>
         <div className="relative my-auto mx-auto max-w-[80%] bg-transparent font-amiri">
           <h1 className="text-3xl text-[#333] font-semibold text-center">تواصل معنا</h1>

@@ -1,5 +1,4 @@
 import React from 'react'
-import Nav from '../../components/client/Nav'
 import { Footer } from '../../components/client/Footer'
 // import achraf from '../images/achraf.jpg'
 // import abdessamad from '../images/abdessamad.jpeg'
@@ -45,7 +44,6 @@ export default function Team () {
 
     return (
         <div>
-            <Nav />
             <div className='font-amiri animate-slide-fade-in mt-[80px] p-8 md:px-6'>
                 <div className='text-center text-4xl font-semibold mb-8 font-amiri bg-purple-text-bg w-fit m-auto bg-no-repeat bg-center bg-cover px-16'> فريقنا </div>
                 <div className="flex items-center xl:h-scree">

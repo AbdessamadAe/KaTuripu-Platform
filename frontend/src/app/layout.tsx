@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import MathJaxProvider from "@/components/MathJaxProvider";
+import { AuthProvider } from "@/contexts/AuthContext";
+import Nav from "@/components/client/Nav";
 
 export const metadata: Metadata = {
   title: "KaTuripu",
@@ -18,7 +20,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={`antialiased min-h-screen w-full overflow-x-hidden`}>
         <MathJaxProvider>
-          {children}
+          <AuthProvider>
+            <Nav />
+            {children}
+          </AuthProvider>
         </MathJaxProvider>
       </body>
     </html>

@@ -1,13 +1,13 @@
 "use client";
-import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { SignInButton } from '@/components/client/sing-in-button'
-import supabase from '@/lib/supabase'
-import { useEffect, useState } from 'react'
+import { useAuth } from '@/contexts/AuthContext'
 
 const navigation = [
   { name: 'Concours', href: '/roadmap', current: true },
   { name: 'Team', href: '/team', current: false },
+  {name: 'Contact', href: '/contact-us', current: false},
 ]
 
 function classNames(...classes: (string | undefined | false | null)[]) {
@@ -15,27 +15,7 @@ function classNames(...classes: (string | undefined | false | null)[]) {
 }
 
 export default function Nav() {
-
-  const [session, setSession] = useState<any>(null);
-  const [user, setUser] = useState<any>(null);
-  const [logged, setlogged] = useState<boolean>(false);
-
-  useEffect(() => {
-    const fetchSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setSession(session?.user);
-      
-      if (session?.user) {
-        const { data: userdata } = await supabase.auth.getUser();
-        setUser(userdata);
-        if (userdata != null) {
-          setlogged(true);
-        }
-      }
-    }
-
-    fetchSession();
-  }, []);
+  const { user, loading, isAuthenticated } = useAuth();
 
   return (
     <Disclosure as="nav" className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
@@ -67,8 +47,7 @@ export default function Nav() {
                     href={item.href}
                     aria-current={item.current ? 'page' : undefined}
                     className={classNames(
-                      'rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200',
-                      item.current ? 'bg-gray-100 text-black' : 'text-gray-600 hover:bg-gray-100 hover:text-black'
+                      'rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200 hover:bg-gray-100 hover:text-black'
                     )}
                   >
                     {item.name}
@@ -78,16 +57,21 @@ export default function Nav() {
             </div>
           </div>
           <div className="absolute inset-y-0 left-0 flex items-center pl-2 lg:static lg:inset-auto lg:ml-6 lg:pl-0">
-            {/* Conditionally render the user's profile if logged in */}
-            {logged ? (
+            {loading ? (
+              // Show skeleton loader while auth state is loading
               <div className="flex items-center space-x-4">
+                <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse"></div>
+                <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+              </div>
+            ) : isAuthenticated ? (
+              <a href="/profile" className="flex items-center space-x-4 hover:opacity-80 transition-opacity">
                 <img
                   src={user?.user?.user_metadata?.avatar_url || '/default-avatar.png'} // Fallback if no avatar is present
                   alt="User Avatar"
                   className="h-8 w-8 rounded-full"
                 />
                 <span>{user?.user?.user_metadata?.full_name || 'User'}</span>
-              </div>
+              </a>
             ) : (
               <SignInButton />
             )}
