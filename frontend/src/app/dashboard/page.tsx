@@ -12,7 +12,6 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [userProgress, setUserProgress] = useState<any>(null);
   const [completedExercises, setCompletedExercises] = useState<any[]>([]);
-  const [roadmaps, setRoadmaps] = useState<any[]>([]);
   const [username, setUsername] = useState('');
   const [stats, setStats] = useState({
     totalExercisesCompleted: 0,
@@ -94,17 +93,6 @@ const Dashboard = () => {
             });
           }
         }
-
-        // Get all roadmaps to calculate progress percentages
-        const { data: roadmapData } = await supabase
-          .from('roadmaps')
-          .select('*');
-        
-        console.log("Roadmap data from database:", roadmapData);
-        
-        if (roadmapData) {
-          setRoadmaps(roadmapData);
-        }
         
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
@@ -115,174 +103,6 @@ const Dashboard = () => {
 
     fetchData();
   }, [userId]);
-
-  // Helper function to extract exercises from roadmap data
-  const extractExercisesFromRoadmap = (roadmap: any) => {
-    // Output variable to store all exercise IDs found
-    const exerciseIds: (string | number)[] = [];
-    
-    try {
-      // Case 1: Direct exercises array on roadmap object
-      if (roadmap.exercises && Array.isArray(roadmap.exercises)) {
-        roadmap.exercises.forEach((ex: any) => {
-          if (typeof ex === 'object' && ex.id) {
-            exerciseIds.push(ex.id);
-          } else if (typeof ex === 'string' || typeof ex === 'number') {
-            exerciseIds.push(ex);
-          }
-        });
-      }
-      
-      // Case 2: exercise_ids array on roadmap object
-      if (roadmap.exercise_ids && Array.isArray(roadmap.exercise_ids)) {
-        roadmap.exercise_ids.forEach((id: string | number) => {
-          exerciseIds.push(id);
-        });
-      }
-      
-      // Case 3: Exercises in data.nodes structure
-      let roadmapData;
-      if (typeof roadmap.data === 'string') {
-        try {
-          roadmapData = JSON.parse(roadmap.data);
-        } catch (e) {
-          // Invalid JSON, skip this approach
-          roadmapData = null;
-        }
-      } else {
-        roadmapData = roadmap.data;
-      }
-      
-      if (roadmapData && roadmapData.nodes && Array.isArray(roadmapData.nodes)) {
-        roadmapData.nodes.forEach((node: any) => {
-          // Process exercises in node
-          if (node.exercises && Array.isArray(node.exercises)) {
-            node.exercises.forEach((ex: any) => {
-              if (typeof ex === 'object' && ex.id) {
-                exerciseIds.push(ex.id);
-              } else if (typeof ex === 'string' || typeof ex === 'number') {
-                exerciseIds.push(ex);
-              }
-            });
-          }
-          
-          // Process exercise_ids in node
-          if (node.exercise_ids && Array.isArray(node.exercise_ids)) {
-            node.exercise_ids.forEach((id: string | number) => {
-              exerciseIds.push(id);
-            });
-          }
-        });
-      }
-      
-      // Case 4: Fetch from additional sources if available
-      if (roadmap.nodes && Array.isArray(roadmap.nodes)) {
-        roadmap.nodes.forEach((node: any) => {
-          if (node.exercises) {
-            node.exercises.forEach((ex: any) => {
-              const id = typeof ex === 'object' ? ex.id : ex;
-              exerciseIds.push(id);
-            });
-          }
-        });
-      }
-      
-      // Log what we found for debugging
-      console.log(`Found ${exerciseIds.length} exercises for roadmap "${roadmap.title}":`, exerciseIds);
-      
-      // Return unique exercise IDs
-      return [...new Set(exerciseIds)];
-      
-    } catch (error) {
-      console.error(`Error extracting exercises from roadmap ${roadmap.title}:`, error);
-      return [];
-    }
-  };
-
-  // Calculate progress for specific roadmap
-  const calculateRoadmapProgress = (roadmap: any) => {
-    if (!roadmap || !userProgress?.completedExercises) {
-      return { total: 0, completed: 0, percentage: 0 };
-    }
-    
-    try {
-      // Parse roadmap data if it's a string
-      let roadmapData;
-      if (typeof roadmap.data === 'string') {
-        try {
-          roadmapData = JSON.parse(roadmap.data);
-        } catch (e) {
-          console.error(`Error parsing roadmap data for ${roadmap.title}:`, e);
-          return { total: 0, completed: 0, percentage: 0 };
-        }
-      } else {
-        roadmapData = roadmap.data;
-      }
-
-      // If roadmap data is null or invalid, try to get exercise IDs from other fields
-      if (!roadmapData || !roadmapData.nodes) {
-        console.log("Roadmap data format doesn't contain nodes, looking for exercises in roadmap.exercises");
-        
-        // Try to look for exercises directly in the roadmap object
-        const exerciseIds = roadmap.exercise_ids || 
-                           (roadmap.exercises && roadmap.exercises.map((ex:any) => ex.id)) || 
-                           [];
-        
-        if (exerciseIds.length === 0) {
-          return { total: 0, completed: 0, percentage: 0 };
-        }
-        
-        // Count completed exercises from the direct list
-        const completedCount = exerciseIds.filter((id:any) => 
-          userProgress.completedExercises.includes(id)
-        ).length;
-        
-        const percentage = Math.round((completedCount / exerciseIds.length) * 100);
-        
-        return {
-          total: exerciseIds.length,
-          completed: completedCount,
-          percentage
-        };
-      }
-      
-      // Process nodes structure if available
-      let totalExercises = 0;
-      let completedCount = 0;
-
-      // Count all exercises in all nodes
-      roadmapData.nodes.forEach((node:any) => {
-        // Check different possible structures
-        const nodeExercises = node.exercises || node.exercise_ids || [];
-        
-        if (nodeExercises && nodeExercises.length) {
-          totalExercises += nodeExercises.length;
-          
-          // Count completed exercises in this node
-          nodeExercises.forEach((exercise:any) => {
-            // Handle both objects with IDs and direct ID values
-            const exerciseId = typeof exercise === 'object' ? exercise.id : exercise;
-            if (userProgress.completedExercises.includes(exerciseId)) {
-              completedCount++;
-            }
-          });
-        }
-      });
-
-      const percentage = totalExercises > 0 
-        ? Math.round((completedCount / totalExercises) * 100) 
-        : 0;
-        
-      return {
-        total: totalExercises,
-        completed: completedCount,
-        percentage
-      };
-    } catch (error) {
-      console.error(`Error calculating roadmap progress for ${roadmap.title}:`, error);
-      return { total: 0, completed: 0, percentage: 0 };
-    }
-  };
 
   // Loading state
   if (loading) {
@@ -407,64 +227,6 @@ const Dashboard = () => {
               </div>
             </div>
           </motion.div>
-        </div>
-
-        {/* Roadmap Progress Section */}
-        <div className="mb-10">
-          <h2 className="text-2xl font-bold mb-6">Votre Progression sur les Feuilles de Route</h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {roadmaps.map((roadmap) => {
-              // Extract all exercises from roadmap using our enhanced helper function
-              const roadmapExercises = extractExercisesFromRoadmap(roadmap);
-              
-              // Calculate completion metrics
-              const total = roadmapExercises.length;
-              const completed = userProgress?.completedExercises 
-                ? roadmapExercises.filter(id => userProgress.completedExercises.includes(id)).length
-                : 0;
-              const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
-              
-              return (
-                <motion.div 
-                  key={roadmap.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                  className="bg-gray-800 rounded-xl p-6 shadow-lg"
-                >
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-xl font-semibold">{roadmap.title}</h3>
-                    <span className="text-lg font-bold">{percentage}%</span>
-                  </div>
-                  <div className="w-full h-3 bg-gray-700 rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${percentage}%` }}
-                      transition={{ duration: 1, ease: "easeInOut" }}
-                      className={`h-full rounded-full ${
-                        percentage >= 75 ? "bg-green-500" :
-                        percentage >= 50 ? "bg-blue-500" :
-                        percentage >= 25 ? "bg-yellow-500" :
-                        "bg-red-500"
-                      }`}
-                    />
-                  </div>
-                  <div className="mt-4 flex justify-between text-sm">
-                    <span>{completed} sur {total} exercices complétés</span>
-                    <Link href={`/roadmap/${roadmap.slug}`} className="text-blue-400 hover:text-blue-300 font-medium">
-                      Continuer l'apprentissage →
-                    </Link>
-                  </div>
-                </motion.div>
-              );
-            })}
-
-            {roadmaps.length === 0 && (
-              <div className="bg-gray-800 rounded-xl p-6 col-span-2">
-                <p>Aucune feuille de route disponible. Revenez bientôt !</p>
-              </div>
-            )}
-          </div>
         </div>
 
         {/* Latest Completed Exercises */}
