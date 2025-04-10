@@ -14,6 +14,31 @@ export interface UserProgress {
 export const getUserProgress = async (userId: string): Promise<UserProgress | null> => {
   if (!userId) return null;
   
+  // Check if we're running in a browser environment where cache is available
+  const isBrowser = typeof window !== 'undefined';
+  
+  // Use memory cache with TTL for server-side or non-browser environments
+  const cacheKey = `user_progress_${userId}`;
+  
+  if (isBrowser) {
+    // Try to get from session storage first (for browser environments)
+    try {
+      const cachedData = sessionStorage.getItem(cacheKey);
+      if (cachedData) {
+        const { data, timestamp } = JSON.parse(cachedData);
+        const now = Date.now();
+        // Cache is valid for 2 minutes (120000ms)
+        if (now - timestamp < 120000) {
+          return data;
+        }
+        // Cache expired, continue to fetch new data
+      }
+    } catch (error) {
+      console.error('Error reading from cache:', error);
+      // Continue with fetch on cache error
+    }
+  }
+  
   try {
     const { data, error } = await supabase
       .from('users')
@@ -26,10 +51,24 @@ export const getUserProgress = async (userId: string): Promise<UserProgress | nu
       return null;
     }
     
-    return {
+    const progressData = {
       xp: data.xp || 0,
       completedExercises: data.completedExercises || []
     };
+    
+    // Update cache if in browser environment
+    if (isBrowser) {
+      try {
+        sessionStorage.setItem(cacheKey, JSON.stringify({
+          data: progressData,
+          timestamp: Date.now()
+        }));
+      } catch (error) {
+        console.error('Error writing to cache:', error);
+      }
+    }
+    
+    return progressData;
   } catch (error) {
     console.error('Error in getUserProgress:', error);
     return null;
@@ -113,6 +152,19 @@ export const completeExercise = async (
       updatedProgress.completedExercises
     );
     
+    // If successful, update the local cache to avoid refetching
+    if (success && typeof window !== 'undefined') {
+      try {
+        const cacheKey = `user_progress_${userId}`;
+        sessionStorage.setItem(cacheKey, JSON.stringify({
+          data: updatedProgress,
+          timestamp: Date.now()
+        }));
+      } catch (error) {
+        console.error('Error updating cache after completion:', error);
+      }
+    }
+    
     return {
       success,
       progress: success ? updatedProgress : currentProgress
@@ -182,6 +234,19 @@ export const uncompleteExercise = async (
       updatedProgress.xp,
       updatedProgress.completedExercises
     );
+    
+    // If successful, update the local cache to avoid refetching
+    if (success && typeof window !== 'undefined') {
+      try {
+        const cacheKey = `user_progress_${userId}`;
+        sessionStorage.setItem(cacheKey, JSON.stringify({
+          data: updatedProgress,
+          timestamp: Date.now()
+        }));
+      } catch (error) {
+        console.error('Error updating cache after unmarking completion:', error);
+      }
+    }
     
     return {
       success,

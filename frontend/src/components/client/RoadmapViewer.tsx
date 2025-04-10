@@ -61,9 +61,44 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
   const fetchUserProgress = async (userId: string) => {
     if (!userId) return;
     
-    const progress = await userService.getUserProgress(userId);
-    if (progress) {
-      setUserProgress(progress.completedExercises);
+    // Use session storage to cache user progress data
+    const cachedProgress = sessionStorage.getItem(`user-progress-${userId}`);
+    
+    if (cachedProgress) {
+      try {
+        const parsedProgress = JSON.parse(cachedProgress);
+        const cacheTime = parsedProgress.timestamp;
+        const now = Date.now();
+        
+        // Cache is valid for 5 minutes (300000ms)
+        if (now - cacheTime < 300000) {
+          console.log("🔄 Using cached user progress");
+          setUserProgress(parsedProgress.completedExercises);
+          return;
+        }
+      } catch (error) {
+        console.error("Error parsing cached progress:", error);
+        // Continue with fresh data fetch on parse error
+      }
+    }
+    
+    // Fetch fresh data if no valid cache exists
+    try {
+      const progress = await userService.getUserProgress(userId);
+      if (progress) {
+        setUserProgress(progress.completedExercises);
+        
+        // Store in session storage with timestamp
+        sessionStorage.setItem(
+          `user-progress-${userId}`,
+          JSON.stringify({
+            ...progress,
+            timestamp: Date.now()
+          })
+        );
+      }
+    } catch (error) {
+      console.error("Failed to fetch user progress:", error);
     }
   };
 
@@ -80,7 +115,11 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
       // Store raw nodes for reference
       setNodes(roadmapData.nodes);
       
-      // Transform nodes for ReactFlow exactly like admin editor does
+      // Get progress state for cache invalidation
+      const hasProgressChanged = sessionStorage.getItem(`last-progress-state-${roadmapData.id}`) !== JSON.stringify(userProgress);
+      
+      // Always generate fresh node elements for ReactFlow
+      // Transform nodes for ReactFlow 
       const flowNodes = roadmapData.nodes.map((node) => {
         // Calculate progress if we have user data
         const total = node.exercises.length;
@@ -138,16 +177,24 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
         };
       });
       
-      // Set flow nodes directly
-      setFlowNodes(flowNodes);
-      
-      // Use the edges directly from the data
-      setFlowEdges(roadmapData.edges.map(edge => ({
+      // Process edges
+      const flowEdges = roadmapData.edges.map(edge => ({
         id: edge.id,
         source: edge.source,
         target: edge.target,
         animated: true
-      })));
+      }));
+      
+      // Set nodes and edges
+      setFlowNodes(flowNodes);
+      setFlowEdges(flowEdges);
+      
+      // Only cache the progress state for invalidation checks, not the nodes themselves
+      try {
+        sessionStorage.setItem(`last-progress-state-${roadmapData.id}`, JSON.stringify(userProgress));
+      } catch (error) {
+        console.error("Error caching progress state:", error);
+      }
     } catch (error) {
       console.error("❌ Error processing roadmap data:", error);
     }
@@ -156,7 +203,22 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
   // Apply user progress to nodes when user data or nodes change
   useEffect(() => {
     if (nodes.length === 0) return;
-
+    
+    // Keep track of which nodes actually need updates
+    let hasChanges = false;
+    const prevProgressKey = `prev-progress-${roadmapData.id}`;
+    const prevProgress = sessionStorage.getItem(prevProgressKey);
+    
+    // Compare with previous progress state
+    if (prevProgress !== JSON.stringify(userProgress)) {
+      hasChanges = true;
+    }
+    
+    // If no changes, skip the update
+    if (!hasChanges) return;
+    
+    console.log("🔄 Updating nodes with user progress");
+    
     const updatedNodes = nodes.map((node) => {
       return {
         ...node,
@@ -169,12 +231,77 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
 
     setNodes(updatedNodes);
     
+    // Update the flow nodes with new completion status if they exist
+    if (flowNodes.length > 0) {
+      // We need to rebuild the node content with fresh React elements
+      const updatedFlowNodes = updatedNodes.map(nodeData => {
+        // Calculate progress for this node
+        const total = nodeData.exercises.length;
+        const completed = nodeData.exercises.filter(ex => userProgress.includes(ex.id)).length;
+        const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+        
+        // Find the corresponding flow node to preserve its position
+        const existingFlowNode = flowNodes.find(n => n.id === nodeData.id);
+        const position = existingFlowNode ? existingFlowNode.position : nodeData.position;
+        
+        // Create fresh React elements
+        return {
+          id: nodeData.id,
+          position,
+          data: { 
+            label: (
+              <div>
+                <div className="font-semibold">{nodeData.label}</div>
+                <div style={{ fontSize: "0.75rem", marginTop: "4px" }}>
+                  <div
+                    style={{
+                      height: "6px",
+                      backgroundColor: "#ccc",
+                      borderRadius: "3px",
+                      overflow: "hidden", 
+                      marginTop: "2px",
+                    }}
+                  >
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${progress}%` }}
+                      transition={{ duration: 0.8, ease: "easeInOut" }}
+                      style={{
+                        height: "100%",
+                        backgroundColor: progress === 100 ? "#4ade80" : "#3b82f6",
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ),
+            description: nodeData.description,
+            exercises: nodeData.exercises
+          },
+          style: {
+            background: progress === 100 ? "#22c55e" : "#192C88",
+            color: "white",
+            padding: "10px",
+            borderRadius: "5px",
+            width: 180,
+            cursor: "pointer"
+          }
+        };
+      });
+      
+      // Update the flow nodes state
+      setFlowNodes(updatedFlowNodes);
+    }
+    
+    // Store current progress state for future comparison
+    sessionStorage.setItem(prevProgressKey, JSON.stringify(userProgress));
+    
     // Calculate overall progress for roadmap
     if (userId && updatedNodes.length > 0) {
       calculateOverallProgress(updatedNodes);
     }
-  }, [userProgress, nodes.length, userId]);
-  
+  }, [userProgress, nodes.length, userId, flowNodes, roadmapData?.id]);
+
   // Calculate the overall progress for the roadmap
   const calculateOverallProgress = async (currentNodes: RoadmapNodeType[]) => {
     if (!userId) return;
