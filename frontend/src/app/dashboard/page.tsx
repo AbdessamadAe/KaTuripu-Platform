@@ -75,7 +75,7 @@ const Dashboard = () => {
               hard: 0,
             };
             
-            exercises.forEach((exercise) => {
+            exercises.forEach((exercise:any) => {
               // Use type guard to ensure difficulty is a valid key
               const difficulty = exercise.difficulty?.toLowerCase() || 'easy';
               // Check if the difficulty is one of our valid keys
@@ -124,7 +124,7 @@ const Dashboard = () => {
     try {
       // Case 1: Direct exercises array on roadmap object
       if (roadmap.exercises && Array.isArray(roadmap.exercises)) {
-        roadmap.exercises.forEach(ex => {
+        roadmap.exercises.forEach((ex: any) => {
           if (typeof ex === 'object' && ex.id) {
             exerciseIds.push(ex.id);
           } else if (typeof ex === 'string' || typeof ex === 'number') {
@@ -135,7 +135,7 @@ const Dashboard = () => {
       
       // Case 2: exercise_ids array on roadmap object
       if (roadmap.exercise_ids && Array.isArray(roadmap.exercise_ids)) {
-        roadmap.exercise_ids.forEach(id => {
+        roadmap.exercise_ids.forEach((id: string | number) => {
           exerciseIds.push(id);
         });
       }
@@ -154,10 +154,10 @@ const Dashboard = () => {
       }
       
       if (roadmapData && roadmapData.nodes && Array.isArray(roadmapData.nodes)) {
-        roadmapData.nodes.forEach(node => {
+        roadmapData.nodes.forEach((node: any) => {
           // Process exercises in node
           if (node.exercises && Array.isArray(node.exercises)) {
-            node.exercises.forEach(ex => {
+            node.exercises.forEach((ex: any) => {
               if (typeof ex === 'object' && ex.id) {
                 exerciseIds.push(ex.id);
               } else if (typeof ex === 'string' || typeof ex === 'number') {
@@ -168,7 +168,7 @@ const Dashboard = () => {
           
           // Process exercise_ids in node
           if (node.exercise_ids && Array.isArray(node.exercise_ids)) {
-            node.exercise_ids.forEach(id => {
+            node.exercise_ids.forEach((id: string | number) => {
               exerciseIds.push(id);
             });
           }
@@ -177,9 +177,9 @@ const Dashboard = () => {
       
       // Case 4: Fetch from additional sources if available
       if (roadmap.nodes && Array.isArray(roadmap.nodes)) {
-        roadmap.nodes.forEach(node => {
+        roadmap.nodes.forEach((node: any) => {
           if (node.exercises) {
-            node.exercises.forEach(ex => {
+            node.exercises.forEach((ex: any) => {
               const id = typeof ex === 'object' ? ex.id : ex;
               exerciseIds.push(id);
             });
@@ -200,7 +200,7 @@ const Dashboard = () => {
   };
 
   // Calculate progress for specific roadmap
-  const calculateRoadmapProgress = (roadmap) => {
+  const calculateRoadmapProgress = (roadmap: any) => {
     if (!roadmap || !userProgress?.completedExercises) {
       return { total: 0, completed: 0, percentage: 0 };
     }
@@ -225,7 +225,7 @@ const Dashboard = () => {
         
         // Try to look for exercises directly in the roadmap object
         const exerciseIds = roadmap.exercise_ids || 
-                           (roadmap.exercises && roadmap.exercises.map(ex => ex.id)) || 
+                           (roadmap.exercises && roadmap.exercises.map((ex:any) => ex.id)) || 
                            [];
         
         if (exerciseIds.length === 0) {
@@ -233,7 +233,7 @@ const Dashboard = () => {
         }
         
         // Count completed exercises from the direct list
-        const completedCount = exerciseIds.filter(id => 
+        const completedCount = exerciseIds.filter((id:any) => 
           userProgress.completedExercises.includes(id)
         ).length;
         
@@ -251,7 +251,7 @@ const Dashboard = () => {
       let completedCount = 0;
 
       // Count all exercises in all nodes
-      roadmapData.nodes.forEach(node => {
+      roadmapData.nodes.forEach((node:any) => {
         // Check different possible structures
         const nodeExercises = node.exercises || node.exercise_ids || [];
         
@@ -259,7 +259,7 @@ const Dashboard = () => {
           totalExercises += nodeExercises.length;
           
           // Count completed exercises in this node
-          nodeExercises.forEach(exercise => {
+          nodeExercises.forEach((exercise:any) => {
             // Handle both objects with IDs and direct ID values
             const exerciseId = typeof exercise === 'object' ? exercise.id : exercise;
             if (userProgress.completedExercises.includes(exerciseId)) {

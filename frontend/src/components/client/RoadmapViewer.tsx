@@ -226,7 +226,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
       
       if (completed) {
         // Calculate XP based on difficulty
-        const xpToAdd = getXPForDifficulty(difficulty);
+        const xpToAdd = getXPForDifficulty(difficulty as 'easy' | 'medium' | 'hard');
         
         // Mark exercise as completed
         const { success, progress } = await userService.completeExercise(

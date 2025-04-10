@@ -47,8 +47,14 @@ const ExerciseDetailPage = () => {
     const markAsCompleted = async () => {
       if (showSolution && userId && !completed && exercise) {
         try {
-          // Calculate XP based on difficulty
-          const xpToAdd = getXPForDifficulty(exercise.difficulty);
+          // Calculate XP based on difficulty - convert to expected type
+          const difficulty = exercise.difficulty.toLowerCase();
+          const safetyDifficulty = ['easy', 'medium', 'hard'].includes(difficulty) 
+            ? difficulty as 'easy' | 'medium' | 'hard'
+            : 'easy'; // Default to 'easy' if unknown
+            
+          const xpToAdd = getXPForDifficulty(safetyDifficulty);
+          
           // Mark exercise as completed using our service
           const { success, progress } = await userService.completeExercise(
             userId,

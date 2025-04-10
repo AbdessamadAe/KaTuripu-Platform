@@ -36,7 +36,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     await supabase.from("users").upsert({
                         id: userData.user?.id,
                         email: userData.user?.email,
-                        name: userData.user.user_metadata.full_name,
+                        name: userData.user?.user_metadata?.full_name,
                     });
 
                 } else {

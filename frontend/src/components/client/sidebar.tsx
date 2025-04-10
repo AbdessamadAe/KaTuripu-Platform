@@ -136,11 +136,11 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
                          problem.difficulty === "medium" ? "Moyen" :
                          problem.difficulty === "hard" ? "Difficile" : problem.difficulty}
                       </span>
-                      {problem.xp && (
+                      {/* {problem.xp && (
                         <span className="px-2 py-0.5 rounded-full text-xs bg-blue-600 text-white">
                           {problem.xp} XP
                         </span>
-                      )}
+                      )} */}
                     </div>
                   </div>
                   
