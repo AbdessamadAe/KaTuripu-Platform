@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   ReactFlow,
   Background,
@@ -8,6 +8,8 @@ import {
   ReactFlowProvider,
   Node,
   Edge,
+  useNodesState,
+  useEdgesState,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { motion } from "framer-motion";
@@ -45,12 +47,15 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
     fetchSession();
   }, []);
 
+  // Replace standard state with ReactFlow hooks
   const [nodes, setNodes] = useState<RoadmapNodeType[]>([]);
-  const [flowNodes, setFlowNodes] = useState<Node[]>([]);
-  const [flowEdges, setFlowEdges] = useState<Edge[]>([]);
+  const [flowNodes, setFlowNodes, onNodesChange] = useNodesState<Node[]>([]);
+  const [flowEdges, setFlowEdges, onEdgesChange] = useEdgesState<Edge[]>([]);
   const [selectedNode, setSelectedNode] = useState<RoadmapNodeType | null>(null);
   const [userProgress, setUserProgress] = useState<string[]>([]);
   const [currentProgress, setCurrentProgress] = useState<number>(0);
+  const [rfInstance, setRfInstance] = useState<any>(null);
+  const [hasRenderedEdges, setHasRenderedEdges] = useState<boolean>(false);
 
   // Fetch user progress from the database using our service
   const fetchUserProgress = async (userId: string) => {
@@ -62,19 +67,91 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
     }
   };
 
-  // Load roadmap data into state
+  // Load roadmap data into state with styling that matches admin editor's approach
   useEffect(() => {
-    setNodes(roadmapData.nodes);
-    setFlowEdges(
-      roadmapData.edges.map((edge) => ({
+    if (!roadmapData || !roadmapData.nodes || !roadmapData.edges) {
+      console.error("❌ Invalid roadmap data structure:", roadmapData);
+      return;
+    }
+    
+    console.log("🔄 Setting nodes and edges using admin editor's approach");
+    
+    try {
+      // Store raw nodes for reference
+      setNodes(roadmapData.nodes);
+      
+      // Transform nodes for ReactFlow exactly like admin editor does
+      const flowNodes = roadmapData.nodes.map((node) => {
+        // Calculate progress if we have user data
+        const total = node.exercises.length;
+        const completed = node.exercises.filter((ex) => 
+          userProgress.includes(ex.id)
+        ).length;
+        const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+        
+        return {
+          id: node.id,
+          // Use position directly from the node data
+          position: node.position,
+          data: { 
+            label: (
+              <div>
+                <div className="font-semibold">{node.label}</div>
+                <div style={{ fontSize: "0.75rem", marginTop: "4px" }}>
+                  <div
+                    style={{
+                      height: "6px",
+                      backgroundColor: "#ccc",
+                      borderRadius: "3px",
+                      overflow: "hidden", 
+                      marginTop: "2px",
+                    }}
+                  >
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${progress}%` }}
+                      transition={{ duration: 0.8, ease: "easeInOut" }}
+                      style={{
+                        height: "100%",
+                        backgroundColor: progress === 100 ? "#4ade80" : "#3b82f6",
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ),
+            description: node.description,
+            exercises: node.exercises.map(ex => ({
+              ...ex,
+              hints: ex.hints || [],
+              completed: userProgress.includes(ex.id)
+            }))
+          },
+          style: {
+            background: progress === 100 ? "#22c55e" : "#192C88",
+            color: "white",
+            padding: "10px",
+            borderRadius: "5px",
+            width: 180,
+            cursor: "pointer"
+          }
+        };
+      });
+      
+      // Set flow nodes directly
+      setFlowNodes(flowNodes);
+      
+      // Use the edges directly from the data
+      setFlowEdges(roadmapData.edges.map(edge => ({
         id: edge.id,
         source: edge.source,
         target: edge.target,
-        animated: true,
-        style: { stroke: "white" },
-      }))
-    );
-  }, [roadmapData]);
+        animated: true
+      })));
+    } catch (error) {
+      console.error("❌ Error processing roadmap data:", error);
+    }
+  }, [roadmapData, userProgress, setFlowNodes, setFlowEdges]);
 
   // Apply user progress to nodes when user data or nodes change
   useEffect(() => {
@@ -127,63 +204,6 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
     // Update the reference
     previousProgressRef.current = percentage;
   };
-
-  // Generate flow nodes with progress bars
-  useEffect(() => {
-    const reactFlowNodes = nodes.map((node) => {
-      const total = node.exercises.length;
-      const completed = node.exercises.filter((ex) => ex.completed).length;
-      const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
-
-      return {
-        id: node.id,
-        position: node.position,
-        data: {
-          label: (
-            <div>
-              <div className="font-semibold">{node.label}</div>
-              <div style={{ fontSize: "0.75rem", marginTop: "4px" }}>
-                <div
-                  style={{
-                    height: "6px",
-                    backgroundColor: "#ccc",
-                    borderRadius: "3px",
-                    overflow: "hidden",
-                    marginTop: "2px",
-                  }}
-                >
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${progress}%` }}
-                    transition={{ duration: 0.8, ease: "easeInOut" }}
-                    style={{
-                      height: "100%",
-                      backgroundColor: progress === 100 ? "#4ade80" : "#3b82f6",
-                      transition: "background-color 0.3s ease",
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          ),
-        },
-        style: {
-          background: progress === 100 ? "linear-gradient(135deg, #4ade80 0%, #22c55e 100%)" : "#192C88",
-          color: "white",
-          padding: "10px",
-          borderRadius: "8px",
-          width: 180,
-          cursor: "pointer",
-          border: completed > 0 ? "2px solid #4ade80" : "none",
-          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-          transition: "transform 0.2s ease, box-shadow 0.2s ease",
-          transform: selectedNode?.id === node.id ? "scale(1.05)" : "scale(1)",
-        },
-      };
-    });
-
-    setFlowNodes(reactFlowNodes);
-  }, [nodes, selectedNode]);
 
   const handleNodeClick = (_: any, node: any) => {
     const clickedNode = nodes.find((n) => n.id === node.id);
@@ -276,6 +296,34 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
     }
   };
 
+  // Center the view on initial load with a reasonable zoom
+  const onInit = useCallback((instance: any) => {
+    console.log("🔄 ReactFlow initialized");
+    setRfInstance(instance);
+    
+    // Small delay to ensure nodes are rendered
+    setTimeout(() => {
+      if (instance && flowNodes.length > 0) {
+        instance.fitView({ padding: 0.2, includeHiddenNodes: true });
+        console.log("✅ View fit to nodes");
+      }
+    }, 200);
+  }, [flowNodes.length]);
+
+  useEffect(() => {
+    if (rfInstance && flowNodes.length > 0) {
+      console.log("🔄 Setting view to respect node positions");
+      setTimeout(() => {
+        try {
+          rfInstance.fitView({ padding: 0.2, includeHiddenNodes: true });
+          console.log("✅ View adjusted successfully");
+        } catch (error) {
+          console.error("❌ Error adjusting view:", error);
+        }
+      }, 200);
+    }
+  }, [rfInstance, flowNodes]);
+
   return (
     <div
       style={{
@@ -300,14 +348,35 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
       )}
       
       {/* Roadmap Graph */}
-      <div style={{ flex: 3 }}>
+      <div style={{ 
+        flex: 3, 
+        height: "100%",
+        width: "100%",
+        position: "relative"
+      }}>
         <ReactFlowProvider>
           <ReactFlow
             nodes={flowNodes}
             edges={flowEdges}
-            fitView
+            fitView={false}
             onNodeClick={handleNodeClick}
             nodesDraggable={false}
+            onInit={onInit}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            snapToGrid={true}
+            snapGrid={[15, 15]}
+            proOptions={{ hideAttribution: true }}
+            fitViewOptions={{ padding: 0.2 }}
+            defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+            elementsSelectable={false}
+            panOnScroll
+            preventScrolling={false}
+            // Crucial for preserving node positions:
+            autoPanOnNodeDrag={false}
+            autoConnect={false}
+            minZoom={0.1}
+            maxZoom={2}
           >
             <Background color="#2B2B2B" />
             <Controls />

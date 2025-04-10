@@ -24,7 +24,7 @@ export default function RootLayout({
           <AuthProvider>
             <Nav />
             {children}
-            {/* <ToastProvider /> */}
+            <ToastProvider />
           </AuthProvider>
         </MathJaxProvider>
       </body>

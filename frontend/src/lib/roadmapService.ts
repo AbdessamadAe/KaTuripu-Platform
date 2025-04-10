@@ -1,7 +1,94 @@
 // src/lib/roadmapService.ts
 import supabase from './supabase';
-import { RoadmapData, Exercise } from '@/types/types';
+import { RoadmapData, Exercise, RoadmapNodeType } from '@/types/types';
 import { v4 as uuidv4 } from 'uuid';
+
+/**
+ * Normalizes roadmap data to ensure consistent structure
+ * @param rawData Raw roadmap data from database
+ * @returns Normalized RoadmapData object
+ */
+function normalizeRoadmapData(rawData: any): RoadmapData {
+  // Extract basic roadmap information
+  const { id, title, description, slug, category, created_at, updated_at } = rawData;
+  
+  // Initialize empty arrays for nodes and edges if they don't exist
+  const nodes = Array.isArray(rawData.nodes) ? rawData.nodes : [];
+  const edges = Array.isArray(rawData.edges) ? rawData.edges : [];
+
+  // Normalize nodes
+  const normalizedNodes: RoadmapNodeType[] = nodes.map((node: any) => {
+    // Ensure node has valid position data
+    const position = {
+      x: typeof node.position_x === 'number' ? node.position_x : 
+         (node.position && typeof node.position.x === 'number' ? node.position.x : 0),
+      y: typeof node.position_y === 'number' ? node.position_y : 
+         (node.position && typeof node.position.y === 'number' ? node.position.y : 0)
+    };
+    
+    // Handle exercises
+    let exercises: Exercise[] = [];
+    
+    if (node.node_exercises && Array.isArray(node.node_exercises)) {
+      // Extract exercises from node_exercises join table
+      exercises = node.node_exercises
+        .filter((ne: any) => ne.exercises) // Filter out any null values
+        .map((ne: any) => {
+          // Normalize exercise data
+          const exercise = ne.exercises;
+          return {
+            id: exercise.id,
+            name: exercise.name || '',
+            difficulty: exercise.difficulty || 'easy',
+            description: exercise.description || '',
+            solution: exercise.solution || '',
+            hints: Array.isArray(exercise.hints) ? exercise.hints : [],
+            video_url: exercise.video_url || '',
+          };
+        });
+    } else if (node.exercises && Array.isArray(node.exercises)) {
+      // Handle direct exercises array
+      exercises = node.exercises.map((ex: any) => ({
+        id: ex.id,
+        name: ex.name || '',
+        difficulty: ex.difficulty || 'easy',
+        description: ex.description || '',
+        solution: ex.solution || '',
+        hints: Array.isArray(ex.hints) ? ex.hints : [],
+        video_url: ex.video_url || '',
+      }));
+    }
+    
+    // Return normalized node
+    return {
+      id: node.id,
+      label: node.label || '',
+      description: node.description || '',
+      position,
+      exercises
+    };
+  });
+
+  // Normalize edges
+  const normalizedEdges = edges.map((edge: any) => ({
+    id: edge.id,
+    source: edge.source_node_id || edge.source,
+    target: edge.target_node_id || edge.target
+  }));
+  
+  // Return complete normalized roadmap data
+  return {
+    id,
+    title,
+    description,
+    slug,
+    category,
+    created_at,
+    updated_at,
+    nodes: normalizedNodes,
+    edges: normalizedEdges
+  };
+}
 
 /**
  * Roadmap related service functions
@@ -45,21 +132,14 @@ export async function getRoadmap(id: string): Promise<RoadmapData> {
 
     if (edgeError) throw new Error(`Failed to fetch edges: ${edgeError.message}`);
 
-    return {
+    // Build and normalize the complete roadmap data
+    const rawRoadmapData = {
       ...roadmap,
-      nodes: nodes.map((node) => ({
-        id: node.id,
-        label: node.label,
-        description: node.description,
-        position: { x: node.position_x, y: node.position_y },
-        exercises: node.node_exercises.map((ne: any) => ne.exercises),
-      })),
-      edges: edges.map((edge) => ({
-        id: edge.id,
-        source: edge.source_node_id,
-        target: edge.target_node_id,
-      })),
+      nodes,
+      edges
     };
+    
+    return normalizeRoadmapData(rawRoadmapData);
   } catch (error) {
     console.error('Error in getRoadmap:', error);
     throw error;
@@ -99,6 +179,7 @@ export async function getRoadmapBySlug(slug: string) {
       throw new Error(`Failed to fetch roadmap by slug: ${error.message}`);
     }
 
+    // Use the normalized getRoadmap function
     return getRoadmap(data.id);
   } catch (error) {
     console.error('Error in getRoadmapBySlug:', error);
@@ -140,13 +221,21 @@ export async function createRoadmap(roadmapData: RoadmapData) {
 
     if (error) throw new Error(`Failed to create roadmap: ${error.message}`);
 
+    // Map to track original node IDs to new clean UUIDs
+    const nodeIdMap: Record<string, string> = {};
+    
     // Create nodes
     for (const node of nodes) {
+      // Generate a clean UUID for the node
+      const nodeId = uuidv4();
+      // Store the mapping from original ID to new clean UUID
+      nodeIdMap[node.id] = nodeId;
+      
       const { data: newNode, error: nodeErr } = await supabase
         .from('roadmap_nodes')
         .insert({
           roadmap_id: roadmap.id,
-          id: uuidv4(), // Generate new UUID for node
+          id: nodeId,
           label: node.label,
           description: node.description,
           position_x: node.position.x,
@@ -170,15 +259,19 @@ export async function createRoadmap(roadmapData: RoadmapData) {
       }
     }
 
-    // Create edges
+    // Create edges using the nodeIdMap to translate IDs
     for (const edge of edges) {
+      // Use the mapped clean UUIDs for source and target
+      const sourceId = nodeIdMap[edge.source] || edge.source;
+      const targetId = nodeIdMap[edge.target] || edge.target;
+      
       const { error: edgeErr } = await supabase
         .from('roadmap_edges')
         .insert({
           id: uuidv4(), // Generate new UUID for edge
           roadmap_id: roadmap.id,
-          source_node_id: edge.source,
-          target_node_id: edge.target,
+          source_node_id: sourceId,
+          target_node_id: targetId,
         });
 
       if (edgeErr) throw new Error(`Failed to insert edge: ${edgeErr.message}`);
@@ -214,18 +307,24 @@ export async function updateRoadmap(id: string, roadmapData: RoadmapData) {
       .eq('roadmap_id', id);
 
     const existingNodeIds = existingNodes?.map(n => n.id) || [];
+    
+    // Map to track original node IDs to clean UUIDs
+    const nodeIdMap: Record<string, string> = {};
 
     // Update or create nodes
     for (const node of nodes) {
-      let nodeId = node.id;
+      // Strip 'node-' prefix if present and ensure we have a valid UUID
+      const cleanNodeId = node.id.startsWith('node-') ? uuidv4() : node.id;
+      // Store mapping from original ID to clean UUID
+      nodeIdMap[node.id] = cleanNodeId;
       
       // If node doesn't exist, create it
-      if (!existingNodeIds.includes(node.id)) {
+      if (!existingNodeIds.includes(cleanNodeId)) {
         const { data: newNode, error: nodeErr } = await supabase
           .from('roadmap_nodes')
           .insert({
             roadmap_id: id,
-            id: node.id,
+            id: cleanNodeId,
             label: node.label,
             description: node.description,
             position_x: node.position.x,
@@ -235,7 +334,6 @@ export async function updateRoadmap(id: string, roadmapData: RoadmapData) {
           .single();
 
         if (nodeErr) throw new Error(`Failed to create node: ${nodeErr.message}`);
-        nodeId = newNode.id;
       } else {
         // Update existing node
         const { error: nodeErr } = await supabase
@@ -246,7 +344,7 @@ export async function updateRoadmap(id: string, roadmapData: RoadmapData) {
             position_x: node.position.x,
             position_y: node.position.y,
           })
-          .eq('id', node.id);
+          .eq('id', cleanNodeId);
 
         if (nodeErr) throw new Error(`Failed to update node: ${nodeErr.message}`);
       }
@@ -255,7 +353,7 @@ export async function updateRoadmap(id: string, roadmapData: RoadmapData) {
       const { data: existingExercises } = await supabase
         .from('node_exercises')
         .select('exercise_id')
-        .eq('node_id', nodeId);
+        .eq('node_id', node.id);
 
       const existingExerciseIds = existingExercises?.map(e => e.exercise_id) || [];
 
@@ -288,7 +386,7 @@ export async function updateRoadmap(id: string, roadmapData: RoadmapData) {
           const { error: relErr } = await supabase
             .from('node_exercises')
             .insert({
-              node_id: nodeId,
+              node_id: node.id,
               exercise_id: exerciseId,
             });
 
@@ -323,13 +421,17 @@ export async function updateRoadmap(id: string, roadmapData: RoadmapData) {
     await supabase.from('roadmap_edges').delete().eq('roadmap_id', id);
     
     for (const edge of edges) {
+      // Use the mapped UUIDs for source and target if available
+      const sourceId = nodeIdMap[edge.source] || edge.source;
+      const targetId = nodeIdMap[edge.target] || edge.target;
+      
       const { error: edgeErr } = await supabase
         .from('roadmap_edges')
         .insert({
-          id: edge.id,
+          id: uuidv4(), // Generate new UUID for edge to avoid conflicts
           roadmap_id: id,
-          source_node_id: edge.source,
-          target_node_id: edge.target,
+          source_node_id: sourceId,
+          target_node_id: targetId,
         });
 
       if (edgeErr) throw new Error(`Failed to update edge: ${edgeErr.message}`);
