@@ -2,39 +2,63 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getAllRoadmaps } from "@/lib/api";
 import RoadmapCard from "@/components/client/RoadmapCard";
+import supabase from "@/lib/supabase";
+import * as userService from '@/lib/userService';
+import * as roadmapService from '@/lib/roadmapService';
 
 const RoadmapsPage = () => {
     const [roadmaps, setRoadmaps] = useState<any[]>([]);
     const [progressMap, setProgressMap] = useState<{ [slug: string]: number }>({});
     const [loading, setLoading] = useState(true);
+    const [userId, setUserId] = useState<string | null>(null);
 
     useEffect(() => {
         async function loadData() {
-            const data = await getAllRoadmaps();
-            setRoadmaps(data);
-            setLoading(false);
-
-            const savedProgress = JSON.parse(localStorage.getItem("roadmapProgress") || "{}");
-
-            const progressPerRoadmap: { [slug: string]: number } = {};
-
-            data.forEach((roadmap: any) => {
-                let completed = 0;
-                let total = 0;
-
-                roadmap.nodes.forEach((node: any) => {
-                    node.exercises.forEach((ex: any) => {
-                        total++;
-                        if (savedProgress[node.id]?.[ex.id]) completed++;
-                    });
-                });
-
-                progressPerRoadmap[roadmap.slug] = total === 0 ? 0 : Math.round((completed / total) * 100);
-            });
-
-            setProgressMap(progressPerRoadmap);
+            try {
+                // Get current user session
+                const { data: { session } } = await supabase.auth.getSession();
+                const currentUserId = session?.user?.id || null;
+                setUserId(currentUserId);
+                
+                // Get all roadmaps (basic info)
+                const roadmapsData = await roadmapService.getAllRoadmaps();
+                setRoadmaps(roadmapsData);
+                
+                // Initialize progress map
+                const progressPerRoadmap: { [slug: string]: number } = {};
+                
+                // For each roadmap, load full details to calculate progress
+                for (const roadmap of roadmapsData) {
+                    try {
+                        const fullRoadmap = await roadmapService.getRoadmap(roadmap.id);
+                        
+                        if (fullRoadmap.nodes && fullRoadmap.nodes.length > 0) {
+                            // If user is logged in, calculate progress using userService
+                            if (currentUserId) {
+                                const { percentage } = await userService.getRoadmapProgress(
+                                    currentUserId,
+                                    fullRoadmap.nodes
+                                );
+                                progressPerRoadmap[roadmap.slug] = percentage;
+                            } else {
+                                progressPerRoadmap[roadmap.slug] = 0;
+                            }
+                        } else {
+                            progressPerRoadmap[roadmap.slug] = 0;
+                        }
+                    } catch (error) {
+                        console.error(`Error loading full roadmap ${roadmap.id}:`, error);
+                        progressPerRoadmap[roadmap.slug] = 0;
+                    }
+                }
+                
+                setProgressMap(progressPerRoadmap);
+            } catch (error) {
+                console.error("Error loading roadmaps:", error);
+            } finally {
+                setLoading(false);
+            }
         }
 
         loadData();

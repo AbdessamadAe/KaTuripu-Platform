@@ -1,6 +1,7 @@
 "use client";
 
 import supabase from "@/lib/supabase";
+import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
 
 export function SignInButton() {
   const handleGoogleSignIn = async () => {
@@ -14,8 +15,14 @@ export function SignInButton() {
   };
 
   return (
-    <button onClick={handleGoogleSignIn}>
-      Sign in
+    <button
+      onClick={handleGoogleSignIn}
+      className={
+        'flex w-full items-center px-4 py-2 text-sm text-gray-700'
+      }
+    >
+      <ArrowRightOnRectangleIcon className="w-4 h-4 mr-2" />
+      Log in
     </button>
   );
 }

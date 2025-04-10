@@ -4,6 +4,7 @@ import "./globals.css";
 import MathJaxProvider from "@/components/MathJaxProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Nav from "@/components/client/Nav";
+import ToastProvider from "@/components/client/ToastProvider";
 
 export const metadata: Metadata = {
   title: "KaTuripu",
@@ -23,6 +24,7 @@ export default function RootLayout({
           <AuthProvider>
             <Nav />
             {children}
+            <ToastProvider />
           </AuthProvider>
         </MathJaxProvider>
       </body>
