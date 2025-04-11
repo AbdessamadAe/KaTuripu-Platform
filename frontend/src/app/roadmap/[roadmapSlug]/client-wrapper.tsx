@@ -34,7 +34,7 @@ export default function ClientRoadmapWrapper({ roadmapData }: ClientRoadmapWrapp
         key.includes('user-progress-') || 
         key.includes('last-progress-state-') || 
         key.includes('roadmap-effect-')
-      ) && !key.includes(roadmapData.id)) {
+      ) && !key.includes(roadmapData?.id as string)) {
         keysToRemove.push(key);
       }
     }
