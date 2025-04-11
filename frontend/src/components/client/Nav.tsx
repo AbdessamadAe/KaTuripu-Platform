@@ -68,7 +68,6 @@ export default function Nav() {
               // Show skeleton loader while auth state is loading
               <div className="flex items-center space-x-4">
                 <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse"></div>
-                <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
               </div>
             ) : isAuthenticated ? (
               <Menu as="div" className="relative">
