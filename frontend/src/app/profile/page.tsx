@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import supabase from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
 import { Disclosure } from '@headlessui/react';
 import { ArrowLeftIcon, PencilIcon } from '@heroicons/react/24/outline';
 
@@ -22,25 +21,8 @@ interface UserData {
 }
 
 export default function ProfilePage() {
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchUserData() {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          setUserData(user as unknown as UserData);
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchUserData();
-  }, []);
+  const { user, loading } = useAuth();
+  const userData = user?.user as UserData | null;
 
   if (loading) {
     return (
@@ -147,32 +129,6 @@ export default function ProfilePage() {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Activity Section */}
-        <div className="mt-8 bg-white shadow overflow-hidden sm:rounded-lg">
-          <Disclosure>
-            {({ open }) => (
-              <>
-                <Disclosure.Button className="px-4 py-5 sm:px-6 w-full flex justify-between items-center text-left">
-                  <div>
-                    <h3 className="text-lg leading-6 font-medium text-gray-900">Activity</h3>
-                    <p className="mt-1 max-w-2xl text-sm text-gray-500">Your recent activity and progress.</p>
-                  </div>
-                  <span className={`ml-6 h-7 flex items-center ${open ? 'transform rotate-180' : ''}`}>
-                    <svg className="h-6 w-6 transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </span>
-                </Disclosure.Button>
-                <Disclosure.Panel className="px-4 py-5 sm:px-6 border-t border-gray-200">
-                  <div className="text-center py-10">
-                    <p className="text-gray-500">Activity data will be shown here.</p>
-                  </div>
-                </Disclosure.Panel>
-              </>
-            )}
-          </Disclosure>
         </div>
       </div>
     </div>
