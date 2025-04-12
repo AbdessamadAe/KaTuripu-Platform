@@ -19,44 +19,35 @@ import supabase from '@/lib/supabase';
 import { getXPForDifficulty } from "@/utils/xpUtils";
 import * as userService from '@/lib/userService';
 import { showXpGain, showXpLoss, celebrateProgress } from "@/utils/gamificationUtils";
+import { useAuth } from "@/contexts/AuthContext"; // Import useAuth
 
 interface RoadmapProps {
   roadmapData: RoadmapData;
 }
 
 const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
-  
-  const [session, setSession] = useState<any>(null);
+  // Use Auth Context instead of manual fetching
+  const { user, loading, isAuthenticated } = useAuth();
   const [userId, setUserId] = useState<string | null>(null);
   const previousProgressRef = useRef<number>(0);
+  const [flowReady, setFlowReady] = useState(false);
 
-  // Fetch session and user data
+  // Set userId when auth state changes
   useEffect(() => {
-    const fetchSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session?.user) {
-        setSession(session.user);
-        setUserId(session.user.id);
-        
-        console.log(`🔑 User authenticated: ${session.user.id}`);
-        
-        // Fetch completed exercises from database
-        await fetchUserProgress(session.user.id);
-      } else {
-        console.log("⚠️ No user session found");
-      }
-    };
+    if (isAuthenticated && user?.user?.id) {
+      setUserId(user.user.id);
+      // Fetch completed exercises from database
+      fetchUserProgress(user.user.id);
+    }
+  }, [isAuthenticated, user]);
 
-    fetchSession();
-    
-    // Clean up function to handle component unmount
+  // Clean up function for roadmap-specific cache
+  useEffect(() => {
     return () => {
-      console.log("🧹 Cleaning up RoadmapViewer component");
       // Clear roadmap-specific cache on unmount
-      if (session) {
+      if (userId) {
         try {
-          const cacheKey = `user-progress-${session.id}-${roadmapData.id}`;
+          const cacheKey = `user-progress-${userId}-${roadmapData.id}`;
           sessionStorage.removeItem(cacheKey);
           sessionStorage.removeItem(`last-progress-state-${roadmapData.id}`);
         } catch (error) {
@@ -64,7 +55,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
         }
       }
     };
-  }, [roadmapData.id]);
+  }, [userId, roadmapData.id]);
 
   // Replace standard state with ReactFlow hooks
   const [nodes, setNodes] = useState<RoadmapNodeType[]>([]);
@@ -79,20 +70,19 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
   // Fetch user progress from the database using our service
   const fetchUserProgress = async (userId: string) => {
     if (!userId) return;
-    
+
     // Use a roadmap-specific cache key to avoid cross-roadmap pollution
     const cacheKey = `user-progress-${userId}-${roadmapData.id}`;
     const cachedProgress = sessionStorage.getItem(cacheKey);
-    
+
     if (cachedProgress) {
       try {
         const parsedProgress = JSON.parse(cachedProgress);
         const cacheTime = parsedProgress.timestamp;
         const now = Date.now();
-        
+
         // Cache is valid for 2 minutes (120000ms) - reduced from 5 minutes
         if (now - cacheTime < 120000) {
-          console.log(`🔄 Using cached user progress for roadmap ${roadmapData.id}`);
           setUserProgress(parsedProgress.completedExercises);
           return parsedProgress.completedExercises;
         }
@@ -101,15 +91,14 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
         // Continue with fresh data fetch on parse error
       }
     }
-    
+
     // Fetch fresh data if no valid cache exists
     try {
-      console.log(`🔍 Fetching fresh user progress for ${userId} on roadmap ${roadmapData.id}`);
       const progress = await userService.getUserProgress(userId);
-      
+
       if (progress) {
         setUserProgress(progress.completedExercises);
-        
+
         // Store in session storage with timestamp, using roadmap-specific key
         sessionStorage.setItem(
           cacheKey,
@@ -118,14 +107,13 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
             timestamp: Date.now()
           })
         );
-        
-        console.log(`✅ Fetched ${progress.completedExercises.length} completed exercises for user`);
+
         return progress.completedExercises;
       }
     } catch (error) {
       console.error("Failed to fetch user progress:", error);
     }
-    
+
     return [];
   };
 
@@ -135,34 +123,32 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
       console.error("❌ Invalid roadmap data structure:", roadmapData);
       return;
     }
-    
-    console.log("🔄 Setting nodes and edges using admin editor's approach");
-    
+
+
     try {
       // Store raw nodes for reference
       setNodes(roadmapData.nodes);
-      
+
       // Mark this effect as having run
       const effectKey = `roadmap-effect-${roadmapData.id}`;
       sessionStorage.setItem(effectKey, "true");
-      
+
       // Always generate fresh node elements for ReactFlow
       // Transform nodes for ReactFlow 
       const flowNodes = roadmapData.nodes.map((node) => {
         // Calculate progress if we have user data
         const total = node.exercises.length;
-        const completed = node.exercises.filter((ex) => 
+        const completed = node.exercises.filter((ex) =>
           userProgress.includes(ex.id)
         ).length;
         const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
-        
-        console.log(`Node ${node.id} (${node.label}): ${completed}/${total} exercises completed`);
-        
+
+
         return {
           id: node.id,
           // Use position directly from the node data
           position: node.position,
-          data: { 
+          data: {
             label: (
               <div>
                 <div className="font-semibold">{node.label}</div>
@@ -172,7 +158,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
                       height: "6px",
                       backgroundColor: "#ccc",
                       borderRadius: "3px",
-                      overflow: "hidden", 
+                      overflow: "hidden",
                       marginTop: "2px",
                     }}
                   >
@@ -206,7 +192,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
           }
         };
       });
-      
+
       // Process edges
       const flowEdges = roadmapData.edges.map(edge => ({
         id: edge.id,
@@ -214,17 +200,22 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
         target: edge.target,
         animated: true
       }));
-      
+
       // Set nodes and edges
       setFlowNodes(flowNodes);
       setFlowEdges(flowEdges);
-      
+
       // Only cache the progress state for invalidation checks, not the nodes themselves
       try {
         sessionStorage.setItem(`last-progress-state-${roadmapData.id}`, JSON.stringify(userProgress));
       } catch (error) {
         console.error("Error caching progress state:", error);
       }
+      
+      // Delay setting flow ready to ensure proper rendering
+      setTimeout(() => {
+        setFlowReady(true);
+      }, 100);
     } catch (error) {
       console.error("❌ Error processing roadmap data:", error);
     }
@@ -233,9 +224,8 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
   // Apply user progress to nodes when user data or nodes change
   useEffect(() => {
     if (nodes.length === 0 || !userId) return;
-    
-    console.log("🔄 Checking if node updates needed due to user progress changes");
-    
+
+
     // Always update nodes when this effect runs to ensure latest progress is reflected
     const updatedNodes = nodes.map((node) => {
       return {
@@ -248,26 +238,24 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
     });
 
     setNodes(updatedNodes);
-    
+
     // Update the flow nodes with new completion status
-    console.log("🔄 Updating flowNodes with latest completion status");
     const updatedFlowNodes = updatedNodes.map(nodeData => {
       // Calculate progress for this node
       const total = nodeData.exercises.length;
       const completed = nodeData.exercises.filter(ex => userProgress.includes(ex.id)).length;
       const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
-      
-      console.log(`Node ${nodeData.id} (${nodeData.label}): ${completed}/${total} completed (${progress}%)`);
-      
+
+
       // Find the corresponding flow node to preserve its position
       const existingFlowNode = flowNodes.find(n => n.id === nodeData.id);
       const position = existingFlowNode ? existingFlowNode.position : nodeData.position;
-      
+
       // Create fresh React elements
       return {
         id: nodeData.id,
         position,
-        data: { 
+        data: {
           label: (
             <div>
               <div className="font-semibold">{nodeData.label}</div>
@@ -277,7 +265,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
                     height: "6px",
                     backgroundColor: "#ccc",
                     borderRadius: "3px",
-                    overflow: "hidden", 
+                    overflow: "hidden",
                     marginTop: "2px",
                   }}
                 >
@@ -307,10 +295,10 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
         }
       };
     });
-    
+
     // Update the flow nodes state
     setFlowNodes(updatedFlowNodes);
-    
+
     // Calculate overall progress for roadmap
     if (userId && updatedNodes.length > 0) {
       calculateOverallProgress(updatedNodes);
@@ -320,16 +308,16 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
   // Calculate the overall progress for the roadmap
   const calculateOverallProgress = async (currentNodes: RoadmapNodeType[]) => {
     if (!userId) return;
-    
+
     // Get progress from the service
     const { total, completed, percentage } = await userService.getRoadmapProgress(
       userId,
       currentNodes
     );
-    
+
     // Store the current progress
     setCurrentProgress(percentage);
-    
+
     // Check if we've hit a milestone worth celebrating
     if (previousProgressRef.current < percentage) {
       // Check for milestone celebrations (25%, 50%, 75%, 100%)
@@ -342,7 +330,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
         celebrateProgress(percentage);
       }
     }
-    
+
     // Update the reference
     previousProgressRef.current = percentage;
   };
@@ -355,16 +343,15 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
   // Handle problem toggle with improved logging
   const handleProblemToggle = async (problemId: string, completed: boolean) => {
     if (!selectedNode || !userId) return;
-    
-    console.log(`🔄 Toggling exercise ${problemId} to ${completed ? 'completed' : 'uncompleted'}`);
-    
+
+
     // Find the exercise to get its actual difficulty
     const exercise = selectedNode.exercises.find(ex => ex.id === problemId);
     if (!exercise) {
       console.error(`❌ Could not find exercise ${problemId} in selected node`);
       return;
     }
-  
+
     // Update the node display immediately for better UX
     const updatedNodes = nodes.map((node) => {
       if (node.id === selectedNode.id) {
@@ -377,36 +364,35 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
       }
       return node;
     });
-  
+
     setNodes(updatedNodes);
-  
+
     const updatedSelectedNode = updatedNodes.find(
       (node) => node.id === selectedNode.id
     );
     if (updatedSelectedNode) {
       setSelectedNode(updatedSelectedNode);
     }
-  
+
     // Use the userService to mark exercise as completed/uncompleted
     try {
       // Get the exercise difficulty for XP calculations
       const difficulty = exercise.difficulty?.toLowerCase() || 'easy';
-      
+
       if (completed) {
         // Calculate XP based on difficulty
         const xpToAdd = getXPForDifficulty(difficulty as 'easy' | 'medium' | 'hard');
-        
+
         // Mark exercise as completed
         const { success, progress } = await userService.completeExercise(
           userId,
           problemId,
           xpToAdd
         );
-        
+
         if (success && progress) {
-          console.log(`✅ Exercise ${problemId} marked as completed`);
           setUserProgress(progress.completedExercises);
-          
+
           // Update the roadmap-specific cache
           const cacheKey = `user-progress-${userId}-${roadmapData.id}`;
           sessionStorage.setItem(
@@ -416,7 +402,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
               timestamp: Date.now()
             })
           );
-          
+
           // Show gamified notification for XP gain
           showXpGain(xpToAdd, difficulty);
         }
@@ -435,18 +421,17 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
             xpToSubtract = 10;
             break;
         }
-        
+
         // Mark exercise as uncompleted and pass the difficulty to calculate XP reduction
         const { success, progress } = await userService.uncompleteExercise(
           userId,
           problemId,
           difficulty
         );
-        
+
         if (success && progress) {
-          console.log(`🔄 Exercise ${problemId} marked as uncompleted`);
           setUserProgress(progress.completedExercises);
-          
+
           // Update the roadmap-specific cache
           const cacheKey = `user-progress-${userId}-${roadmapData.id}`;
           sessionStorage.setItem(
@@ -456,7 +441,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
               timestamp: Date.now()
             })
           );
-          
+
           // Show gamified notification for XP loss
           showXpLoss(xpToSubtract);
         }
@@ -468,31 +453,23 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
 
   // Center the view on initial load with a reasonable zoom
   const onInit = useCallback((instance: any) => {
-    console.log("🔄 ReactFlow initialized");
     setRfInstance(instance);
-    
-    // Small delay to ensure nodes are rendered
+    // Handle fit view immediately in onInit callback
     setTimeout(() => {
-      if (instance && flowNodes.length > 0) {
-        instance.fitView({ padding: 0.2, includeHiddenNodes: true });
-        console.log("✅ View fit to nodes");
-      }
-    }, 200);
-  }, [flowNodes.length]);
+      instance.fitView({ padding: 0.2, includeHiddenNodes: true });
+    }, 50);
+  }, []);
 
+  // Only fit view on major changes, not on every flow nodes update
   useEffect(() => {
-    if (rfInstance && flowNodes.length > 0) {
-      console.log("🔄 Setting view to respect node positions");
-      setTimeout(() => {
-        try {
-          rfInstance.fitView({ padding: 0.2, includeHiddenNodes: true });
-          console.log("✅ View adjusted successfully");
-        } catch (error) {
-          console.error("❌ Error adjusting view:", error);
-        }
-      }, 200);
+    if (rfInstance && flowReady) {
+      try {
+        rfInstance.fitView({ padding: 0.2, includeHiddenNodes: true });
+      } catch (error) {
+        console.error("❌ Error adjusting view:", error);
+      }
     }
-  }, [rfInstance, flowNodes]);
+  }, [rfInstance, flowReady]); // Only depend on rfInstance and flowReady, not flowNodes
 
   return (
     <div
@@ -505,7 +482,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
     >
       {/* Progress indicator */}
       {currentProgress > 0 && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-4 py-2 rounded-full shadow-lg z-20"
@@ -516,10 +493,11 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
           </div>
         </motion.div>
       )}
-      
+
       {/* Roadmap Graph */}
-      <div style={{ 
-        flex: 3, 
+      {flowNodes.length > 0 && flowReady && (
+      <div style={{
+        flex: 3,
         height: "100%",
         width: "100%",
         position: "relative"
@@ -528,7 +506,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
           <ReactFlow
             nodes={flowNodes}
             edges={flowEdges}
-            fitView={false}
+            fitView={true} // Set fitView to true for initial load
             onNodeClick={handleNodeClick}
             nodesDraggable={false}
             onInit={onInit}
@@ -537,11 +515,11 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
             snapToGrid={true}
             snapGrid={[15, 15]}
             proOptions={{ hideAttribution: true }}
-            fitViewOptions={{ padding: 0.2 }}
+            fitViewOptions={{ padding: 0.2, duration: 800 }} // Add duration for smoother zoom
             defaultViewport={{ x: 0, y: 0, zoom: 1 }}
             elementsSelectable={false}
             panOnScroll
-            preventScrolling={false}
+            preventScrolling={true}
             // Crucial for preserving node positions:
             autoPanOnNodeDrag={false}
             minZoom={0.1}
@@ -551,7 +529,14 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
             <Controls />
           </ReactFlow>
         </ReactFlowProvider>
-      </div>
+      </div>)}
+      
+      {/* Show a loading state when flowReady is false */}
+      {flowNodes.length > 0 && !flowReady && (
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-lg text-gray-500">Chargement du parcours...</div>
+        </div>
+      )}
 
       {/* Sidebar Popup */}
       {selectedNode && (
