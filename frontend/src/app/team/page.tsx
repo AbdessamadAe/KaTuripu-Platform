@@ -1,7 +1,5 @@
 import React from 'react'
 import { Footer } from '../../components/client/Footer'
-// import achraf from '../images/achraf.jpg'
-// import abdessamad from '../images/abdessamad.jpeg'
 import { FaLinkedin, FaGithub, FaFacebook } from "react-icons/fa";
 
 interface TeamMember {
@@ -86,7 +84,6 @@ export default function Team () {
                     </div>
                 </div>
             </div>
-            <Footer />
         </div>
     )
 }

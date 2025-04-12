@@ -54,7 +54,6 @@ const ContactUs = () => {
           className="hidden sm:block w-[450px] h-[450px] mx-auto"
         />
       </div>
-      <Footer />
     </div>
   )
 }

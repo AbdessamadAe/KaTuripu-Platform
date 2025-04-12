@@ -30,7 +30,6 @@ export const BookSession: React.FC = () => {
                 </div>
             </div>
             <Calendly />
-            <Footer />
         </div>
     )
 }
