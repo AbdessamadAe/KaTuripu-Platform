@@ -11,6 +11,7 @@ interface ClientRoadmapWrapperProps {
 
 export default function ClientRoadmapWrapper({ roadmapData }: ClientRoadmapWrapperProps) {
   const [showIntroduction, setShowIntroduction] = useState(false);
+  const [showRoadmap, setShowRoadmap] = useState(false);
 
   // Check if user has seen the introduction before
   useEffect(() => {
@@ -19,6 +20,13 @@ export default function ClientRoadmapWrapper({ roadmapData }: ClientRoadmapWrapp
     if (!hasSeenIntro) {
       setShowIntroduction(true);
     }
+    
+    // Add a slight delay before showing the roadmap for a smooth fade-in effect
+    const timer = setTimeout(() => {
+      setShowRoadmap(true);
+    }, 300);
+    
+    return () => clearTimeout(timer);
   }, []);
 
   // Clear stale caches when switching roadmaps
@@ -124,7 +132,13 @@ export default function ClientRoadmapWrapper({ roadmapData }: ClientRoadmapWrapp
         )}
       </AnimatePresence>
       
-      <Roadmap roadmapData={roadmapData} />
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: showRoadmap ? 1 : 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <Roadmap roadmapData={roadmapData} />
+      </motion.div>
     </>
   );
 }
