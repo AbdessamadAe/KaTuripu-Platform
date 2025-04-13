@@ -41,13 +41,15 @@ export default function Nav() {
           </div>
           <div className="flex flex-1 items-center justify-center lg:items-stretch lg:justify-start">
             <div className="flex shrink-0 items-center">
-              <a href="/" className="flex items-center">
+              <Link 
+              onMouseEnter={() => router.prefetch('/')}
+              href="/" className="flex items-center">
                 <img
                   alt="katuripu"
                   src="/images/logo.png"
                   className="h-8 w-auto"
                 />
-              </a>
+              </Link>
             </div>
             <div className="hidden lg:ml-14 lg:block">
               <div className="flex space-x-4">
@@ -94,21 +96,7 @@ export default function Nav() {
                   <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
                     <Menu.Item>
                       {({ active }) => (
-                        <a
-                          href="/dashboard"
-                          className={classNames(
-                            active ? 'bg-gray-100' : '',
-                            'flex items-center px-4 py-2 text-sm text-gray-700'
-                          )}
-                        >
-                          <UserIcon className="w-4 h-4 mr-2" />
-                          Tableau de bord
-                        </a>
-                      )}
-                    </Menu.Item>
-                    <Menu.Item>
-                      {({ active }) => (
-                        <a
+                        <Link
                           href="/profile"
                           className={classNames(
                             active ? 'bg-gray-100' : '',
@@ -117,7 +105,7 @@ export default function Nav() {
                         >
                           <UserIcon className="w-4 h-4 mr-2" />
                           Profil
-                        </a>
+                        </Link>
                       )}
                     </Menu.Item>
                     <Menu.Item>

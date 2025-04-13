@@ -33,10 +33,10 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
 
   // Set userId when auth state changes
   useEffect(() => {
-    if (isAuthenticated && user?.user?.id) {
-      setUserId(user.user.id);
+    if (isAuthenticated && user?.id) {
+      setUserId(user?.id);
       // Fetch completed exercises from database
-      fetchUserProgress(user.user.id);
+      fetchUserProgress(user?.id);
     }
   }, [isAuthenticated, user]);
 
