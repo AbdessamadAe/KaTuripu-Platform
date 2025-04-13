@@ -15,10 +15,9 @@ import "@xyflow/react/dist/style.css";
 import { motion } from "framer-motion";
 import ExerciseSidebar from "./sidebar";
 import { Exercise, RoadmapNodeType, RoadmapData } from "@/types/types";
-import supabase from '@/lib/supabase';
 import * as userService from '@/lib/userService';
 import { celebrateProgress } from "@/utils/gamificationUtils";
-import { useAuth } from "@/contexts/AuthContext"; // Import useAuth
+import { useAuth } from "@/contexts/AuthContext";
 
 interface RoadmapProps {
   roadmapData: RoadmapData;
@@ -40,22 +39,6 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
     }
   }, [isAuthenticated, user]);
 
-  // Clean up function for roadmap-specific cache
-  useEffect(() => {
-    return () => {
-      // Clear roadmap-specific cache on unmount
-      if (userId) {
-        try {
-          const cacheKey = `user-progress-${userId}-${roadmapData.id}`;
-          sessionStorage.removeItem(cacheKey);
-          sessionStorage.removeItem(`last-progress-state-${roadmapData.id}`);
-        } catch (error) {
-          console.error("Error clearing cache:", error);
-        }
-      }
-    };
-  }, [userId, roadmapData.id]);
-
   // Replace standard state with ReactFlow hooks
   const [nodes, setNodes] = useState<RoadmapNodeType[]>([]);
   const [flowNodes, setFlowNodes, onNodesChange] = useNodesState<any>([]);
@@ -69,44 +52,12 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
   // Fetch user progress from the database using our service
   const fetchUserProgress = async (userId: string) => {
     if (!userId) return;
-
-    // Use a roadmap-specific cache key to avoid cross-roadmap pollution
-    const cacheKey = `user-progress-${userId}-${roadmapData.id}`;
-    const cachedProgress = sessionStorage.getItem(cacheKey);
-
-    if (cachedProgress) {
-      try {
-        const parsedProgress = JSON.parse(cachedProgress);
-        const cacheTime = parsedProgress.timestamp;
-        const now = Date.now();
-
-        // Cache is valid for 2 minutes (120000ms) - reduced from 5 minutes
-        if (now - cacheTime < 120000) {
-          setUserProgress(parsedProgress.completedExercises);
-          return parsedProgress.completedExercises;
-        }
-      } catch (error) {
-        console.error("Error parsing cached progress:", error);
-        // Continue with fresh data fetch on parse error
-      }
-    }
-
     // Fetch fresh data if no valid cache exists
     try {
       const progress = await userService.getUserProgress(userId);
 
       if (progress) {
         setUserProgress(progress.completedExercises);
-
-        // Store in session storage with timestamp, using roadmap-specific key
-        sessionStorage.setItem(
-          cacheKey,
-          JSON.stringify({
-            ...progress,
-            timestamp: Date.now()
-          })
-        );
-
         return progress.completedExercises;
       }
     } catch (error) {
@@ -127,10 +78,6 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
     try {
       // Store raw nodes for reference
       setNodes(roadmapData.nodes);
-
-      // Mark this effect as having run
-      const effectKey = `roadmap-effect-${roadmapData.id}`;
-      sessionStorage.setItem(effectKey, "true");
 
       // Always generate fresh node elements for ReactFlow
       // Transform nodes for ReactFlow 
@@ -204,13 +151,6 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
       setFlowNodes(flowNodes);
       setFlowEdges(flowEdges);
 
-      // Only cache the progress state for invalidation checks, not the nodes themselves
-      try {
-        sessionStorage.setItem(`last-progress-state-${roadmapData.id}`, JSON.stringify(userProgress));
-      } catch (error) {
-        console.error("Error caching progress state:", error);
-      }
-      
       // Delay setting flow ready to ensure proper rendering
       setTimeout(() => {
         setFlowReady(true);

@@ -31,9 +31,7 @@ export default function ClientRoadmapWrapper({ roadmapData }: ClientRoadmapWrapp
 
   // Clear stale caches when switching roadmaps
   useEffect(() => {
-    // Clear any roadmap-specific cached data when entering a new roadmap
-    console.log(`🧹 Clearing stale roadmap caches for roadmap ${roadmapData.id}`);
-    
+    // Clear any roadmap-specific cached data when entering a new roadmap    
     // Get current keys that might be related to other roadmaps
     const keysToRemove: string[] = [];
     for (let i = 0; i < sessionStorage.length; i++) {
