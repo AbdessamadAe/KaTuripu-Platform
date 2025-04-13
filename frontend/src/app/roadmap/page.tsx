@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import RoadmapCard from "@/components/client/RoadmapCard";
-import supabase from "@/lib/supabase";
 import * as userService from '@/lib/userService';
 import * as roadmapService from '@/lib/roadmapService';
 import { motion } from 'framer-motion';
+import { useAuth } from "@/contexts/AuthContext";
 
 const RoadmapsPage = () => {
     const [roadmaps, setRoadmaps] = useState<any[]>([]);
@@ -16,47 +16,47 @@ const RoadmapsPage = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [category, setCategory] = useState("all");
 
+    const { user: userData } = useAuth();
+
+    useEffect(() => {
+        // Get current user session
+        const currentUserId = userData?.id || null;
+        if (currentUserId) {
+            setUserId(currentUserId);
+        }
+    }
+        , [userData]);
+
     useEffect(() => {
         async function loadData() {
             try {
-                // Get current user session
-                const { data: { session } } = await supabase.auth.getSession();
-                const currentUserId = session?.user?.id || null;
-                setUserId(currentUserId);
-                
                 // Get all roadmaps (basic info)
                 const roadmapsData = await roadmapService.getAllRoadmaps();
                 setRoadmaps(roadmapsData);
-                
-                // Initialize progress map
-                const progressPerRoadmap: { [slug: string]: number } = {};
-                
-                // For each roadmap, load full details to calculate progress
-                for (const roadmap of roadmapsData) {
-                    try {
-                        const fullRoadmap = await roadmapService.getRoadmap(roadmap.id);
-                        
-                        if (fullRoadmap.nodes && fullRoadmap.nodes.length > 0) {
-                            // If user is logged in, calculate progress using userService
-                            if (currentUserId) {
-                                const { percentage } = await userService.getRoadmapProgress(
-                                    currentUserId,
-                                    fullRoadmap.nodes
-                                );
-                                progressPerRoadmap[roadmap.slug] = percentage;
-                            } else {
-                                progressPerRoadmap[roadmap.slug] = 0;
+
+                const roadmapDetails = await Promise.all(
+                    roadmapsData.map((roadmap) => roadmapService.getRoadmap(roadmap.id))
+                );
+                console.log("Roadmap details loaded:", roadmapDetails);
+
+                const progressPerMap = await Promise.all(
+                    roadmapDetails.map(async (fullRoadmap, index) => {
+                        const slug = roadmapsData[index].slug;
+                        console.log(fullRoadmap);
+                        try {
+                            if (fullRoadmap) {
+                                const { percentage } = await userService.getRoadmapProgress(userId, fullRoadmap.nodes);
+                                // Check if percentage is a number
+                                return [slug, percentage];
                             }
-                        } else {
-                            progressPerRoadmap[roadmap.slug] = 0;
+                        } catch (e) {
+                            console.error(`Error loading progress for ${slug}`, e);
                         }
-                    } catch (error) {
-                        console.error(`Erreur lors du chargement complet de la feuille de route ${roadmap.id}:`, error);
-                        progressPerRoadmap[roadmap.slug] = 0;
-                    }
-                }
-                
-                setProgressMap(progressPerRoadmap);
+                        return [slug, 0];
+                    })
+                );
+
+                setProgressMap(Object.fromEntries(progressPerMap));
             } catch (error) {
                 console.error("Erreur lors du chargement des feuilles de route:", error);
             } finally {
@@ -65,36 +65,36 @@ const RoadmapsPage = () => {
         }
 
         loadData();
-    }, []);
+    }, [userId]);
 
     // Helper function to extract all categories from a roadmap
     const getCategoriesFromRoadmap = (roadmap: any): string[] => {
         if (Array.isArray(roadmap.category)) {
             return roadmap.category;
         }
-        
+
         if (typeof roadmap.category === 'string') {
             return [roadmap.category];
         }
-        
+
         return ['uncategorized'];
     };
 
     // Filter roadmaps based on search and category
     const filteredRoadmaps = roadmaps.filter(roadmap => {
         // Check if title or description matches search term
-        const matchesSearch = roadmap.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                             roadmap.description.toLowerCase().includes(searchTerm.toLowerCase());
-        
+        const matchesSearch = roadmap.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            roadmap.description.toLowerCase().includes(searchTerm.toLowerCase());
+
         // Check if category matches - accounting for array categories
         let matchesCategory = category === 'all';
         if (!matchesCategory) {
             const roadmapCategories = getCategoriesFromRoadmap(roadmap);
-            matchesCategory = roadmapCategories.some(cat => 
+            matchesCategory = roadmapCategories.some(cat =>
                 cat.toLowerCase() === category.toLowerCase()
             );
         }
-        
+
         return matchesSearch && matchesCategory;
     });
 
@@ -142,7 +142,7 @@ const RoadmapsPage = () => {
             {/* Minimalist Hero Section */}
             <div className="bg-white py-16 px-4">
                 <div className="container mx-auto max-w-4xl">
-                    <motion.div 
+                    <motion.div
                         className="text-center"
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -177,42 +177,41 @@ const RoadmapsPage = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                     </div>
-                    
+
                     {/* Category filters with horizontal scrolling for small screens */}
                     <div className="flex flex-nowrap overflow-x-auto gap-2 pb-1 -mx-1 px-1 scrollbar-hide">
                         {categories.map((cat) => (
                             <button
                                 key={cat}
                                 onClick={() => setCategory(cat)}
-                                className={`px-3 py-2 rounded-md whitespace-nowrap text-sm transition-all flex-shrink-0 ${
-                                    category === cat 
-                                        ? 'bg-blue-500 text-white' 
-                                        : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
-                                }`}
+                                className={`px-3 py-2 rounded-md whitespace-nowrap text-sm transition-all flex-shrink-0 ${category === cat
+                                    ? 'bg-blue-500 text-white'
+                                    : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                                    }`}
                             >
                                 {cat === 'all' ? 'Tous' : cat}
                             </button>
                         ))}
                     </div>
                 </div>
-                
+
                 {filteredRoadmaps.length === 0 ? (
-                    <motion.div 
+                    <motion.div
                         className="text-center py-12 bg-gray-50 rounded-lg"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.5 }}
                     >
                         <p className="text-gray-600 mb-3">Aucun parcours ne correspond à votre recherche</p>
-                        <button 
-                            onClick={() => { setSearchTerm(''); setCategory('all'); }} 
+                        <button
+                            onClick={() => { setSearchTerm(''); setCategory('all'); }}
                             className="text-blue-500 text-sm hover:underline"
                         >
                             Réinitialiser les filtres
                         </button>
                     </motion.div>
                 ) : (
-                    <motion.div 
+                    <motion.div
                         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
                         variants={containerVariants}
                         initial="hidden"

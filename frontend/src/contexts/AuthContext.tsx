@@ -67,7 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     const { data: userData } = await supabase.auth.getUser();
                     if (!mounted) return;
 
-                    setUser(userData);
+                    setUser(userData?.user);
                     setIsAuthenticated(true);
 
                     await supabase.from("users").upsert({
@@ -108,7 +108,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                         const { data: userData } = await supabase.auth.getUser();
                         if (!mounted) return;
 
-                        setUser(userData);
+                        setUser(userData?.user);
                         setIsAuthenticated(true);
                     } else {
                         setUser(null);

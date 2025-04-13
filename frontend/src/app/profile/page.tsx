@@ -22,7 +22,7 @@ interface UserData {
 
 export default function ProfilePage() {
   const { user, loading } = useAuth();
-  const userData = user?.user as UserData | null;
+  const userData = user as UserData | null;
 
   if (loading) {
     return (

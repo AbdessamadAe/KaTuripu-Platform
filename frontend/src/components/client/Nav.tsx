@@ -5,6 +5,8 @@ import { SignInButton } from '@/components/client/sing-in-button'
 import { useAuth } from '@/contexts/AuthContext'
 import { Fragment } from 'react'
 import supabase from '@/lib/supabase'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 const navigation = [
   { name: 'Concours', href: '/roadmap', current: true },
@@ -18,6 +20,7 @@ function classNames(...classes: (string | undefined | false | null)[]) {
 
 export default function Nav() {
   const { user, loading, isAuthenticated } = useAuth();
+  const router = useRouter();
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -49,16 +52,17 @@ export default function Nav() {
             <div className="hidden lg:ml-14 lg:block">
               <div className="flex space-x-4">
                 {navigation.map((item) => (
-                  <a
+                  <Link
                     key={item.name}
                     href={item.href}
+                    onMouseEnter={() => router.prefetch(item.href)}
                     aria-current={item.current ? 'page' : undefined}
                     className={classNames(
                       'rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200 hover:bg-gray-100 hover:text-black'
                     )}
                   >
                     {item.name}
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -73,7 +77,7 @@ export default function Nav() {
               <Menu as="div" className="relative">
                 <Menu.Button className="flex items-center space-x-4 hover:opacity-80 transition-opacity">
                   <img
-                    src={user?.user?.user_metadata?.avatar_url || '/default-avatar.png'}
+                    src={user?.user_metadata?.avatar_url || '/default-avatar.png'}
                     alt="User Avatar"
                     className="h-8 w-8 rounded-full object-cover"
                   />
