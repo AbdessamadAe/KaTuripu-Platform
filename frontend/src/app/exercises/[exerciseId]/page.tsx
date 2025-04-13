@@ -6,9 +6,8 @@ import { Exercise } from '@/types/types';
 import { MathJax } from 'better-react-mathjax';
 import ReactMarkdown from 'react-markdown';
 import { motion } from 'framer-motion';
-import { getXPForDifficulty } from '@/utils/xpUtils';
 import * as userService from '@/lib/userService';
-import { showXpGain, showAchievement } from '@/utils/gamificationUtils';
+import { showAchievement } from '@/utils/gamificationUtils';
 
 const ExerciseDetailPage = () => {
   const params = useParams();
@@ -20,7 +19,6 @@ const ExerciseDetailPage = () => {
   const [showSolution, setShowSolution] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [completed, setCompleted] = useState(false);
-  const [userXp, setUserXp] = useState(0);
   const [hintAnimation, setHintAnimation] = useState(false);
   const [isFirstView, setIsFirstView] = useState(true);
 
@@ -34,7 +32,6 @@ const ExerciseDetailPage = () => {
         // Get user data from database
         const progress = await userService.getUserProgress(currentUserId);
         if (progress) {
-          setUserXp(progress.xp);
           setCompleted(progress.completedExercises.includes(exerciseId));
         }
       }
@@ -47,35 +44,20 @@ const ExerciseDetailPage = () => {
     const markAsCompleted = async () => {
       if (showSolution && userId && !completed && exercise) {
         try {
-          // Calculate XP based on difficulty - convert to expected type
-          const difficulty = exercise.difficulty.toLowerCase();
-          const safetyDifficulty = ['easy', 'medium', 'hard'].includes(difficulty) 
-            ? difficulty as 'easy' | 'medium' | 'hard'
-            : 'easy'; // Default to 'easy' if unknown
-            
-          const xpToAdd = getXPForDifficulty(safetyDifficulty);
-          
           // Mark exercise as completed using our service
           const { success, progress } = await userService.completeExercise(
             userId,
-            exerciseId,
-            xpToAdd
+            exerciseId
           );
           if (success && progress) {
-            setUserXp(progress.xp);
             setCompleted(true);
-            
-            // Show XP gain notification with animation
-            showXpGain(xpToAdd, exercise.difficulty);
-            
+      
             // Check for achievements (hardcoded for demo, but could be data-driven)
             if (exercise.difficulty.toLowerCase() === 'hard') {
               setTimeout(() => {
                 showAchievement('Math Wizard', 'Solved a hard difficulty problem');
               }, 1500);
-            }
-            
-            console.log(`Exercise marked as completed! +${xpToAdd} XP`);
+            }            
           }
         } catch (error) {
           console.error("Error updating user progress:", error);
@@ -149,30 +131,6 @@ const ExerciseDetailPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
-      {/* User XP display */}
-      {userId && (
-        <motion.div 
-          className="absolute top-4 right-4 bg-gradient-to-r from-purple-600 to-blue-500 px-4 py-2 rounded-full shadow-lg"
-          initial={isFirstView ? { y: -50, opacity: 0 } : false}
-          animate={isFirstView ? { y: 0, opacity: 1 } : false}
-          transition={{ type: "spring", stiffness: 500, damping: 30 }}
-          onAnimationComplete={() => setIsFirstView(false)}
-        >
-          <div className="flex items-center space-x-2">
-            <span className="text-sm font-bold">XP:</span>
-            <motion.span
-              key={userXp} // This forces animation when XP changes
-              className="font-bold text-lg"
-              initial={{ scale: 1 }}
-              animate={{ scale: [1, 1.5, 1] }}
-              transition={{ duration: 0.5 }}
-            >
-              {userXp}
-            </motion.span>
-          </div>
-        </motion.div>
-      )}
-
       {/* Exercise content with animations */}
       <div className="max-w-4xl mx-auto bg-gray-800 rounded-xl shadow-lg overflow-hidden">
         <motion.div 

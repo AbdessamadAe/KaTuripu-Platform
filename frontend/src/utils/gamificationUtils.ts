@@ -2,49 +2,6 @@ import React from 'react';
 import toast from 'react-hot-toast';
 import confetti from 'canvas-confetti';
 
-// XP animations and toast notifications
-export const showXpGain = (xp: number, difficulty: string = 'easy') => {
-  // Show a toast notification with color based on difficulty
-  let bgColor = '#4ade80'; // default green for easy
-
-  if (difficulty.toLowerCase() === 'medium') {
-    bgColor = '#facc15';  // yellow
-  } else if (difficulty.toLowerCase() === 'hard') {
-    bgColor = '#f87171';  // red
-  }
-
-  // Fire confetti for hard problems or large XP gains
-  if (difficulty.toLowerCase() === 'hard' || xp >= 30) {
-    fireConfetti();
-  }
-
-  toast.success(
-    React.createElement(
-      'div',
-      { className: "flex items-center" },
-      React.createElement(
-        'span',
-        { className: "text-xl font-bold mr-2" },
-        `+${xp} XP`
-      ),
-      React.createElement(
-        'span',
-        null,
-        'Good job! Keep going!'
-      )
-    ),
-    {
-      style: {
-        background: `linear-gradient(135deg, ${bgColor} 0%, rgba(25, 44, 136, 0.8) 100%)`,
-        color: '#fff',
-        fontWeight: 'bold',
-      },
-      duration: 3000,
-      icon: '🏆',
-    }
-  );
-};
-
 // Progress celebration
 export const celebrateProgress = (percentage: number) => {
   // Custom styles for different milestone levels
@@ -142,33 +99,6 @@ export const celebrateProgress = (percentage: number) => {
       }
     );
   }
-};
-
-// XP lost notification
-export const showXpLoss = (xp: number) => {
-  toast(
-    React.createElement(
-      'div',
-      { className: "flex items-center" },
-      React.createElement(
-        'span',
-        { className: "text-xl font-bold mr-2" },
-        `-${xp} XP`
-      ),
-      React.createElement(
-        'span',
-        null,
-        'Exercise uncompleted'
-      )
-    ),
-    {
-      icon: '📝',
-      style: {
-        background: '#475569',
-        color: '#e2e8f0',
-      }
-    }
-  );
 };
 
 // Achievement unlocked notification

@@ -16,9 +16,8 @@ import { motion } from "framer-motion";
 import ExerciseSidebar from "./sidebar";
 import { Exercise, RoadmapNodeType, RoadmapData } from "@/types/types";
 import supabase from '@/lib/supabase';
-import { getXPForDifficulty } from "@/utils/xpUtils";
 import * as userService from '@/lib/userService';
-import { showXpGain, showXpLoss, celebrateProgress } from "@/utils/gamificationUtils";
+import { celebrateProgress } from "@/utils/gamificationUtils";
 import { useAuth } from "@/contexts/AuthContext"; // Import useAuth
 
 interface RoadmapProps {
@@ -376,18 +375,12 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
 
     // Use the userService to mark exercise as completed/uncompleted
     try {
-      // Get the exercise difficulty for XP calculations
-      const difficulty = exercise.difficulty?.toLowerCase() || 'easy';
-
       if (completed) {
-        // Calculate XP based on difficulty
-        const xpToAdd = getXPForDifficulty(difficulty as 'easy' | 'medium' | 'hard');
 
         // Mark exercise as completed
         const { success, progress } = await userService.completeExercise(
           userId,
-          problemId,
-          xpToAdd
+          problemId
         );
 
         if (success && progress) {
@@ -402,31 +395,12 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
               timestamp: Date.now()
             })
           );
-
-          // Show gamified notification for XP gain
-          showXpGain(xpToAdd, difficulty);
         }
       } else {
-        // Calculate XP to subtract based on difficulty
-        let xpToSubtract: number;
-        switch (difficulty.toLowerCase()) {
-          case 'medium':
-            xpToSubtract = 20;
-            break;
-          case 'hard':
-            xpToSubtract = 30;
-            break;
-          case 'easy':
-          default:
-            xpToSubtract = 10;
-            break;
-        }
-
-        // Mark exercise as uncompleted and pass the difficulty to calculate XP reduction
+        // Mark exercise as uncompleted
         const { success, progress } = await userService.uncompleteExercise(
           userId,
-          problemId,
-          difficulty
+          problemId          
         );
 
         if (success && progress) {
@@ -441,9 +415,6 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
               timestamp: Date.now()
             })
           );
-
-          // Show gamified notification for XP loss
-          showXpLoss(xpToSubtract);
         }
       }
     } catch (error) {

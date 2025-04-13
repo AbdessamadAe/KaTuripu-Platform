@@ -2,7 +2,6 @@
 import supabase from './supabase';
 
 export interface UserProgress {
-  xp: number;
   completedExercises: string[];
 }
 
@@ -42,7 +41,7 @@ export const getUserProgress = async (userId: string): Promise<UserProgress | nu
   try {
     const { data, error } = await supabase
       .from('users')
-      .select('xp, completedExercises')
+      .select('completedExercises')
       .eq('id', userId)
       .single();
     
@@ -52,7 +51,6 @@ export const getUserProgress = async (userId: string): Promise<UserProgress | nu
     }
     
     const progressData = {
-      xp: data.xp || 0,
       completedExercises: data.completedExercises || []
     };
     
@@ -76,15 +74,13 @@ export const getUserProgress = async (userId: string): Promise<UserProgress | nu
 };
 
 /**
- * Update a user's XP and completed exercises
+ * Update completed exercises
  * @param userId User ID
- * @param xp New XP value
  * @param completedExercises New array of completed exercise IDs
  * @returns Success status
  */
 export const updateUserProgress = async (
   userId: string, 
-  xp: number, 
   completedExercises: string[]
 ): Promise<boolean> => {
   if (!userId) return false;
@@ -93,7 +89,6 @@ export const updateUserProgress = async (
     const { error } = await supabase
       .from('users')
       .update({
-        xp,
         completedExercises
       })
       .eq('id', userId);
@@ -111,16 +106,14 @@ export const updateUserProgress = async (
 };
 
 /**
- * Mark an exercise as completed and award XP to the user
+ * Mark an exercise as completed
  * @param userId User ID
  * @param exerciseId Exercise ID to mark as completed
- * @param xpToAdd Amount of XP to add
  * @returns Success status and updated user progress
  */
 export const completeExercise = async (
   userId: string,
   exerciseId: string,
-  xpToAdd: number
 ): Promise<{ success: boolean; progress: UserProgress | null }> => {
   if (!userId || !exerciseId) {
     return { success: false, progress: null };
@@ -139,16 +132,14 @@ export const completeExercise = async (
       return { success: true, progress: currentProgress };
     }
     
-    // Add XP and mark exercise as completed
+    // Mark exercise as completed
     const updatedProgress: UserProgress = {
-      xp: currentProgress.xp + xpToAdd,
       completedExercises: [...currentProgress.completedExercises, exerciseId]
     };
     
     // Update in database
     const success = await updateUserProgress(
       userId,
-      updatedProgress.xp,
       updatedProgress.completedExercises
     );
     
@@ -176,16 +167,14 @@ export const completeExercise = async (
 };
 
 /**
- * Remove an exercise from completed list and reduce XP
+ * Remove an exercise from completed list
  * @param userId User ID
  * @param exerciseId Exercise ID to unmark
- * @param difficulty Exercise difficulty to calculate XP reduction
  * @returns Success status and updated user progress
  */
 export const uncompleteExercise = async (
   userId: string,
   exerciseId: string,
-  difficulty: string = 'easy'
 ): Promise<{ success: boolean; progress: UserProgress | null }> => {
   if (!userId || !exerciseId) {
     return { success: false, progress: null };
@@ -202,36 +191,15 @@ export const uncompleteExercise = async (
     // If the exercise wasn't in the completed list, no action needed
     if (!currentProgress.completedExercises.includes(exerciseId)) {
       return { success: true, progress: currentProgress };
-    }
-    
-    // Calculate XP to subtract based on difficulty
-    let xpToSubtract: number;
-    switch (difficulty.toLowerCase()) {
-      case 'medium':
-        xpToSubtract = 20;
-        break;
-      case 'hard':
-        xpToSubtract = 30;
-        break;
-      case 'easy':
-      default:
-        xpToSubtract = 10;
-        break;
-    }
-    
-    // Ensure XP doesn't go below 0
-    const newXp = Math.max(0, currentProgress.xp - xpToSubtract);
-    
-    // Remove exercise from completed list and reduce XP
+    } 
+    // Remove exercise from completed list
     const updatedProgress: UserProgress = {
-      xp: newXp,
       completedExercises: currentProgress.completedExercises.filter(id => id !== exerciseId)
     };
     
     // Update in database
     const success = await updateUserProgress(
       userId,
-      updatedProgress.xp,
       updatedProgress.completedExercises
     );
     
