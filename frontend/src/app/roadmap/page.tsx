@@ -39,14 +39,12 @@ const RoadmapsPage = () => {
                 const roadmapDetails = await Promise.all(
                     roadmapsData.map((roadmap) => roadmapService.getRoadmap(roadmap.id))
                 );
-                console.log("Roadmap details loaded:", roadmapDetails);
 
                 const progressPerMap = await Promise.all(
                     roadmapDetails.map(async (fullRoadmap, index) => {
                         const slug = roadmapsData[index].slug;
-                        console.log(fullRoadmap);
                         try {
-                            if (fullRoadmap) {
+                            if (fullRoadmap.nodes && userId) {
                                 const { percentage } = await userService.getRoadmapProgress(userId, fullRoadmap.nodes);
                                 // Check if percentage is a number
                                 return [slug, percentage];
