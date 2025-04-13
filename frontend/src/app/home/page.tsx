@@ -1,5 +1,3 @@
-"use client";
-
 import Hero from "@/components/client/Hero";
 export default function HomePage() {
 

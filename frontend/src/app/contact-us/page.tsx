@@ -1,6 +1,4 @@
-// pages/contact.tsx
 import React from 'react'
-import { Footer } from '@/components/client/Footer'
 
 const ContactUs = () => {
   return (

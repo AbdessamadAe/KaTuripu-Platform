@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { motion } from 'framer-motion';
 import supabase from '@/lib/supabase';
 import * as userService from '@/lib/userService';
 import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Dashboard = () => {
   // State variables
@@ -23,26 +24,39 @@ const Dashboard = () => {
     }
   });
 
-  // Get user session
-  useEffect(() => {
-    const fetchUserSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session?.user) {
-        setUserId(session.user.id);
-        if (session.user.user_metadata?.full_name) {
-          setUsername(session.user.user_metadata.full_name);
-        } else {
-          setUsername(session.user.email?.split('@')[0] || 'Student');
-        }
-      } else {
-        // Redirect to login if no session
-        window.location.href = '/login';
-      }
-    };
+  // // Get user session
+  const { user: userData } = useAuth();
 
-    fetchUserSession();
-  }, []);
+  useEffect(() => {
+    if (userData) {
+      setUserId(userData.user.id);
+      setUsername(userData.user.user_metadata?.full_name || userData.email?.split('@')[0] || 'Student');
+    } else {
+      // Redirect to login if no session
+      window.location.href = '/login';
+    }
+  }
+  , [userData]);
+
+  // useEffect(() => {
+  //   const fetchUserSession = async () => {
+  //     const { data: { session } } = await supabase.auth.getSession();
+      
+  //     if (session?.user) {
+  //       setUserId(session.user.id);
+  //       if (session.user.user_metadata?.full_name) {
+  //         setUsername(session.user.user_metadata.full_name);
+  //       } else {
+  //         setUsername(session.user.email?.split('@')[0] || 'Student');
+  //       }
+  //     } else {
+  //       // Redirect to login if no session
+  //       window.location.href = '/login';
+  //     }
+  //   };
+
+  //   fetchUserSession();
+  // }, []);
 
   // Fetch user progress data when userId is available
   useEffect(() => {
