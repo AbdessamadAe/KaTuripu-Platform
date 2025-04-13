@@ -7,8 +7,10 @@ import * as userService from '@/lib/userService';
 import * as roadmapService from '@/lib/roadmapService';
 import { motion } from 'framer-motion';
 import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 const RoadmapsPage = () => {
+    const router = useRouter();
     const [roadmaps, setRoadmaps] = useState<any[]>([]);
     const [progressMap, setProgressMap] = useState<{ [slug: string]: number }>({});
     const [loading, setLoading] = useState(true);
@@ -219,7 +221,9 @@ const RoadmapsPage = () => {
                     >
                         {filteredRoadmaps.map((roadmap) => (
                             <motion.div key={roadmap.id} variants={itemVariants} className="w-full">
-                                <Link href={`/roadmap/${roadmap.slug}`} className="w-full block">
+                                <Link href={`/roadmap/${roadmap.slug}`}
+                                    onMouseEnter={() => router.prefetch(`/roadmap/${roadmap.slug}`)}
+                                    className="w-full block">
                                     <RoadmapCard
                                         roadmap={roadmap}
                                         progress={progressMap[roadmap.slug] || 0}
