@@ -11,6 +11,7 @@ import {
   useNodesState,
   useEdgesState,
 } from "@xyflow/react";
+import {NodeLabel} from "./NodeLabel";
 import "@xyflow/react/dist/style.css";
 import { motion } from "framer-motion";
 import ExerciseSidebar from "./sidebar";
@@ -24,30 +25,22 @@ interface RoadmapProps {
 }
 
 const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
-  // Use Auth Context instead of manual fetching
   const { user, loading, isAuthenticated } = useAuth();
-  const [userId, setUserId] = useState<string | null>(null);
   const previousProgressRef = useRef<number>(0);
   const [flowReady, setFlowReady] = useState(false);
-
-  // Set userId when auth state changes
-  useEffect(() => {
-    if (isAuthenticated && user?.id) {
-      setUserId(user?.id);
-      // Fetch completed exercises from database
-      fetchUserProgress(user?.id);
-    }
-  }, [isAuthenticated, user]);
-
-  // Replace standard state with ReactFlow hooks
-  const [nodes, setNodes] = useState<RoadmapNodeType[]>([]);
-  const [flowNodes, setFlowNodes, onNodesChange] = useNodesState<any>([]);
-  const [flowEdges, setFlowEdges, onEdgesChange] = useEdgesState<any>([]);
+  const [flowNodes, setFlowNodes, onNodesChange] = useNodesState<Node<any>[]>([]);
+  const [flowEdges, setFlowEdges, onEdgesChange] = useEdgesState<Edge<any>[]>([]);
   const [selectedNode, setSelectedNode] = useState<RoadmapNodeType | null>(null);
   const [userProgress, setUserProgress] = useState<string[]>([]);
   const [currentProgress, setCurrentProgress] = useState<number>(0);
   const [rfInstance, setRfInstance] = useState<any>(null);
-  const [hasRenderedEdges, setHasRenderedEdges] = useState<boolean>(false);
+  
+  // Update to use user.id directly
+  useEffect(() => {
+    if (isAuthenticated && user?.id) {
+      fetchUserProgress(user.id);
+    }
+  }, [isAuthenticated, user]);
 
   // Fetch user progress from the database using our service
   const fetchUserProgress = async (userId: string) => {
@@ -67,163 +60,30 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
     return [];
   };
 
-  // Load roadmap data into state with styling that matches admin editor's approach
-  useEffect(() => {
-    if (!roadmapData || !roadmapData.nodes || !roadmapData.edges) {
-      console.error("❌ Invalid roadmap data structure:", roadmapData);
-      return;
-    }
-
-
-    try {
-      // Store raw nodes for reference
-      setNodes(roadmapData.nodes);
-
-      // Always generate fresh node elements for ReactFlow
-      // Transform nodes for ReactFlow 
-      const flowNodes = roadmapData.nodes.map((node) => {
-        // Calculate progress if we have user data
-        const total = node.exercises.length;
-        const completed = node.exercises.filter((ex) =>
-          userProgress.includes(ex.id)
-        ).length;
-        const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
-
-
-        return {
-          id: node.id,
-          // Use position directly from the node data
-          position: node.position,
-          data: {
-            label: (
-              <div>
-                <div className="font-semibold">{node.label}</div>
-                <div style={{ fontSize: "0.75rem", marginTop: "4px" }}>
-                  <div
-                    style={{
-                      height: "6px",
-                      backgroundColor: "#ccc",
-                      borderRadius: "3px",
-                      overflow: "hidden",
-                      marginTop: "2px",
-                    }}
-                  >
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${progress}%` }}
-                      transition={{ duration: 0.8, ease: "easeInOut" }}
-                      style={{
-                        height: "100%",
-                        backgroundColor: progress === 100 ? "#4ade80" : "#3b82f6",
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            ),
-            description: node.description,
-            exercises: node.exercises.map(ex => ({
-              ...ex,
-              hints: ex.hints || [],
-              completed: userProgress.includes(ex.id)
-            }))
-          },
-          style: {
-            background: progress === 100 ? "#22c55e" : "#192C88",
-            color: "white",
-            padding: "10px",
-            borderRadius: "5px",
-            width: 180,
-            cursor: "pointer"
-          }
-        };
-      });
-
-      // Process edges
-      const flowEdges = roadmapData.edges.map(edge => ({
-        id: edge.id,
-        source: edge.source,
-        target: edge.target,
-        animated: true
+  const generateFlowNodes = useCallback(() => {
+    const progressSet = new Set(userProgress); // Use Set for O(1) lookups
+    
+    return roadmapData.nodes.map((node) => {
+      const exercises = node.exercises.map(ex => ({
+        ...ex,
+        hints: ex.hints || [],
+        completed: progressSet.has(ex.id)
       }));
-
-      // Set nodes and edges
-      setFlowNodes(flowNodes);
-      setFlowEdges(flowEdges);
-
-      // Delay setting flow ready to ensure proper rendering
-      setTimeout(() => {
-        setFlowReady(true);
-      }, 100);
-    } catch (error) {
-      console.error("❌ Error processing roadmap data:", error);
-    }
-  }, [roadmapData, userProgress, setFlowNodes, setFlowEdges]);
-
-  // Apply user progress to nodes when user data or nodes change
-  useEffect(() => {
-    if (nodes.length === 0 || !userId) return;
-
-
-    // Always update nodes when this effect runs to ensure latest progress is reflected
-    const updatedNodes = nodes.map((node) => {
-      return {
-        ...node,
-        exercises: node.exercises.map((exercise) => ({
-          ...exercise,
-          completed: userProgress.includes(exercise.id),
-        })),
-      };
-    });
-
-    setNodes(updatedNodes);
-
-    // Update the flow nodes with new completion status
-    const updatedFlowNodes = updatedNodes.map(nodeData => {
-      // Calculate progress for this node
-      const total = nodeData.exercises.length;
-      const completed = nodeData.exercises.filter(ex => userProgress.includes(ex.id)).length;
+      
+      const total = exercises.length;
+      const completed = exercises.filter(ex => ex.completed).length;
       const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
 
-
-      // Find the corresponding flow node to preserve its position
-      const existingFlowNode = flowNodes.find(n => n.id === nodeData.id);
-      const position = existingFlowNode ? existingFlowNode.position : nodeData.position;
-
-      // Create fresh React elements
       return {
-        id: nodeData.id,
-        position,
+        id: node.id,
+        position: node.position,
         data: {
-          label: (
-            <div>
-              <div className="font-semibold">{nodeData.label}</div>
-              <div style={{ fontSize: "0.75rem", marginTop: "4px" }}>
-                <div
-                  style={{
-                    height: "6px",
-                    backgroundColor: "#ccc",
-                    borderRadius: "3px",
-                    overflow: "hidden",
-                    marginTop: "2px",
-                  }}
-                >
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${progress}%` }}
-                    transition={{ duration: 0.8, ease: "easeInOut" }}
-                    style={{
-                      height: "100%",
-                      backgroundColor: progress === 100 ? "#4ade80" : "#3b82f6",
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          ),
-          description: nodeData.description,
-          exercises: nodeData.exercises
+          label: <NodeLabel label={node.label} progress={progress} />,
+          rawLabel: node.label,
+          description: node.description,
+          exercises
         },
+        
         style: {
           background: progress === 100 ? "#22c55e" : "#192C88",
           color: "white",
@@ -234,25 +94,41 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
         }
       };
     });
+  }, [roadmapData.nodes, userProgress]);
 
-    // Update the flow nodes state
-    setFlowNodes(updatedFlowNodes);
+  // Initialize flow data
+  useEffect(() => {
+    // Only update when roadmap data changes or user progress updates
+    setFlowNodes(generateFlowNodes());
+    
+    const flowEdges = roadmapData.edges.map(edge => ({
+      id: edge.id,
+      source: edge.source,
+      target: edge.target,
+      animated: true
+    }));
+    
+    setFlowEdges(flowEdges);
+    
+    // Delay setting flow ready to ensure proper rendering
+    setTimeout(() => {
+      setFlowReady(true);
+    }, 100);
+  }, [generateFlowNodes, roadmapData.edges]);
 
-    // Calculate overall progress for roadmap
-    if (userId && updatedNodes.length > 0) {
-      calculateOverallProgress(updatedNodes);
-    }
-  }, [userProgress, nodes.length, userId, roadmapData.id]);
 
   // Calculate the overall progress for the roadmap
-  const calculateOverallProgress = async (currentNodes: RoadmapNodeType[]) => {
-    if (!userId) return;
+  const calculateOverallProgress = useCallback(async () => {
+    if (!user?.id) return;
 
-    // Get progress from the service
-    const { total, completed, percentage } = await userService.getRoadmapProgress(
-      userId,
-      currentNodes
+    // Extract exercises from flow nodes data
+    const exercises = flowNodes.flatMap(node => 
+      node.data.exercises || []
     );
+    
+    const total = exercises.length;
+    const completed = exercises.filter(ex => ex.completed).length;
+    const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
 
     // Store the current progress
     setCurrentProgress(percentage);
@@ -272,95 +148,110 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
 
     // Update the reference
     previousProgressRef.current = percentage;
-  };
+  }, [user?.id, flowNodes]);
 
-  const handleNodeClick = (_: any, node: any) => {
-    const clickedNode = nodes.find((n) => n.id === node.id);
-    if (clickedNode) setSelectedNode(clickedNode);
-  };
+  // Call calculateOverallProgress when user progress changes
+  useEffect(() => {
+    calculateOverallProgress();
+  }, [calculateOverallProgress, userProgress]);
 
-  // Handle problem toggle with improved logging
-  const handleProblemToggle = async (problemId: string, completed: boolean) => {
-    if (!selectedNode || !userId) return;
-
-
-    // Find the exercise to get its actual difficulty
-    const exercise = selectedNode.exercises.find(ex => ex.id === problemId);
-    if (!exercise) {
-      console.error(`❌ Could not find exercise ${problemId} in selected node`);
-      return;
-    }
-
-    // Update the node display immediately for better UX
-    const updatedNodes = nodes.map((node) => {
-      if (node.id === selectedNode.id) {
-        return {
-          ...node,
-          exercises: node.exercises.map((ex) =>
-            ex.id === problemId ? { ...ex, completed } : ex
-          ),
-        };
-      }
-      return node;
-    });
-
-    setNodes(updatedNodes);
-
-    const updatedSelectedNode = updatedNodes.find(
-      (node) => node.id === selectedNode.id
-    );
-    if (updatedSelectedNode) {
-      setSelectedNode(updatedSelectedNode);
-    }
-
-    // Use the userService to mark exercise as completed/uncompleted
-    try {
-      if (completed) {
-
-        // Mark exercise as completed
-        const { success, progress } = await userService.completeExercise(
-          userId,
-          problemId
-        );
-
-        if (success && progress) {
-          setUserProgress(progress.completedExercises);
-
-          // Update the roadmap-specific cache
-          const cacheKey = `user-progress-${userId}-${roadmapData.id}`;
-          sessionStorage.setItem(
-            cacheKey,
-            JSON.stringify({
-              ...progress,
-              timestamp: Date.now()
-            })
-          );
-        }
+  const handleNodeClick = useCallback((_: any, node: any) => {
+    const clickedNode = roadmapData.nodes.find((n) => n.id === node.id);
+    if (clickedNode) {
+      // Find the matching flow node to get current exercise completion status
+      const flowNode = flowNodes.find(fn => fn.id === node.id);
+      
+      if (flowNode && flowNode.data.exercises) {
+        // Create a node with updated exercise completion status from flow node
+        setSelectedNode({
+          ...clickedNode,
+          exercises: flowNode.data.exercises
+        });
       } else {
-        // Mark exercise as uncompleted
-        const { success, progress } = await userService.uncompleteExercise(
-          userId,
-          problemId          
+        setSelectedNode(clickedNode);
+      }
+    }
+  }, [roadmapData.nodes, flowNodes]);
+
+  // Simplified problem toggle function
+  const handleProblemToggle = useCallback(async (problemId: string, completed: boolean) => {
+    if (!selectedNode || !user?.id) return;
+  
+    // Optimistically update the UI
+    updateFlowNodesWithExerciseStatus(selectedNode.id, problemId, completed);
+    updateSelectedNodeExerciseStatus(problemId, completed);
+  
+    try {
+      const result = completed
+        ? await userService.completeExercise(user.id, problemId)
+        : await userService.uncompleteExercise(user.id, problemId);
+  
+      if (result.success && result.progress) {
+        setUserProgress(result.progress.completedExercises);
+        const cacheKey = `user-progress-${user.id}-${roadmapData.id}`;
+        sessionStorage.setItem(
+          cacheKey,
+          JSON.stringify({ ...result.progress, timestamp: Date.now() })
         );
-
-        if (success && progress) {
-          setUserProgress(progress.completedExercises);
-
-          // Update the roadmap-specific cache
-          const cacheKey = `user-progress-${userId}-${roadmapData.id}`;
-          sessionStorage.setItem(
-            cacheKey,
-            JSON.stringify({
-              ...progress,
-              timestamp: Date.now()
-            })
-          );
-        }
       }
     } catch (error) {
-      console.error("Erreur lors de la mise à jour du statut d'achèvement de l'exercice:", error);
+      console.error("Error updating exercise completion status:", error);
+      // Revert if server fails
+      if (user?.id) {
+        fetchUserProgress(user.id);
+      }
     }
+  }, [selectedNode, user?.id, roadmapData.id]); // Use optional chaining in dependency array
+  
+  // 🧩 Helper to update flowNodes optimistically
+  const updateFlowNodesWithExerciseStatus = (nodeId: string, problemId: string, completed: boolean) => {
+    setFlowNodes(currentNodes =>
+      currentNodes.map(node => {
+        if (node.id !== nodeId) return node;
+  
+        const updatedExercises = node.data.exercises.map(ex =>
+          ex.id === problemId ? { ...ex, completed } : ex
+        );
+  
+        const progress = calculateExerciseProgress(updatedExercises);
+  
+        return {
+          ...node,
+          data: {
+            ...node.data,
+            label: <NodeLabel label={node.data.rawLabel} progress={progress} />,
+            exercises: updatedExercises
+          },
+          style: {
+            ...node.style,
+            background: progress === 100 ? "#22c55e" : "#192C88",
+          }
+        };
+      })
+    );
   };
+  
+  // 🧩 Helper to update selectedNode state
+  const updateSelectedNodeExerciseStatus = (problemId: string, completed: boolean) => {
+    setSelectedNode(prev =>
+      prev
+        ? {
+            ...prev,
+            exercises: prev.exercises.map(ex =>
+              ex.id === problemId ? { ...ex, completed } : ex
+            )
+          }
+        : null
+    );
+  };
+  
+  // 🧩 Helper to calculate progress %
+  const calculateExerciseProgress = (exercises: Exercise[]) => {
+    const total = exercises.length;
+    const completed = exercises.filter(ex => ex.completed).length;
+    return total > 0 ? Math.round((completed / total) * 100) : 0;
+  };
+  
 
   // Center the view on initial load with a reasonable zoom
   const onInit = useCallback((instance: any) => {
@@ -391,57 +282,43 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
         display: "flex",
       }}
     >
-      {/* Progress indicator */}
-      {currentProgress > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-4 py-2 rounded-full shadow-lg z-20"
-        >
-          <div className="flex items-center space-x-2">
-            <span className="text-sm">Progression:</span>
-            <span className="font-bold text-lg">{currentProgress}%</span>
-          </div>
-        </motion.div>
-      )}
-
       {/* Roadmap Graph */}
       {flowNodes.length > 0 && flowReady && (
-      <div style={{
-        flex: 3,
-        height: "100%",
-        width: "100%",
-        position: "relative"
-      }}>
-        <ReactFlowProvider>
-          <ReactFlow
-            nodes={flowNodes}
-            edges={flowEdges}
-            fitView={true} // Set fitView to true for initial load
-            onNodeClick={handleNodeClick}
-            nodesDraggable={false}
-            onInit={onInit}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            snapToGrid={true}
-            snapGrid={[15, 15]}
-            proOptions={{ hideAttribution: true }}
-            fitViewOptions={{ padding: 0.2, duration: 800 }} // Add duration for smoother zoom
-            defaultViewport={{ x: 0, y: 0, zoom: 1 }}
-            elementsSelectable={false}
-            panOnScroll
-            preventScrolling={true}
-            // Crucial for preserving node positions:
-            autoPanOnNodeDrag={false}
-            minZoom={0.1}
-            maxZoom={2}
-          >
-            <Background />
-            <Controls />
-          </ReactFlow>
-        </ReactFlowProvider>
-      </div>)}
-      
+        <div style={{
+          flex: 3,
+          height: "100%",
+          width: "100%",
+          position: "relative"
+        }}>
+          <ReactFlowProvider>
+            <ReactFlow
+              nodes={flowNodes}
+              edges={flowEdges}
+              fitView={true} // Set fitView to true for initial load
+              onNodeClick={handleNodeClick}
+              nodesDraggable={false}
+              onInit={onInit}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              snapToGrid={true}
+              snapGrid={[15, 15]}
+              proOptions={{ hideAttribution: true }}
+              fitViewOptions={{ padding: 0.2, duration: 800 }} // Add duration for smoother zoom
+              defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+              elementsSelectable={false}
+              panOnScroll
+              preventScrolling={true}
+              // Crucial for preserving node positions:
+              autoPanOnNodeDrag={false}
+              minZoom={0.1}
+              maxZoom={2}
+            >
+              <Background />
+              <Controls />
+            </ReactFlow>
+          </ReactFlowProvider>
+        </div>)}
+
       {/* Show a loading state when flowReady is false */}
       {flowNodes.length > 0 && !flowReady && (
         <div className="flex-1 flex items-center justify-center">
@@ -451,13 +328,6 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
 
       {/* Sidebar Popup */}
       {selectedNode && (
-        <motion.div
-          initial={{ x: 300, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: 300, opacity: 0 }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="sidebar-container"
-        >
           <ExerciseSidebar
             title={selectedNode.label}
             prerequisites={[{ label: selectedNode.description, link: "#" }]}
@@ -465,7 +335,6 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
             onClose={() => setSelectedNode(null)}
             onProblemToggle={handleProblemToggle}
           />
-        </motion.div>
       )}
     </div>
   );
