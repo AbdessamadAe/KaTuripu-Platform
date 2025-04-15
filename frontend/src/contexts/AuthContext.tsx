@@ -98,35 +98,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Set up the auth state listener
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
             async (event, session) => {
-                if (!mounted) return;
-
-                // Set loading to true when auth state changes
-                setLoading(true);
-
-                try {
-                    if (session?.user) {
-                        const { data: userData } = await supabase.auth.getUser();
-                        if (!mounted) return;
-
-                        setUser(userData?.user);
-                        setIsAuthenticated(true);
-                    } else {
-                        setUser(null);
-                        setIsAuthenticated(false);
-                    }
-                } catch (error) {
-                    console.error("Error in auth state change:", error);
-                    if (!mounted) return;
-
-                    setUser(null);
-                    setIsAuthenticated(false);
-                } finally {
-                    if (mounted) {
-                        setLoading(false);
-                    }
-                }
+              setLoading(true);
+          
+              if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+                setUser(session?.user ?? null);
+                setIsAuthenticated(true);
+          
+                await supabase.from("users").upsert({
+                  id: session?.user?.id,
+                  email: session?.user?.email,
+                  name: session?.user?.user_metadata?.full_name,
+                });
+          
+              } else if (event === 'SIGNED_OUT') {
+                setUser(null);
+                setIsAuthenticated(false);
+              }
+          
+              setLoading(false);
             }
-        );
+          );
+          
 
         // Cleanup subscription on unmount
         return () => {
