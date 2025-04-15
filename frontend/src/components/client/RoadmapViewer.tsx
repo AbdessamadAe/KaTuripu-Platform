@@ -25,7 +25,7 @@ interface RoadmapProps {
   roadmapData: RoadmapData;
 }
  
-const nodeClassName = (node) => node.type;
+const nodeClassName = (node:any) => node.type;
 
 const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
   const { user } = useAuth();
@@ -52,7 +52,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
   
   // Transform the roadmap nodes to include progress
   const generateNodes = useCallback(() => {
-    return roadmapData.nodes.map(node => {
+    return roadmapData.nodes.map((node:any) => {
       const exercisesWithStatus = getExercisesWithCompletionStatus(node.exercises);
       const progress = calculateNodeProgress(node.exercises);
       
@@ -70,9 +70,9 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
     });
   }, [roadmapData.nodes, getExercisesWithCompletionStatus, calculateNodeProgress]);
   
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<any>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState(roadmapData.edges);
-  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const [selectedNode, setSelectedNode] = useState<any>(null);
   
   // Update nodes when completed exercises change
   useEffect(() => {
@@ -103,7 +103,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
     previousProgressRef.current = percentage;
   }, [completedExercises, roadmapData.nodes, isExerciseCompleted]);
   
-  const onNodeClick = useCallback((event, node) => {
+  const onNodeClick = useCallback((event: any, node: any) => {
     setSelectedNode(node);
   }, []);
   
@@ -120,7 +120,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
       
       // Update selected node with new completion status
       if (selectedNode) {
-        const updatedExercises = selectedNode.data.exercises.map(ex => 
+        const updatedExercises = selectedNode.data.exercises.map((ex:any) => 
           ex.id === exerciseId ? { ...ex, completed } : ex
         );
         
@@ -152,9 +152,9 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
             attributionPosition="top-right"
             style={{ backgroundColor: "#F7F9FB" }}
           >
-            <MiniMap zoomable pannable nodeClassName={nodeClassName} />
+            <MiniMap zoomable pannable nodeClassName={nodeClassName as any} />
             <Controls />
-            <Background variant="none" />
+            <Background />
           </ReactFlow>
         </div>
         
