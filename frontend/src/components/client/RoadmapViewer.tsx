@@ -65,7 +65,15 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
           description: node.description,
           exercises: exercisesWithStatus
         },
-        type: 'default'
+        type: 'default',
+        style: {
+          background: progress === 100 ? "#22c55e" : "#192C88",
+          color: "white",
+          padding: "10px",
+          borderRadius: "5px",
+          width: 180,
+          cursor: "pointer"
+        }
       };
     });
   }, [roadmapData.nodes, getExercisesWithCompletionStatus, calculateNodeProgress]);
@@ -154,7 +162,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
           >
             <MiniMap zoomable pannable nodeClassName={nodeClassName as any} />
             <Controls />
-            <Background />
+            <Background variant="" />
           </ReactFlow>
         </div>
         

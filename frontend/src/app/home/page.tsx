@@ -2,7 +2,7 @@ import Hero from "@/components/client/Hero";
 export default function HomePage() {
 
     return (
-        <div className="w-full">
+        <div>
             <Hero/>
         </div>
     );

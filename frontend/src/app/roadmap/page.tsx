@@ -14,20 +14,9 @@ const RoadmapsPage = () => {
     const [roadmaps, setRoadmaps] = useState<any[]>([]);
     const [progressMap, setProgressMap] = useState<{ [slug: string]: number }>({});
     const [loading, setLoading] = useState(true);
-    const [userId, setUserId] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [category, setCategory] = useState("all");
-
-    const { user: userData } = useAuth();
-
-    useEffect(() => {
-        // Get current user session
-        const currentUserId = userData?.id || null;
-        if (currentUserId) {
-            setUserId(currentUserId);
-        }
-    }
-        , [userData]);
+    const { user } = useAuth();
 
     useEffect(() => {
         async function loadData() {
@@ -44,8 +33,8 @@ const RoadmapsPage = () => {
                     roadmapDetails.map(async (fullRoadmap, index) => {
                         const slug = roadmapsData[index].slug;
                         try {
-                            if (fullRoadmap.nodes && userId) {
-                                const { percentage } = await userService.getRoadmapProgress(userId, fullRoadmap.nodes);
+                            if (fullRoadmap.nodes && user?.id) {
+                                const { percentage } = await userService.getRoadmapProgress(user?.id, fullRoadmap.nodes);
                                 // Check if percentage is a number
                                 return [slug, percentage];
                             }
@@ -65,20 +54,7 @@ const RoadmapsPage = () => {
         }
 
         loadData();
-    }, [userId]);
-
-    // Helper function to extract all categories from a roadmap
-    const getCategoriesFromRoadmap = (roadmap: any): string[] => {
-        if (Array.isArray(roadmap.category)) {
-            return roadmap.category;
-        }
-
-        if (typeof roadmap.category === 'string') {
-            return [roadmap.category];
-        }
-
-        return ['uncategorized'];
-    };
+    }, [user]);
 
     // Filter roadmaps based on search and category
     const filteredRoadmaps = roadmaps.filter(roadmap => {
@@ -100,12 +76,7 @@ const RoadmapsPage = () => {
 
     // Get unique categories from all roadmaps
     const allCategories = new Set<string>(['all']);
-    roadmaps.forEach(roadmap => {
-        getCategoriesFromRoadmap(roadmap).forEach(cat => {
-            if (cat) allCategories.add(cat);
-        });
-    });
-    const categories = Array.from(allCategories);
+    const categories = ["SM", "PC"]
 
     // Animation variants
     const containerVariants = {
@@ -152,7 +123,7 @@ const RoadmapsPage = () => {
                         <p className="text-lg mb-8 text-gray-600 max-w-2xl mx-auto font-amiri">
                             Explorez nos parcours structurés pour maîtriser de nouvelles compétences
                         </p>
-                        {!userId && (
+                        {!user?.id && (
                             <Link href="/login" className="bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 inline-block transition-colors">
                                 Commencer
                             </Link>
