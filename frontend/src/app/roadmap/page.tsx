@@ -66,7 +66,6 @@ const RoadmapsPage = () => {
                 setLoading(false);
             }
         }
-
         loadData();
     }, [user]);
 

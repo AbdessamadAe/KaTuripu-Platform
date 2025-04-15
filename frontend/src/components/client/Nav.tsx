@@ -3,7 +3,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, Transition } from 
 import { Bars3Icon, XMarkIcon, UserIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline'
 import { SignInButton } from '@/components/client/sing-in-button'
 import { useAuth } from '@/contexts/AuthContext'
-import { Fragment } from 'react'
+import { Fragment, useMemo } from 'react'
 import supabase from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -24,8 +24,17 @@ export default function Nav() {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    window.location.href = '/';
   };
+
+  // Memoize user info to prevent unnecessary re-renders
+  const userProfile = useMemo(() => {
+    if (!user) return null;
+    
+    return {
+      avatar: user?.user_metadata?.avatar_url || '/default-avatar.png',
+      name: user?.user_metadata?.name || 'User'
+    };
+  }, [user]);
 
   return (
     <Disclosure as="nav" className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
@@ -75,11 +84,11 @@ export default function Nav() {
               <div className="flex items-center space-x-4">
                 <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse"></div>
               </div>
-            ) : isAuthenticated ? (
+            ) : isAuthenticated && userProfile ? (
               <Menu as="div" className="relative">
                 <Menu.Button className="flex items-center space-x-4 hover:opacity-80 transition-opacity">
                   <img
-                    src={user?.user_metadata?.avatar_url || '/default-avatar.png'}
+                    src={userProfile.avatar}
                     alt="User Avatar"
                     className="h-8 w-8 rounded-full object-cover"
                   />
