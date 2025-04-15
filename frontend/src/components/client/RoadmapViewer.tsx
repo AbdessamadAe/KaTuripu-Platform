@@ -162,7 +162,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
           >
             <MiniMap zoomable pannable nodeClassName={nodeClassName as any} />
             <Controls />
-            <Background variant="" />
+            <Background variant={undefined} />
           </ReactFlow>
         </div>
         

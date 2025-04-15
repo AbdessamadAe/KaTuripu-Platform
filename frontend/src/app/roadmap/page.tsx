@@ -9,6 +9,20 @@ import { motion } from 'framer-motion';
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 
+
+// Helper function to extract all categories from a roadmap
+const getCategoriesFromRoadmap = (roadmap: any): string[] => {
+    if (Array.isArray(roadmap.category)) {
+        return roadmap.category;
+    }
+
+    if (typeof roadmap.category === 'string') {
+        return [roadmap.category];
+    }
+
+    return ['uncategorized'];
+};
+
 const RoadmapsPage = () => {
     const router = useRouter();
     const [roadmaps, setRoadmaps] = useState<any[]>([]);
@@ -73,6 +87,7 @@ const RoadmapsPage = () => {
 
         return matchesSearch && matchesCategory;
     });
+    
 
     // Get unique categories from all roadmaps
     const allCategories = new Set<string>(['all']);
