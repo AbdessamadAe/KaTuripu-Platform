@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import MathJaxProvider from "@/components/MathJaxProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ProgressProvider } from "@/contexts/ProgressContext";
 import Nav from "@/components/client/Nav";
 import ToastProvider from "@/components/client/ToastProvider";
 import Footer from "@/components/client/Footer";
@@ -23,10 +24,12 @@ export default function RootLayout({
       <body className={`antialiased min-h-screen w-full overflow-x-hidden`}>
         <MathJaxProvider>
           <AuthProvider>
-            <Nav />
-            {children}
-            <Footer />
-            <ToastProvider />
+            <ProgressProvider>
+              <Nav />
+              {children}
+              <Footer />
+              <ToastProvider />
+            </ProgressProvider>
           </AuthProvider>
         </MathJaxProvider>
       </body>

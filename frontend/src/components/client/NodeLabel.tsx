@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
+import {memo} from "react";
 import { motion } from "framer-motion";
 
-export const NodeLabel = React.memo(({ label, progress }: { label: string; progress: number }) => {
+export const NodeLabel = memo(({ label, progress }: { label: string; progress: number }) => {
   return (
     <div>
       <div className="font-semibold">{label}</div>
