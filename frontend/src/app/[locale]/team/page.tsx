@@ -1,5 +1,5 @@
 import React from 'react'
-import { Footer } from '../../components/client/Footer'
+import { Footer } from '../../../components/client/Footer'
 import { FaLinkedin, FaGithub, FaFacebook } from "react-icons/fa";
 
 interface TeamMember {

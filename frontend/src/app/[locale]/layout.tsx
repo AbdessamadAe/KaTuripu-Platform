@@ -1,6 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import {NextIntlClientProvider} from "next-intl";
+import { getMessages } from "next-intl/server";
 import MathJaxProvider from "@/components/MathJaxProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProgressProvider } from "@/contexts/ProgressContext";
@@ -11,17 +13,28 @@ import Footer from "@/components/client/Footer";
 export const metadata: Metadata = {
   title: "KaTuripu",
   description: "KaTuripu - Roadmaps",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
 };
 
-export default function RootLayout({
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
+
+export default async function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: { locale: string };
 }>) {
+  const locale = params.locale;
+  const messages = await getMessages(locale as any);
+  
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body className={`antialiased min-h-screen w-full overflow-x-hidden`}>
+        <NextIntlClientProvider messages={messages} locale={locale}>
         <MathJaxProvider>
           <AuthProvider>
             <ProgressProvider>
@@ -32,6 +45,7 @@ export default function RootLayout({
             </ProgressProvider>
           </AuthProvider>
         </MathJaxProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

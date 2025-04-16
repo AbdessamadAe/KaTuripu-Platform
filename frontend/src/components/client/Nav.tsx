@@ -1,11 +1,10 @@
 "use client";
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, Transition } from '@headlessui/react'
-import { Bars3Icon, XMarkIcon, UserIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, XMarkIcon, UserIcon, ArrowRightOnRectangleIcon, LanguageIcon } from '@heroicons/react/24/outline'
 import { SignInButton } from '@/components/client/sing-in-button'
 import { useAuth } from '@/contexts/AuthContext'
-import { Fragment, useMemo } from 'react'
-import supabase from '@/lib/supabase'
-import { useRouter } from 'next/navigation'
+import { Fragment, useMemo, useState } from 'react'
+import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 
 const navigation = [
@@ -19,11 +18,27 @@ function classNames(...classes: (string | undefined | false | null)[]) {
 }
 
 export default function Nav() {
-  const { user, loading, isAuthenticated } = useAuth();
+  const { user, loading, isAuthenticated, logout } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
+  const [currentLang, setCurrentLang] = useState('fr'); // Default language is French
+
+  const languages = [
+    { code: 'fr', name: 'Français' },
+    { code: 'en', name: 'English' },
+    { code: 'ar', name: 'العربية' }
+  ];
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    await logout();
+  };
+
+  const switchLanguage = (langCode: string) => {
+    setCurrentLang(langCode);
+    const segments = pathname.split('/');
+    segments[1] = langCode; // replace locale segment
+    const newPath = segments.join('/');
+    router.push(newPath);
   };
 
   // Memoize user info to prevent unnecessary re-renders
@@ -79,6 +94,42 @@ export default function Nav() {
             </div>
           </div>
           <div className="absolute inset-y-0 left-0 flex items-center pl-2 lg:static lg:inset-auto lg:ml-6 lg:pl-0">
+            {/* Language Switcher */}
+            <Menu as="div" className="relative mr-4">
+              <Menu.Button className="flex items-center space-x-1 rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-100 transition-colors duration-200">
+                <LanguageIcon className="h-5 w-5 mr-1" />
+                <span>{currentLang.toUpperCase()}</span>
+              </Menu.Button>
+              <Transition
+                as={Fragment}
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-75"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-95"
+              >
+                <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                  {languages.map((lang) => (
+                    <Menu.Item key={lang.code}>
+                      {({ active }) => (
+                        <button
+                          onClick={() => switchLanguage(lang.code)}
+                          className={classNames(
+                            active ? 'bg-gray-100' : '',
+                            currentLang === lang.code ? 'font-medium' : '',
+                            'flex w-full items-center px-4 py-2 text-sm text-gray-700 text-left'
+                          )}
+                        >
+                          {lang.name}
+                        </button>
+                      )}
+                    </Menu.Item>
+                  ))}
+                </Menu.Items>
+              </Transition>
+            </Menu>
+            
             {loading ? (
               // Show skeleton loader while auth state is loading
               <div className="flex items-center space-x-4">
