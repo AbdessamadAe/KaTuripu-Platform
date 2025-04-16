@@ -5,6 +5,7 @@ import { SignInButton } from '@/components/client/sing-in-button'
 import { useAuth } from '@/contexts/AuthContext'
 import { Fragment, useMemo, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
+import { useLocale } from 'next-intl';
 import Link from 'next/link'
 
 const navigation = [
@@ -21,7 +22,8 @@ export default function Nav() {
   const { user, loading, isAuthenticated, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-  const [currentLang, setCurrentLang] = useState('fr'); // Default language is French
+  const locale = useLocale();
+  const [currentLang, setCurrentLang] = useState(locale);
 
   const languages = [
     { code: 'fr', name: 'Français' },

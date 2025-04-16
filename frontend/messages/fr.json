@@ -1,4 +1,9 @@
 {
-    "HomePage": {
-        "title": "Page d'accueil"}
+    "hero": {
+        "tagline": "Préparez-vous aux admissions",
+        "highlight1": "de la bonne",
+        "highlight2": "façon",
+        "description": "Nos parcours gamifiés vous aident à acquérir les compétences nécessaires pour réussir vos examens et entrer dans les meilleures universités.",
+        "getStarted": "Commencer"
+    }
 }

@@ -1,16 +1,22 @@
-import { notFound } from "next/navigation";
-import { getRequestConfig } from "next-intl/server";
+import { getRequestConfig } from 'next-intl/server';
 
-export const locales = ["en", "fr", "ar"];
-export const defaultLocale = "en";
+import { headers } from 'next/headers';
 
-export default getRequestConfig(async ({ locale }) => {
-    if (!locale || !locales.includes(locale)) {
-        locale = defaultLocale;
-    }
-    
-    return {
-        locale,
-        messages: (await import(`./messages/${locale}.json`)).default,
-    }
+
+
+export const locales = ['en', 'fr', 'ar'];
+export const defaultLocale = 'en';
+
+
+export default getRequestConfig(async () => {
+  const h = headers();
+  const detected = h.get('x-next-intl-locale'); // Set by middleware
+  const locale = detected && locales.includes(detected) ? detected : defaultLocale;
+
+  console.log('Patched Detected locale:', locale);
+
+  return {
+    locale,
+    messages: (await import(`./messages/${locale}.json`)).default
+  };
 });

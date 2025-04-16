@@ -1,9 +1,11 @@
 import Hero from "@/components/client/Hero";
-export default function HomePage() {
+import { useLocale } from "next-intl";
 
+export default function HomePage() {
+    const locale = useLocale();
     return (
         <div>
-            <Hero/>
+            <Hero locale={locale}/>
         </div>
     );
 }

@@ -28,7 +28,7 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: { locale: string };
 }>) {
-  const locale = params.locale;
+  const {locale} = await params;
   const messages = await getMessages(locale as any);
   
   return (
@@ -39,7 +39,9 @@ export default async function RootLayout({
           <AuthProvider>
             <ProgressProvider>
               <Nav />
+              <div dir={locale == "ar" ? "rtl" : "ltr"} className={`${locale == "ar" ? 'font-amiri' : ''}`}>
               {children}
+              </div>
               <Footer />
               <ToastProvider />
             </ProgressProvider>
