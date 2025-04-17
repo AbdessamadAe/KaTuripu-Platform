@@ -5,5 +5,18 @@
         "highlight2": "façon",
         "description": "Nos parcours gamifiés vous aident à acquérir les compétences nécessaires pour réussir vos examens et entrer dans les meilleures universités.",
         "getStarted": "Commencer"
+    },
+    "team": {
+        "title": "Notre Équipe",
+        "member1": {
+            "name": "Abdesamad Ait Mouden",
+            "title": "Ami du Propriétaire de Café",
+            "bio": "Étudiant en licence à l'Université Al Akhawayn à Ifrane, spécialisé en Informatique et Mathématiques."
+        },
+        "member2": {
+            "name": "Achraf Agghoug",
+            "title": "Propriétaire de Café",
+            "bio": "Diplômé de Master de l'Université Al Akhawayn à Ifrane, spécialisé en Big Data Analytics."
+        }
     }
 }

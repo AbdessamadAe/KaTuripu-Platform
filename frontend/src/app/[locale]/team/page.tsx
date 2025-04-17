@@ -1,7 +1,7 @@
 import React from 'react'
 import { Footer } from '../../../components/client/Footer'
 import { FaLinkedin, FaGithub, FaFacebook } from "react-icons/fa";
-
+import { useLocale, useTranslations } from 'next-intl';
 interface TeamMember {
     name: string;
     title: string;
@@ -15,11 +15,14 @@ interface TeamMember {
 }
 
 export default function Team () {
+    const locale = useLocale();
+    const t = useTranslations('team');
+    const isLTR = locale === 'en' || locale === 'fr';
     const teamMembers: TeamMember[] = [
         {
-            name: "عبد الصمد أيت المودن",
-            title: "صاحب مول القهوة",
-            bio: "طالب بسلك البكالوريوس بجامعة الأخوين بإفران، تخصص علوم الحاسوب والرياضيات.",
+            name: t('member1.name'),
+            title: t('member1.title'),
+            bio: t('member1.bio'),
             image: "/images/abdessamad.jpeg",
             socialLinks: {
                 linkedin: "#",
@@ -28,9 +31,9 @@ export default function Team () {
             }
         },
         {
-            name: "أشرف أجغوغ",
-            title: "مول القهوة",
-            bio: "خريج سلك الماستر بجامعة الأخوين بإفران، تخصص تحليل البيانات الضخمة.",
+            name: t('member2.name'),
+            title: t('member2.title'),
+            bio: t('member2.bio'),
             image: "/images/achraf.jpg",
             socialLinks: {
                 linkedin: "#",
@@ -43,7 +46,7 @@ export default function Team () {
     return (
         <div>
             <div className='font-amiri animate-slide-fade-in mt-[80px] p-8 md:px-6'>
-                <div className='text-center text-4xl font-semibold mb-8 font-amiri bg-purple-text-bg w-fit m-auto bg-no-repeat bg-center bg-cover px-16'> فريقنا </div>
+                <div className='text-center text-4xl font-semibold mb-8 font-amiri bg-purple-text-bg w-fit m-auto bg-no-repeat bg-center bg-cover px-16'> {t('title')} </div>
                 <div className="flex items-center xl:h-scree">
                     <div className="p-4 mx-auto max-w-7xl">
                         <div className="grid grid-cols-1 gap-4 lg:gap-8 sm:gap-4 sm:grid-cols-2 lg:grid-cols-2">
@@ -52,7 +55,7 @@ export default function Team () {
                                     <div className="relative w-full overflow-hidden lg:w-2/5 h-72">
                                         <img className="object-cover w-full h-full transition-all hover:scale-110" src={member.image} alt={member.name} />
                                     </div>
-                                    <div dir='rtl' className="items-center self-center flex-1 p-6">
+                                    <div className={`items-center self-center flex-1 p-6 ${!isLTR ? 'dir-rtl' : ''}`}>
                                         <div className="mb-1 text-2xl font-semibold text-gray-800">{member.name}</div>
                                         <span className="inline-block mb-4 text-base font-medium text-blue-500">
                                             {member.title}
