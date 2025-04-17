@@ -48,8 +48,8 @@ export default function Nav() {
     if (!user) return null;
     
     return {
-      avatar: user?.user_metadata?.avatar_url || '/default-avatar.png',
-      name: user?.user_metadata?.name || 'User'
+      avatar: user?.user_metadata?.avatar_url,
+      name: user?.user_metadata?.name
     };
   }, [user]);
 
@@ -57,19 +57,131 @@ export default function Nav() {
     <Disclosure as="nav" className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
-          <div className="absolute inset-y-0 right-0 flex items-center lg:hidden">
-            <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-200 hover:text-black focus:ring-2 focus:ring-black focus:outline-hidden focus:ring-inset">
-              <span className="absolute -inset-0.5" />
-              <span className="sr-only">Open main menu</span>
-              <Bars3Icon aria-hidden="true" className="block size-6 group-data-open:hidden" />
-              <XMarkIcon aria-hidden="true" className="hidden size-6 group-data-open:block" />
-            </DisclosureButton>
+          {/* Mobile logo - centered */}
+          <div className="flex w-full items-center justify-between lg:hidden">
+            <Link 
+              onMouseEnter={() => router.prefetch('/')}
+              href="/" 
+              className="flex items-center"
+            >
+              <img
+                alt="katuripu"
+                src="/images/logo.png"
+                className="h-6 w-auto"
+              />
+            </Link>
+            
+            <div className="flex items-center">
+              {/* Language Switcher */}
+              <Menu as="div" className="relative mr-2">
+                <Menu.Button className="flex items-center space-x-1 rounded-md px-2 py-1.5 text-sm font-medium hover:bg-gray-100 transition-colors duration-200">
+                  <LanguageIcon className="h-5 w-5" />
+                  <span className="sr-only md:not-sr-only">{currentLang.toUpperCase()}</span>
+                </Menu.Button>
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                    {languages.map((lang) => (
+                      <Menu.Item key={lang.code}>
+                        {({ active }) => (
+                          <button
+                            onClick={() => switchLanguage(lang.code)}
+                            className={classNames(
+                              active ? 'bg-gray-100' : '',
+                              currentLang === lang.code ? 'font-medium' : '',
+                              'flex w-full items-center px-4 py-2 text-sm text-gray-700 text-left'
+                            )}
+                          >
+                            {lang.name}
+                          </button>
+                        )}
+                      </Menu.Item>
+                    ))}
+                  </Menu.Items>
+                </Transition>
+              </Menu>
+              
+              {loading ? (
+                <div className="flex items-center mr-2">
+                  <div className="h-7 w-7 rounded-full bg-gray-200 animate-pulse"></div>
+                </div>
+              ) : isAuthenticated && userProfile ? (
+                <Menu as="div" className="relative mr-2">
+                  <Menu.Button className="flex items-center hover:opacity-80 transition-opacity">
+                    <img
+                      src={userProfile.avatar}
+                      alt="User Avatar"
+                      className="h-7 w-7 rounded-full object-cover"
+                    />
+                  </Menu.Button>
+                  <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                  >
+                    <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                      <Menu.Item>
+                        {({ active }) => (
+                          <Link
+                            href="/profile"
+                            className={classNames(
+                              active ? 'bg-gray-100' : '',
+                              'flex items-center px-4 py-2 text-sm text-gray-700'
+                            )}
+                          >
+                            <UserIcon className="w-4 h-4 mr-2" />
+                            Profil
+                          </Link>
+                        )}
+                      </Menu.Item>
+                      <Menu.Item>
+                        {({ active }) => (
+                          <button
+                            onClick={handleSignOut}
+                            className={classNames(
+                              active ? 'bg-gray-100' : '',
+                              'flex w-full items-center px-4 py-2 text-sm text-gray-700'
+                            )}
+                          >
+                            <ArrowRightOnRectangleIcon className="w-4 h-4 mr-2" />
+                            Déconnexion
+                          </button>
+                        )}
+                      </Menu.Item>
+                    </Menu.Items>
+                  </Transition>
+                </Menu>
+              ) : (
+                <div className="mr-2">
+                  <SignInButton />
+                </div>
+              )}
+              
+              <DisclosureButton className="inline-flex items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-200 hover:text-black focus:ring-2 focus:ring-black focus:outline-hidden focus:ring-inset">
+                <span className="sr-only">Open main menu</span>
+                <Bars3Icon aria-hidden="true" className="block size-6 group-data-open:hidden" />
+                <XMarkIcon aria-hidden="true" className="hidden size-6 group-data-open:block" />
+              </DisclosureButton>
+            </div>
           </div>
-          <div className="flex flex-1 items-center justify-center lg:items-stretch lg:justify-start">
+
+          {/* Desktop layout */}
+          <div className="hidden lg:flex lg:flex-1 lg:items-stretch lg:justify-start">
             <div className="flex shrink-0 items-center">
               <Link 
-              onMouseEnter={() => router.prefetch('/')}
-              href="/" className="flex items-center">
+                onMouseEnter={() => router.prefetch('/')}
+                href="/" className="flex items-center">
                 <img
                   alt="katuripu"
                   src="/images/logo.png"
@@ -77,7 +189,7 @@ export default function Nav() {
                 />
               </Link>
             </div>
-            <div className="hidden lg:ml-14 lg:block">
+            <div className="lg:ml-14">
               <div className="flex space-x-4">
                 {navigation.map((item) => (
                   <Link
@@ -95,10 +207,12 @@ export default function Nav() {
               </div>
             </div>
           </div>
-          <div className="absolute inset-y-0 left-0 flex items-center pl-2 lg:static lg:inset-auto lg:ml-6 lg:pl-0">
+          
+          {/* Desktop right side actions */}
+          <div className="hidden lg:flex lg:items-center lg:justify-end lg:flex-1">
             {/* Language Switcher */}
             <Menu as="div" className="relative mr-4">
-              <Menu.Button className="flex items-center space-x-1 rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-100 transition-colors duration-200">
+              <Menu.Button className="flex items-center space-x-1 rounded-md px-2 py-1.5 text-sm font-medium hover:bg-gray-100 transition-colors duration-200">
                 <LanguageIcon className="h-5 w-5 mr-1" />
                 <span>{currentLang.toUpperCase()}</span>
               </Menu.Button>
@@ -195,17 +309,13 @@ export default function Nav() {
       </div>
 
       <DisclosurePanel className="lg:hidden">
-        <div className="space-y-1 px-2 pt-2 pb-3">
+        <div className="space-y-1 px-4 py-3 bg-gray-50 shadow-inner">
           {navigation.map((item) => (
             <DisclosureButton
               key={item.name}
               as="a"
               href={item.href}
-              aria-current={item.current ? 'page' : undefined}
-              className={classNames(
-                item.current ? 'bg-gray-100 text-black' : 'text-gray-600 hover:bg-gray-100 hover:text-black',
-                'block rounded-md px-3 py-2 text-base font-medium transition-colors duration-200'
-              )}
+              className="block rounded-md px-3 py-3 text-base font-medium transition-colors duration-200 text-gray-800 hover:bg-gray-200 hover:text-black"
             >
               {item.name}
             </DisclosureButton>
