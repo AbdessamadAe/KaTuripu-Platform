@@ -18,5 +18,15 @@
             "title": "Coffee Shop Owner",
             "bio": "Master's graduate from Al Akhawayn University in Ifrane, specializing in Big Data Analytics."
         }
+    },
+    "contact-us": {
+        "contact": "Contact Us",
+        "form": {
+            "name": "Name",
+            "email": "Email",
+            "subject": "Subject",
+            "message": "Your Message",
+            "submit": "Send"
+        }
     }
 }

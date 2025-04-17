@@ -18,5 +18,15 @@
             "title": "Propriétaire de Café",
             "bio": "Diplômé de Master de l'Université Al Akhawayn à Ifrane, spécialisé en Big Data Analytics."
         }
+    },
+    "contact-us": {
+        "contact": "Contactez-nous",
+        "form": {
+            "name": "Nom",
+            "email": "Email",
+            "subject": "Sujet",
+            "message": "Votre Message",
+            "submit": "Envoyer"
+        }
     }
 }
