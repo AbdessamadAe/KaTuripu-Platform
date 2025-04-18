@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { getAllRoadmaps, deleteRoadmap } from "@/lib/roadmapService";
+import { getAllRoadmaps, deleteRoadmap } from "@/lib/services/roadmapService";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 

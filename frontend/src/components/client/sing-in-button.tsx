@@ -1,6 +1,6 @@
 "use client";
 
-import supabase from "@/lib/supabase";
+import supabase from "@/lib/db/supabase";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
 
 export function SignInButton() {

@@ -1,12 +1,12 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import supabase from '@/lib/supabase';
+import supabase from '@/lib/db/supabase';
 import { Exercise } from '@/types/types';
 import { MathJax } from 'better-react-mathjax';
 import ReactMarkdown from 'react-markdown';
 import { motion } from 'framer-motion';
-import * as userService from '@/lib/userService';
+import * as userService from '@/lib/services/userService';
 import { showAchievement } from '@/utils/gamificationUtils';
 
 const ExerciseDetailPage = () => {

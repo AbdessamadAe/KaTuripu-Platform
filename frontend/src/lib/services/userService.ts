@@ -1,5 +1,5 @@
 // src/lib/userService.ts
-import supabase from './supabase';
+import supabase from '../db/supabase';
 
 export interface UserProgress {
   completedExercises: string[];

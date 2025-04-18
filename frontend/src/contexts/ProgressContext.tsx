@@ -1,9 +1,9 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
-import * as userService from '@/lib/userService';
+import * as userService from '@/lib/services/userService';
 import { useAuth } from './AuthContext';
-import { UserProgress } from '@/lib/userService';
+import { UserProgress } from '@/lib/services/userService';
 import { RoadmapNodeType } from '@/types/types';
 
 interface ProgressContextType {

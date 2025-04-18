@@ -5,6 +5,6 @@
  */
 
 // Re-export everything from service files
-export * from './roadmapService';
-export * from './exerciseService';
-export * from './userService';
+export * from './services/roadmapService';
+export * from './services/exerciseService';
+export * from './services/userService';

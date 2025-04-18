@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import RoadmapCard from "@/components/client/RoadmapCard";
-import * as userService from '@/lib/userService';
-import * as roadmapService from '@/lib/roadmapService';
+import * as userService from '@/lib/services/userService';
+import * as roadmapService from '@/lib/services/roadmapService';
 import { motion } from 'framer-motion';
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
