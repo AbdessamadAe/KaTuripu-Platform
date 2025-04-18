@@ -56,7 +56,7 @@ const RoadmapsPage = () => {
             }
         }
         loadData();
-    }, [user]);
+    }, []);
 
     const filteredRoadmaps = roadmaps.filter(roadmap => {
         const matchesSearch = roadmap.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
