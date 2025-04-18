@@ -15,7 +15,7 @@ export default function ClientRoadmapWrapper({ roadmapData }: ClientRoadmapWrapp
 
   useEffect(() => {
     // Always show introduction on load (no caching)
-    setShowIntroduction(true);
+    setShowIntroduction(false);
 
     const timer = setTimeout(() => {
       setShowRoadmap(true);
