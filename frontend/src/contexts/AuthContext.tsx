@@ -13,45 +13,10 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Cache user data in localStorage
-const cacheUser = (userData: any) => {
-    if (typeof window !== 'undefined') {
-        localStorage.setItem('cachedUser', JSON.stringify(userData));
-    }
-};
-
-// Retrieve cached user data
-const getCachedUser = () => {
-    if (typeof window !== 'undefined') {
-        const userData = localStorage.getItem('cachedUser');
-        return userData ? JSON.parse(userData) : null;
-    }
-    return null;
-};
-
-// Clear cached user data
-const clearCachedUser = () => {
-    if (typeof window !== 'undefined') {
-        localStorage.removeItem('cachedUser');
-    }
-};
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-    // Set user with caching
-    const setUserWithCache = (userData: any) => {
-        setUser(userData);
-        if (userData) {
-            cacheUser(userData);
-            setIsAuthenticated(true);
-        } else {
-            clearCachedUser();
-            setIsAuthenticated(false);
-        }
-    };
 
     const loginWithGoogle = async () => {
         try {
@@ -63,14 +28,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     skipBrowserRedirect: false
                 }
             });
-            
-            if (error) {
-                console.error("Error logging in with Google:", error);
-                throw error;
-            }
+            if (error) throw error;
         } catch (error) {
             console.error("Error during Google login:", error);
-            throw error;
         } finally {
             setLoading(false);
         }
@@ -80,10 +40,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
             setLoading(true);
             await supabase.auth.signOut();
-            setUserWithCache(null);
         } catch (error) {
             console.error("Error logging out:", error);
         } finally {
+            setUser(null);
+            setIsAuthenticated(false);
             setLoading(false);
         }
     };
@@ -91,74 +52,56 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         let mounted = true;
 
-        // Initialize with cached user if available
-        const cachedUser = getCachedUser();
-        if (cachedUser) {
-            setUser(cachedUser);
-            setIsAuthenticated(true);
-            setLoading(false);
-        }
-
-        // Fetch the session on initial load
-        const fetchSession = async () => {
+        const syncSession = async () => {
             try {
                 const { data: { session } } = await supabase.auth.getSession();
 
                 if (!mounted) return;
 
                 if (session?.user) {
-                    const { data: userData } = await supabase.auth.getUser();
-                    if (!mounted) return;
+                    setUser(session.user);
+                    setIsAuthenticated(true);
 
-                    setUserWithCache(userData?.user);
-
+                    // Sync user in your DB
                     await supabase.from("users").upsert({
-                        id: userData.user?.id,
-                        email: userData.user?.email,
-                        name: userData.user?.user_metadata?.full_name,
+                        id: session.user.id,
+                        email: session.user.email,
+                        name: session.user.user_metadata?.full_name,
                     });
-
                 } else {
-                    setUserWithCache(null);
+                    setUser(null);
+                    setIsAuthenticated(false);
                 }
             } catch (error) {
                 console.error("Error fetching session:", error);
-                if (!mounted) return;
-
-                setUserWithCache(null);
             } finally {
-                if (mounted) {
-                    setLoading(false);
-                }
+                if (mounted) setLoading(false);
             }
         };
 
-        fetchSession();
+        syncSession();
 
-        // Set up the auth state listener
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
             async (event, session) => {
-              setLoading(true);
-          
-              if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-                setUserWithCache(session?.user ?? null);
-          
-                await supabase.from("users").upsert({
-                  id: session?.user?.id,
-                  email: session?.user?.email,
-                  name: session?.user?.user_metadata?.full_name,
-                });
-          
-              } else if (event === 'SIGNED_OUT') {
-                setUserWithCache(null);
-              }
-          
-              setLoading(false);
-            }
-          );
-          
+                setLoading(true);
+                if (session?.user) {
+                    setUser(session.user);
+                    setIsAuthenticated(true);
 
-        // Cleanup subscription on unmount
+                    // Sync user in your DB
+                    await supabase.from("users").upsert({
+                        id: session.user.id,
+                        email: session.user.email,
+                        name: session.user.user_metadata?.full_name,
+                    });
+                } else {
+                    setUser(null);
+                    setIsAuthenticated(false);
+                }
+                setLoading(false);
+            }
+        );
+
         return () => {
             mounted = false;
             subscription.unsubscribe();
@@ -174,8 +117,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth() {
     const context = useContext(AuthContext);
-    if (context === undefined) {
-        throw new Error('useAuth must be used within an AuthProvider');
-    }
+    if (!context) throw new Error('useAuth must be used within an AuthProvider');
     return context;
 }
