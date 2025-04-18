@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import RoadmapCard from "@/components/client/RoadmapCard";
-import * as userService from '@/lib/services/userService';
 import * as roadmapService from '@/lib/services/roadmapService';
+import * as userService from '@/lib/services/userService';
 import { motion } from 'framer-motion';
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
@@ -34,22 +34,17 @@ const RoadmapsPage = () => {
                 const roadmapsData = await roadmapService.getAllRoadmaps();
                 setRoadmaps(roadmapsData);
 
-                const roadmapDetails = await Promise.all(
-                    roadmapsData.map((roadmap) => roadmapService.getRoadmap(roadmap.id))
-                );
-
                 const progressPerMap = await Promise.all(
-                    roadmapDetails.map(async (fullRoadmap, index) => {
-                        const slug = roadmapsData[index].slug;
+                    roadmapsData.map(async (roadmap) => {
                         try {
-                            if (fullRoadmap.nodes && user?.id) {
-                                const { percentage } = await userService.getRoadmapProgress(user?.id, fullRoadmap.nodes);
-                                return [slug, percentage];
+                            if (user?.id) {
+                                const progress = await userService.getUserProgressOnRoadmap(user.id, roadmap.id);
+                                return [roadmap.slug, progress?.progressPercent || 0];
                             }
                         } catch (e) {
-                            console.error(`Error loading progress for ${slug}`, e);
+                            console.error(`Error loading progress for ${roadmap.slug}`, e);
                         }
-                        return [slug, 0];
+                        return [roadmap.slug, 0];
                     })
                 );
 

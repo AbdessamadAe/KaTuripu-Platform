@@ -5,7 +5,6 @@ import {NextIntlClientProvider} from "next-intl";
 import { getMessages } from "next-intl/server";
 import MathJaxProvider from "@/components/MathJaxProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { ProgressProvider } from "@/contexts/ProgressContext";
 import Nav from "@/components/client/Nav";
 import ToastProvider from "@/components/client/ToastProvider";
 import Footer from "@/components/client/Footer";
@@ -37,14 +36,12 @@ export default async function RootLayout({
         <NextIntlClientProvider messages={messages} locale={locale}>
         <MathJaxProvider>
           <AuthProvider>
-            <ProgressProvider>
               <Nav />
               <div dir={locale == "ar" ? "rtl" : "ltr"} className={`${locale == "ar" ? 'font-amiri' : ''}`}>
               {children}
               </div>
               <Footer />
               <ToastProvider />
-            </ProgressProvider>
           </AuthProvider>
         </MathJaxProvider>
         </NextIntlClientProvider>

@@ -13,49 +13,18 @@ export default function ClientRoadmapWrapper({ roadmapData }: ClientRoadmapWrapp
   const [showIntroduction, setShowIntroduction] = useState(false);
   const [showRoadmap, setShowRoadmap] = useState(false);
 
-  // Check if user has seen the introduction before
   useEffect(() => {
-    // Get from localStorage, not sessionStorage, to persist across sessions
-    const hasSeenIntro = localStorage.getItem('hasSeenRoadmapIntro');
-    if (!hasSeenIntro) {
-      setShowIntroduction(true);
-    }
-    
-    // Add a slight delay before showing the roadmap for a smooth fade-in effect
+    // Always show introduction on load (no caching)
+    setShowIntroduction(true);
+
     const timer = setTimeout(() => {
       setShowRoadmap(true);
     }, 300);
-    
+
     return () => clearTimeout(timer);
   }, []);
 
-  // Clear stale caches when switching roadmaps
-  useEffect(() => {
-    // Clear any roadmap-specific cached data when entering a new roadmap    
-    // Get current keys that might be related to other roadmaps
-    const keysToRemove: string[] = [];
-    for (let i = 0; i < sessionStorage.length; i++) {
-      const key = sessionStorage.key(i);
-      if (key && (
-        key.includes('user-progress-') || 
-        key.includes('last-progress-state-') || 
-        key.includes('roadmap-effect-')
-      ) && !key.includes(roadmapData?.id as string)) {
-        keysToRemove.push(key);
-      }
-    }
-    
-    // Remove the keys outside the loop to avoid index issues
-    keysToRemove.forEach(key => sessionStorage.removeItem(key));
-    
-    return () => {
-      console.log(`🚪 Leaving roadmap ${roadmapData.id}`);
-    };
-  }, [roadmapData.id]);
-
-  // Handle dismissing the introduction
   const handleDismissIntro = () => {
-    localStorage.setItem('hasSeenRoadmapIntro', 'true');
     setShowIntroduction(false);
   };
 
@@ -73,7 +42,7 @@ export default function ClientRoadmapWrapper({ roadmapData }: ClientRoadmapWrapp
               <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">
                 Bienvenue sur KaTuripu !
               </h2>
-              
+
               <div className="space-y-4 mb-6">
                 <div>
                   <h3 className="font-semibold text-lg mb-1">Comment utiliser les parcours d'apprentissage ?</h3>
@@ -82,7 +51,7 @@ export default function ClientRoadmapWrapper({ roadmapData }: ClientRoadmapWrapp
                     des concepts clés. Suivez le flux des nœuds de gauche à droite pour progresser logiquement.
                   </p>
                 </div>
-                
+
                 <div className="flex items-start space-x-3 border-l-4 border-green-500 pl-3">
                   <div>
                     <strong className="block">1. Cliquez sur un nœud</strong>
@@ -91,7 +60,7 @@ export default function ClientRoadmapWrapper({ roadmapData }: ClientRoadmapWrapp
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start space-x-3 border-l-4 border-blue-500 pl-3">
                   <div>
                     <strong className="block">2. Complétez les exercices</strong>
@@ -100,7 +69,7 @@ export default function ClientRoadmapWrapper({ roadmapData }: ClientRoadmapWrapp
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start space-x-3 border-l-4 border-purple-500 pl-3">
                   <div>
                     <strong className="block">3. Suivez votre progression</strong>
@@ -129,7 +98,7 @@ export default function ClientRoadmapWrapper({ roadmapData }: ClientRoadmapWrapp
           </motion.div>
         )}
       </AnimatePresence>
-      
+
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: showRoadmap ? 1 : 0 }}

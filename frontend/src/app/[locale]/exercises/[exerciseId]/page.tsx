@@ -1,6 +1,7 @@
-"use client";
+'use client';
+
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import supabase from '@/lib/db/supabase';
 import { Exercise } from '@/types/types';
 import { MathJax } from 'better-react-mathjax';
@@ -11,8 +12,13 @@ import { showAchievement } from '@/utils/gamificationUtils';
 
 const ExerciseDetailPage = () => {
   const params = useParams();
+  const searchParams = useSearchParams();
   const router = useRouter();
+
   const exerciseId = params.exerciseId as string;
+  const nodeId = searchParams.get('nodeId') || '';
+  const roadmapId = searchParams.get('roadmapId') || '';
+
   const [exercise, setExercise] = useState<Exercise | null>(null);
   const [loading, setLoading] = useState(true);
   const [showHint, setShowHint] = useState<number | null>(null);
@@ -22,63 +28,68 @@ const ExerciseDetailPage = () => {
   const [hintAnimation, setHintAnimation] = useState(false);
   const [isFirstView, setIsFirstView] = useState(true);
 
-  // Fetch user data
   useEffect(() => {
     const fetchUserData = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       if (session?.user) {
         const currentUserId = session.user.id;
         setUserId(currentUserId);
-        // Get user data from database
-        const progress = await userService.getUserProgress(currentUserId);
-        if (progress) {
-          setCompleted(progress.completedExercises.includes(exerciseId));
+
+        const completedExercises = await userService.getCompletedExercises(currentUserId);
+        if (completedExercises && completedExercises.includes(exerciseId)) {
+          setCompleted(true);
         }
       }
     };
+
     fetchUserData();
   }, [exerciseId]);
 
-  // Mark exercise as completed when solution is viewed
   useEffect(() => {
     const markAsCompleted = async () => {
       if (showSolution && userId && !completed && exercise) {
         try {
-          // Mark exercise as completed using our service
-          const { success, progress } = await userService.completeExercise(
+          const { success } = await userService.completeExercise(
             userId,
-            exerciseId
+            exerciseId,
+            nodeId,
+            roadmapId
           );
-          if (success && progress) {
+
+          if (success) {
             setCompleted(true);
-      
-            // Check for achievements (hardcoded for demo, but could be data-driven)
-            if (exercise.difficulty.toLowerCase() === 'hard') {
+
+            if (exercise?.difficulty.toLowerCase() === 'hard') {
               setTimeout(() => {
                 showAchievement('Math Wizard', 'Solved a hard difficulty problem');
               }, 1500);
-            }            
+            }
           }
         } catch (error) {
-          console.error("Error updating user progress:", error);
+          console.error('Error marking exercise completed:', error);
         }
       }
     };
+
     markAsCompleted();
-  }, [showSolution, userId, completed, exerciseId, exercise]);
+  }, [showSolution, userId, completed, exerciseId, exercise, nodeId, roadmapId]);
 
   useEffect(() => {
     const fetchExercise = async () => {
       try {
-        // Try to fetch from Supabase
         const { data, error } = await supabase
           .from('exercises')
           .select('*')
           .eq('id', exerciseId)
           .single();
+
         if (error || !data) {
           throw new Error('Exercise not found');
         }
+
         setExercise(data as Exercise);
       } catch (error) {
         console.error('Error fetching exercise:', error);
@@ -86,10 +97,10 @@ const ExerciseDetailPage = () => {
         setLoading(false);
       }
     };
+
     fetchExercise();
   }, [exerciseId]);
 
-  // Animation for when hints are revealed
   const triggerHintAnimation = (hintIndex: number) => {
     setHintAnimation(true);
     setShowHint(hintIndex);
@@ -97,37 +108,6 @@ const ExerciseDetailPage = () => {
       setHintAnimation(false);
     }, 700);
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-900 text-white p-6 flex justify-center items-center">
-        <motion.div 
-          className="text-xl"
-          animate={{ 
-            opacity: [0.5, 1, 0.5],
-            scale: [1, 1.05, 1]
-          }}
-          transition={{ repeat: Infinity, duration: 1.5 }}
-        >
-          Loading exercise...
-        </motion.div>
-      </div>
-    );
-  }
-
-  if (!exercise) {
-    return (
-      <div className="min-h-screen bg-gray-900 text-white p-6 flex flex-col items-center justify-center">
-        <div className="text-2xl mb-4">Exercise not found</div>
-        <button
-          onClick={() => router.back()}
-          className="px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          Go Back
-        </button>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
@@ -141,29 +121,29 @@ const ExerciseDetailPage = () => {
         >
           {/* Exercise header with difficulty badge */}
           <div className="flex justify-between items-start mb-6">
-            <h1 className="text-3xl font-bold mb-2">{exercise.name}</h1>
+            <h1 className="text-3xl font-bold mb-2">{exercise?.name}</h1>
             <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-              exercise.difficulty === 'easy' ? 'bg-green-500' :
-              exercise.difficulty === 'medium' ? 'bg-yellow-500 text-black' :
+              exercise?.difficulty === 'easy' ? 'bg-green-500' :
+              exercise?.difficulty === 'medium' ? 'bg-yellow-500 text-black' :
               'bg-red-500'
             }`}>
-              {exercise.difficulty}
+              {exercise?.difficulty}
             </span>
           </div>
           
           {/* Exercise description */}
           <div className="bg-gray-700 p-6 rounded-lg mb-8">
             <MathJax>
-              <ReactMarkdown>{exercise.name}</ReactMarkdown>
+              <ReactMarkdown>{exercise?.name}</ReactMarkdown>
             </MathJax>
           </div>
 
           {/* Hints section with animations */}
-          {exercise.hints && exercise.hints.length > 0 && (
+          {exercise?.hints && exercise?.hints.length > 0 && (
             <div className="mb-8">
               <h2 className="text-xl font-bold mb-4">Hints</h2>
               <div className="space-y-3">
-                {exercise.hints.map((hint, i) => (
+                {exercise?.hints.map((hint, i) => (
                   <div key={i}>
                     <button
                       onClick={() => triggerHintAnimation(i)}
@@ -199,7 +179,7 @@ const ExerciseDetailPage = () => {
           )}
 
           {/* Solution section with animation */}
-          {exercise.solution && (
+          {exercise?.solution && (
             <div className="mt-8">
               <button
                 onClick={() => setShowSolution(!showSolution)}
@@ -221,7 +201,7 @@ const ExerciseDetailPage = () => {
                 >
                   <h3 className="text-xl font-bold mb-3 text-green-400">Solution</h3>
                   <MathJax>
-                    <ReactMarkdown>{exercise.solution}</ReactMarkdown>
+                    <ReactMarkdown>{exercise?.solution}</ReactMarkdown>
                   </MathJax>
                   
                   {/* "Completed" badge appears when solution is viewed */}
@@ -241,12 +221,12 @@ const ExerciseDetailPage = () => {
           )}
 
           {/* Video section */}
-          {exercise.video_url && (
+          {exercise?.video_url && (
             <div className="mt-8">
               <h2 className="text-xl font-bold mb-4">Video Explanation</h2>
               <div className="relative pb-56.25 h-0 overflow-hidden rounded-lg">
                 <iframe
-                  src={exercise.video_url}
+                  src={exercise?.video_url}
                   className="absolute top-0 left-0 w-full h-full"
                   frameBorder="0"
                   allowFullScreen

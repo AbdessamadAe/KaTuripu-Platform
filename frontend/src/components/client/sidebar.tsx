@@ -9,15 +9,19 @@ interface Prerequisite {
 }
 
 interface SidebarProps {
+  userId: string;
   title: string;
+  nodeId: string;
   prerequisites: Prerequisite[];
   problems: Exercise[];
   onClose: () => void;
-  onProblemToggle?: (id: string, completed: boolean) => void;
+  onProblemToggle?: (userId: string, exerciseId: string, completed: boolean, nodeId: string) => void;
 }
 
 const ExerciseSidebar: React.FC<SidebarProps> = ({
+  userId,
   title,
+  nodeId,
   prerequisites,
   problems,
   onClose,
@@ -118,7 +122,7 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
                     type="checkbox"
                     id={`problem-${problem.id}`}
                     checked={!!problem.completed}
-                    onChange={(e) => onProblemToggle && onProblemToggle(problem.id, e.target.checked)}
+                    onChange={(e) => onProblemToggle && onProblemToggle(userId, problem.id, e.target.checked, nodeId)}
                     className="absolute opacity-0 w-full h-full cursor-pointer z-10"
                   />
                   <div className={`w-6 h-6 flex items-center justify-center rounded border ${
