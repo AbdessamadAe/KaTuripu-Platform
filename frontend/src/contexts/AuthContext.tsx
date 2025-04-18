@@ -13,10 +13,45 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Cache user data in localStorage
+const cacheUser = (userData: any) => {
+    if (typeof window !== 'undefined') {
+        localStorage.setItem('cachedUser', JSON.stringify(userData));
+    }
+};
+
+// Retrieve cached user data
+const getCachedUser = () => {
+    if (typeof window !== 'undefined') {
+        const userData = localStorage.getItem('cachedUser');
+        return userData ? JSON.parse(userData) : null;
+    }
+    return null;
+};
+
+// Clear cached user data
+const clearCachedUser = () => {
+    if (typeof window !== 'undefined') {
+        localStorage.removeItem('cachedUser');
+    }
+};
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    // Set user with caching
+    const setUserWithCache = (userData: any) => {
+        setUser(userData);
+        if (userData) {
+            cacheUser(userData);
+            setIsAuthenticated(true);
+        } else {
+            clearCachedUser();
+            setIsAuthenticated(false);
+        }
+    };
 
     const loginWithGoogle = async () => {
         try {
@@ -45,8 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
             setLoading(true);
             await supabase.auth.signOut();
-            setUser(null);
-            setIsAuthenticated(false);
+            setUserWithCache(null);
         } catch (error) {
             console.error("Error logging out:", error);
         } finally {
@@ -56,6 +90,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         let mounted = true;
+
+        // Initialize with cached user if available
+        const cachedUser = getCachedUser();
+        if (cachedUser) {
+            setUser(cachedUser);
+            setIsAuthenticated(true);
+            setLoading(false);
+        }
 
         // Fetch the session on initial load
         const fetchSession = async () => {
@@ -68,8 +110,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     const { data: userData } = await supabase.auth.getUser();
                     if (!mounted) return;
 
-                    setUser(userData?.user);
-                    setIsAuthenticated(true);
+                    setUserWithCache(userData?.user);
 
                     await supabase.from("users").upsert({
                         id: userData.user?.id,
@@ -78,15 +119,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     });
 
                 } else {
-                    setUser(null);
-                    setIsAuthenticated(false);
+                    setUserWithCache(null);
                 }
             } catch (error) {
                 console.error("Error fetching session:", error);
                 if (!mounted) return;
 
-                setUser(null);
-                setIsAuthenticated(false);
+                setUserWithCache(null);
             } finally {
                 if (mounted) {
                     setLoading(false);
@@ -102,8 +141,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               setLoading(true);
           
               if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-                setUser(session?.user ?? null);
-                setIsAuthenticated(true);
+                setUserWithCache(session?.user ?? null);
           
                 await supabase.from("users").upsert({
                   id: session?.user?.id,
@@ -112,8 +150,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 });
           
               } else if (event === 'SIGNED_OUT') {
-                setUser(null);
-                setIsAuthenticated(false);
+                setUserWithCache(null);
               }
           
               setLoading(false);

@@ -27,5 +27,11 @@
             "message": "رسالتك",
             "submit": "إرسال"
         }
+    },
+    "roadmap": {
+        "searchPlaceholder": "          البحث عن خريطة أو مدرسة...",
+        "all": "الكل",
+        "noRoadmapsFound": "لا توجد مسارات تعليمية تطابق بحثك",
+        "resetFilters": "إعادة تعيين الفلاتر"
     }
 }

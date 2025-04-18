@@ -3,7 +3,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, Transition } from 
 import { Bars3Icon, XMarkIcon, UserIcon, ArrowRightOnRectangleIcon, LanguageIcon } from '@heroicons/react/24/outline'
 import { SignInButton } from '@/components/client/sing-in-button'
 import { useAuth } from '@/contexts/AuthContext'
-import { Fragment, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl';
 import Link from 'next/link'
@@ -24,6 +24,7 @@ export default function Nav() {
   const pathname = usePathname();
   const locale = useLocale();
   const [currentLang, setCurrentLang] = useState(locale);
+  const [userProfile, setUserProfile] = useState<{ avatar: string; name: string } | null>(null);
 
   const languages = [
     { code: 'fr', name: 'Français' },
@@ -43,15 +44,9 @@ export default function Nav() {
     router.push(newPath);
   };
 
-  // Memoize user info to prevent unnecessary re-renders
-  const userProfile = useMemo(() => {
-    if (!user) return null;
-    
-    return {
-      avatar: user?.user_metadata?.avatar_url,
-      name: user?.user_metadata?.name
-    };
-  }, [user]);
+  useEffect(() => {
+    setUserProfile({avatar: user?.user_metadata?.avatar_url, name: user?.user_metadata?.name});
+  } , [user]);
 
   return (
     <Disclosure as="nav" className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
@@ -108,11 +103,7 @@ export default function Nav() {
                 </Transition>
               </Menu>
               
-              {loading ? (
-                <div className="flex items-center mr-2">
-                  <div className="h-7 w-7 rounded-full bg-gray-200 animate-pulse"></div>
-                </div>
-              ) : isAuthenticated && userProfile ? (
+              {isAuthenticated && userProfile ? (
                 <Menu as="div" className="relative mr-2">
                   <Menu.Button className="flex items-center hover:opacity-80 transition-opacity">
                     <img

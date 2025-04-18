@@ -8,6 +8,7 @@ import * as userService from '@/lib/services/userService';
 import { motion } from 'framer-motion';
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
+import { useTranslations } from 'next-intl';
 
 const getCategoriesFromRoadmap = (roadmap: any): string[] => {
     if (Array.isArray(roadmap.category)) {
@@ -21,6 +22,7 @@ const getCategoriesFromRoadmap = (roadmap: any): string[] => {
 
 const RoadmapsPage = () => {
     const router = useRouter();
+    const t = useTranslations('roadmap');
     const [roadmaps, setRoadmaps] = useState<any[]>([]);
     const [progressMap, setProgressMap] = useState<{ [slug: string]: number }>({});
     const [loading, setLoading] = useState(true);
@@ -99,7 +101,6 @@ const RoadmapsPage = () => {
             <div className="flex justify-center items-center h-screen">
                 <div className="flex flex-col items-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-                    <span className="mt-4 text-lg text-gray-600">Chargement des parcours...</span>
                 </div>
             </div>
         );
@@ -112,7 +113,7 @@ const RoadmapsPage = () => {
                     <div className="relative w-full lg:w-1/2">
                         <input
                             type="text"
-                            placeholder="Rechercher un parcours..."
+                            placeholder={t('searchPlaceholder')}
                             className="w-full px-5 py-3 rounded-lg border border-gray-200 shadow-sm focus:ring-2 focus:ring-blue-300 focus:border-blue-400 outline-none transition"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
@@ -129,7 +130,7 @@ const RoadmapsPage = () => {
                                 onClick={() => setCategory(cat)}
                                 className={`px-4 py-2 text-sm rounded-full transition-all whitespace-nowrap ${category === cat ? 'bg-blue-600 text-white' : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-100'}`}
                             >
-                                {cat === 'all' ? 'Tous' : cat}
+                                {cat === 'all' ? t('all') : cat}
                             </button>
                         ))}
                     </div>
@@ -137,12 +138,12 @@ const RoadmapsPage = () => {
 
                 {filteredRoadmaps.length === 0 ? (
                     <div className="text-center py-12">
-                        <p className="text-gray-500 mb-4">Aucun parcours ne correspond à votre recherche</p>
+                        <p className="text-gray-500 mb-4">{t('noRoadmapsFound')}</p>
                         <button
                             onClick={() => { setSearchTerm(''); setCategory('all'); }}
                             className="text-blue-600 hover:underline"
                         >
-                            Réinitialiser les filtres
+                            {t('resetFilters')}
                         </button>
                     </div>
                 ) : (
@@ -154,7 +155,7 @@ const RoadmapsPage = () => {
                     >
                         {filteredRoadmaps.map((roadmap) => (
                             <motion.div key={roadmap.id} variants={itemVariants}>
-                                <Link href={`/roadmap/${roadmap.slug}`} onMouseEnter={() => router.prefetch(`/roadmap/${roadmap.slug}`)}>
+                                <Link href={`/roadmap/${roadmap?.slug}`}>
                                     <RoadmapCard roadmap={roadmap} progress={progressMap[roadmap.slug] || 0} />
                                 </Link>
                             </motion.div>

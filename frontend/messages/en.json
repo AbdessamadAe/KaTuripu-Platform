@@ -27,5 +27,11 @@
             "message": "Your Message",
             "submit": "Send"
         }
+    },
+    "roadmap": {
+        "searchPlaceholder": "Search for a roadmap...",
+        "all": "All",
+        "noRoadmapsFound": "No roadmaps match your search",
+        "resetFilters": "Reset filters"
     }
 }

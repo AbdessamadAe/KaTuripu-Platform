@@ -27,5 +27,11 @@
             "message": "Votre Message",
             "submit": "Envoyer"
         }
+    },
+    "roadmap": {
+        "searchPlaceholder": "Rechercher un parcours...",
+        "all": "Tous",
+        "noRoadmapsFound": "Aucun parcours ne correspond à votre recherche",
+        "resetFilters": "Réinitialiser les filtres"
     }
 }
