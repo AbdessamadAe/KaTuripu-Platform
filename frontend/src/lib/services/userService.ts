@@ -32,7 +32,7 @@ export const completeExercise = async (
   userId: string,
   exerciseId: string,
   nodeId: string,
-  roadmapId: string
+  roadmapId: string | undefined
 ): Promise<{ success: boolean }> => {
   if (!userId || !exerciseId) return { success: false };
 
@@ -57,7 +57,7 @@ export const uncompleteExercise = async (
   userId: string,
   exerciseId: string,
   nodeId: string,
-  roadmapId: string
+  roadmapId: string | undefined
 ): Promise<{ success: boolean }> => {
   if (!userId || !exerciseId) return { success: false };
 

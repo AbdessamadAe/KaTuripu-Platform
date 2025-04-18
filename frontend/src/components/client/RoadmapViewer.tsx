@@ -31,21 +31,21 @@ const nodeClassName = (node: any) => node.type;
 
 const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
   const { user } = useAuth();
-  const [completedExercises, setCompletedExercises] = useState<string[]>([]);
+  const [completedExercises, setCompletedExercises] = useState<string[] | null>([]);
   const [nodes, setNodes, onNodesChange] = useNodesState<any>([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(roadmapData.edges);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(roadmapData?.edges);
   const [selectedNode, setSelectedNode] = useState<any>(null);
   const [currentProgress, setCurrentProgress] = useState(0);
   const previousProgressRef = useRef(0);
 
   const fetchCompleted = useCallback(async () => {
     if (!user) return;
-    const completed = await getCompletedExercises(user.id, roadmapData.id);
+    const completed = await getCompletedExercises(user.id);
     setCompletedExercises(completed);
-  }, [user, roadmapData.id]);
+  }, [user, roadmapData?.id]);
 
   const isExerciseCompleted = useCallback(
-    (id: string) => completedExercises.includes(id),
+    (id: string) => completedExercises?.includes(id),
     [completedExercises]
   );
 
@@ -61,7 +61,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
   const generateNodes = useCallback(async () => {
     if (!user) return [];
 
-    const nodePromises = roadmapData.nodes.map(async (node: any) => {
+    const nodePromises = roadmapData?.nodes.map(async (node: any) => {
       const progress = await getUserProgressOnNode(user.id, node.id);
       console.log("Node progress:", progress);
       const exercisesWithStatus = getExercisesWithStatus(node.exercises);
@@ -88,16 +88,16 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
     });
 
     return Promise.all(nodePromises);
-  }, [roadmapData.nodes, getExercisesWithStatus, user, completedExercises]);
+  }, [roadmapData?.nodes, getExercisesWithStatus, user, completedExercises]);
 
   const calculateOverallProgress = useCallback(() => {
-    const allExercises = roadmapData.nodes.flatMap((node) => node.exercises);
+    const allExercises = roadmapData?.nodes.flatMap((node) => node.exercises);
     const total = allExercises.length;
     const completedCount = allExercises.filter((ex) =>
-      completedExercises.includes(ex.id)
+      completedExercises?.includes(ex.id)
     ).length;
     return total > 0 ? Math.round((completedCount / total) * 100) : 0;
-  }, [roadmapData.nodes, completedExercises]);
+  }, [roadmapData?.nodes, completedExercises]);
 
   const handleProblemToggle = useCallback(
     async (userId: string, exerciseId: string, completed: boolean, nodeId: string) => {
@@ -105,9 +105,9 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
 
       try {
         if (completed) {
-          await completeExercise(userId, exerciseId, nodeId, roadmapData.id);
+          await completeExercise(userId, exerciseId, nodeId, roadmapData?.id);
         } else {
-          await uncompleteExercise(userId, exerciseId, nodeId, roadmapData.id);
+          await uncompleteExercise(userId, exerciseId, nodeId, roadmapData?.id);
         }
 
         await fetchCompleted(); // refresh completed list
@@ -129,7 +129,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
         console.error("Error updating exercise:", error);
       }
     },
-    [user, roadmapData.id, selectedNode, fetchCompleted]
+    [user, roadmapData?.id, selectedNode, fetchCompleted]
   );
 
   useEffect(() => {
@@ -140,7 +140,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
     const refreshNodes = async () => {
       if (!user) return;
   
-      const newNodes = await generateNodes(user);
+      const newNodes = await generateNodes();
       setNodes(newNodes);
     };
   
