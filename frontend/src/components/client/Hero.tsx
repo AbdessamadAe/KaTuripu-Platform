@@ -12,7 +12,7 @@ const Hero = ({ locale = 'en' }: HeroProps) => {
     <div className={`w-full mt-12 px-auto flex items-center min-h-[80vh]`}>
       <div className='flex flex-col lg:flex-row items-center md:mx-24 mr-0 px-4 sm:px-6 lg:px-2 relative w-full'>
         <div className="w-full lg:w-7/12 flex items-center">
-          <div className={`w-full mx-auto mb-0 lg:mx-0 lg:text-${isRTL ? 'right' : 'left'}`}>
+          <div className={`w-full mx-auto mb-0 lg:mx-0 text-center lg:text-${isRTL ? 'right' : 'left'}`}>
             <p className="mb-5 text-4xl md:text-5xl lg:text-5xl font-bold text-gray-900 leading-tight">
               {t('tagline')}
               <span className='flex flex-col md:flex-row md:gap-4'>
