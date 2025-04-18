@@ -177,7 +177,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
             attributionPosition="top-right"
             style={{ backgroundColor: "#F7F9FB" }}
           >
-            <MiniMap zoomable pannable nodeClassName={nodeClassName as any} />
+            <MiniMap className="hidden md:block" zoomable pannable nodeClassName={nodeClassName as any} />
             <Controls />
             <Background variant={undefined} />
           </ReactFlow>
