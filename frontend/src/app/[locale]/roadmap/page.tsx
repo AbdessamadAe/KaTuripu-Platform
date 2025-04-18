@@ -28,6 +28,7 @@ const RoadmapsPage = () => {
     const [category, setCategory] = useState("all");
     const { user } = useAuth();
 
+
     useEffect(() => {
         async function loadData() {
             try {
@@ -56,7 +57,7 @@ const RoadmapsPage = () => {
             }
         }
         loadData();
-    }, []);
+    }, [user?.id]);
 
     const filteredRoadmaps = roadmaps.filter(roadmap => {
         const matchesSearch = roadmap.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
