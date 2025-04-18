@@ -18,7 +18,7 @@ export function SignInButton() {
     <button
       onClick={handleGoogleSignIn}
       className={
-        'flex w-ful border-sky-300 border-4 rounded-xl items-center px-3 py-1 text-sm text-gray-700'
+        'flex w-ful border-sky-300 border-2 rounded-xl items-center px-3 py-1 text-sm text-gray-700'
       }
     >
       <ArrowRightOnRectangleIcon className="w-4 h-4 mr-2" />

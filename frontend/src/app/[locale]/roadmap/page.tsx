@@ -111,17 +111,7 @@ const RoadmapsPage = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-white via-blue-50 to-white text-gray-800 font-sans">
-            <div className="py-16 px-6 text-center">
-                <h1 className="text-5xl font-extrabold mb-4 text-gray-900 tracking-tight">Parcours d'Apprentissage</h1>
-                <p className="text-xl max-w-2xl mx-auto mb-8 text-gray-600">Explorez nos parcours structurés pour maîtriser de nouvelles compétences</p>
-                {!user?.id && (
-                    <Link href="/login" className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition">
-                        Commencer
-                    </Link>
-                )}
-            </div>
-
-            <div className="container mx-auto px-4 md:px-8 lg:px-16 pb-16">
+            <div className="container mt-12 mx-auto px-4 md:px-8 lg:px-16 pb-16">
                 <div className="mb-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                     <div className="relative w-full lg:w-1/2">
                         <input
@@ -150,7 +140,7 @@ const RoadmapsPage = () => {
                 </div>
 
                 {filteredRoadmaps.length === 0 ? (
-                    <div className="text-center py-12 bg-white shadow-md rounded-lg">
+                    <div className="text-center py-12">
                         <p className="text-gray-500 mb-4">Aucun parcours ne correspond à votre recherche</p>
                         <button
                             onClick={() => { setSearchTerm(''); setCategory('all'); }}

@@ -7,7 +7,7 @@ import { NodeEditPanel } from '@/components/admin/NodeEditPanel';
 import { useRouter } from 'next/navigation';
 import { RoadmapData, RoadmapNodeType, Exercise } from '@/types/types';
 import { getRoadmap, createRoadmap, updateRoadmap } from '@/lib/roadmapService';
-import { generateSlug } from '@/lib/utils';
+import { generateSlug } from '@/utils/utils';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { v4 as uuidv4 } from 'uuid';
