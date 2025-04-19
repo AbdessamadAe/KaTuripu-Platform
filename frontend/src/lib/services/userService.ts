@@ -37,14 +37,12 @@ export const completeExercise = async (
   if (!userId || !exerciseId) return { success: false };
 
   try {
-    console.log('Completing exercise:', { userId, exerciseId });
-    await supabase.from('user_completed_exercises').insert({
+    const { error } = await supabase.from('user_completed_exercises').insert({
       user_id: userId,
       exercise_id: exerciseId,
       node_id: nodeId,
       roadmap_id: roadmapId
     });
-
     return { success: true };
   } catch (error) {
     console.error('Error in completeExercise:', error);

@@ -1,29 +1,16 @@
 import { notFound } from "next/navigation";
 import { RoadmapData } from "@/types/types";
-import ClientRoadmapWrapper from "./client-wrapper";
-import { getRoadmapBySlug } from "@/lib/api";
+import Roadmap from "@/components/client/RoadmapViewer";
 
-// Define Params as a Promise
-type Params = Promise<{ roadmapSlug: string }>;
+export default function RoadmapPage({ params }: { params: {roadmapSlug: string | undefined} }) {
+  const slug = params?.roadmapSlug;
 
-export default async function RoadmapPage({ params }: { params: Params }) {
-  // Wait for the Promise to resolve
-  const resolvedParams = await params;
-
-  if (!resolvedParams?.roadmapSlug) {
-    return <div>Chargement...</div>;
-  }
+  console.log("slug", slug);
 
   try {
-    const data = await getRoadmapBySlug(resolvedParams.roadmapSlug);
-
-    if (!data) {
-      return notFound();
-    }
-
     return (
       <div>
-        <ClientRoadmapWrapper roadmapData={data as RoadmapData} />
+        <Roadmap roadmapSlug={slug} />
       </div>
     );
   } catch (error) {

@@ -59,6 +59,8 @@ const ExerciseDetailPage = () => {
             roadmapId
           );
 
+          console.log(success);
+
           if (success) {
             setCompleted(true);
 

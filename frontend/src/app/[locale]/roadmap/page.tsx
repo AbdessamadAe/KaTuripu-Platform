@@ -152,7 +152,12 @@ const RoadmapsPage = () => {
                     >
                         {filteredRoadmaps.map((roadmap) => (
                             <motion.div key={roadmap.id} variants={itemVariants}>
-                                <Link href={`/roadmap/${roadmap?.slug}`}>
+                                <Link 
+                                  href={`/roadmap/${roadmap?.slug}`} 
+                                  prefetch={false}
+                                  onMouseEnter={() => {
+                                    router.prefetch(`/roadmap/${roadmap?.slug}`);
+                                  }}>
                                     <RoadmapCard roadmap={roadmap} progress={progressMap[roadmap.slug] || 0} />
                                 </Link>
                             </motion.div>
