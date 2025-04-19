@@ -21,20 +21,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const loginWithGoogle = async () => {
         try {
             setLoading(true);
-            const { error } = await supabase.auth.signInWithOAuth({
+            await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: `${window.location.origin}/dashboard`,
-                    skipBrowserRedirect: false
+                    redirectTo: window.location.origin,
+                    flow: 'popup'
                 }
             });
-            if (error) throw error;
         } catch (error) {
             console.error("Error during Google login:", error);
         } finally {
             setLoading(false);
         }
     };
+
 
     const logout = async () => {
         try {

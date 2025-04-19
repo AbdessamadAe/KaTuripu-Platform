@@ -99,7 +99,12 @@ export default function Nav() {
                 </Transition>
               </Menu>
               
-              {isAuthenticated ? (
+              {loading ? (
+              // Show skeleton loader while auth state is loading
+              <div className="flex items-center space-x-4">
+                <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse"></div>
+              </div>
+            ) : isAuthenticated ? (
                 <Menu as="div" className="relative mr-2">
                   <Menu.Button className="flex items-center hover:opacity-80 transition-opacity">
                     <img
@@ -167,8 +172,8 @@ export default function Nav() {
           <div className="hidden lg:flex lg:flex-1 lg:items-stretch lg:justify-start">
             <div className="flex shrink-0 items-center">
               <Link 
-                onMouseEnter={() => router.prefetch('/')}
-                href="/" className="flex items-center">
+                onMouseEnter={() => router.prefetch('/roadmap')}
+                href="/roadmap" className="flex items-center">
                 <img
                   alt="katuripu"
                   src="/images/logo.png"

@@ -27,7 +27,7 @@ export const Footer: React.FC = () => {
                     © {d.getFullYear()} KaTuripu | All Rights Reserved
                 </p>
                 <p className="text-sm leading-6 hover:text-gray-300 transition-colors duration-300">
-                    <span className="font-light italic">Developed with ❤️ by </span>
+                    <span className="font-light italic">Developed by </span>
                     <a 
                         href="https://github.com/abdessamadae" 
                         target="_blank" 

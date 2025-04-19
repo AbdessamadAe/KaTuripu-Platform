@@ -1,17 +1,13 @@
 "use client";
 
-import supabase from "@/lib/db/supabase";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function SignInButton() {
-  const handleGoogleSignIn = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-    });
+  const { loginWithGoogle } = useAuth();
 
-    if (error) {
-      alert(error.message);
-    }
+  const handleGoogleSignIn = async () => {
+    await loginWithGoogle();
   };
 
   return (
