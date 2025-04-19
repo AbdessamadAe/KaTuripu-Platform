@@ -22,9 +22,22 @@ export const Footer: React.FC = () => {
                     <FaTiktok className='w-6 h-6' />
                 </a>
             </div>
-            <p className="mt-8 text-base leading-6 text-center text-gray-400">
+            <div className="flex flex-wrap justify-between items-center mt-8 text-gray-400">
+                <p className="text-base leading-6 text-gray-400">
                     © {d.getFullYear()} KaTuripu | All Rights Reserved
-            </p>
+                </p>
+                <p className="text-sm leading-6 hover:text-gray-300 transition-colors duration-300">
+                    <span className="font-light italic">Developed with ❤️ by </span>
+                    <a 
+                        href="https://github.com/abdessamadae" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="font-medium hover:text-indigo-400"
+                    >
+                        Abdessamad Ait Elmouden
+                    </a>
+                </p>
+            </div>
         </div>
     )
 }
