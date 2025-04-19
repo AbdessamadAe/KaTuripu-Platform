@@ -136,7 +136,7 @@ const ExerciseDetailPage = () => {
           {/* Exercise description */}
           <div className="bg-gray-700 p-6 rounded-lg mb-8">
             <MathJax>
-              <ReactMarkdown>{exercise?.name}</ReactMarkdown>
+              <ReactMarkdown>{exercise?.description}</ReactMarkdown>
             </MathJax>
           </div>
 

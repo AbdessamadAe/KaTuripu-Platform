@@ -11,6 +11,7 @@ type Exercise = {
   id: string;
   name: string;
   difficulty: string;
+  description: string;
   hints: string[];
   solution?: string;
   video_url?: string;
@@ -59,7 +60,8 @@ export function NodeEditPanel({ node, onChange }: NodeEditPanelProps) {
           difficulty: 'medium',
           hints: [],
           solution: '',
-          video_url: ''
+          video_url: '',
+          description: '',
         })
         .select()
         .single();
@@ -108,6 +110,7 @@ export function NodeEditPanel({ node, onChange }: NodeEditPanelProps) {
     const exerciseToUpdate = {
       id: updatedExercise.id,
       name: updatedExercise.name,
+      description: updatedExercise.description,
       difficulty: updatedExercise.difficulty,
       hints: updatedExercise.hints || [],
       solution: updatedExercise.solution,

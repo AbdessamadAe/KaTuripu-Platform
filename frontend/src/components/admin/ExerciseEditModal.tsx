@@ -8,6 +8,7 @@ import { Modal } from './Modal';
 type Exercise = {
   id: string;
   name: string;
+  description: string;
   difficulty: string;
   hints: string[];
   solution?: string;
@@ -26,6 +27,7 @@ export function ExerciseEditModal({ exercise, isOpen, onClose, onSave }: Exercis
   const [difficulty, setDifficulty] = useState<string>('medium');
   const [hints, setHints] = useState<string[]>([]);
   const [solution, setSolution] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
   const [videoUrl, setVideoUrl] = useState<string>('');
   
   // Update state when exercise changes
@@ -148,7 +150,29 @@ export function ExerciseEditModal({ exercise, isOpen, onClose, onSave }: Exercis
             )}
           </div>
         </div>
-        
+        <div>
+          <label className="block text-sm font-medium mb-2">Question</label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="w-full p-2 border rounded min-h-[300px] font-mono"
+                placeholder="Enter solution with math formulas using LaTeX syntax e.g. $x^2 + y^2 = z^2$"
+              />
+              <div className="text-xs text-gray-500 mt-1">
+                <p>Use $ for inline math: {'$x^2$'} or $$ for block math: {'$$\\sum_{i=1}^n i = \\frac{n(n+1)}{2}$$'}</p>
+                <p>You can use Markdown formatting (## headers, * for lists, etc)</p>
+              </div>
+            </div>
+            <div className="border rounded p-4 bg-gray-50 min-h-[300px] overflow-auto">
+              <div className="font-medium text-sm mb-2">Preview:</div>
+              <MathJax dynamic>
+                <ReactMarkdown>{description}</ReactMarkdown>
+              </MathJax>
+            </div>
+          </div>
+        </div>
         <div>
           <label className="block text-sm font-medium mb-2">Solution (optional)</label>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
