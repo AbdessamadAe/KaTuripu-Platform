@@ -104,24 +104,30 @@ export function NodeEditPanel({ node, onChange }: NodeEditPanelProps) {
   };
 
   const updateExercise = (updatedExercise: Exercise) => {
-    
     // Ensure all fields are properly preserved without nesting
     const exerciseToUpdate = {
       id: updatedExercise.id,
       name: updatedExercise.name,
       difficulty: updatedExercise.difficulty,
       hints: updatedExercise.hints || [],
-      solution: updatedExercise.solution, // Don't use || '' here
+      solution: updatedExercise.solution,
       video_url: updatedExercise.video_url || ''
     };
-    
     
     const updatedExercises = exercises.map(ex => 
       ex.id === updatedExercise.id ? exerciseToUpdate : ex
     );
     
     setExercises(updatedExercises);
-    handleUpdateNode();
+    
+    // Update the node with the updated exercises
+    onChange({
+      ...node,
+      data: {
+        ...node.data,
+        exercises: updatedExercises,
+      }
+    });
   };
 
   const removeExercise = (id: string) => {
