@@ -45,7 +45,7 @@ export default function Team () {
 
     return (
         <div>
-            <div className='font-amiri animate-slide-fade-in mt-[80px] p-8 md:px-6'>
+            <div className='font-amiri min-h-screen animate-slide-fade-in mt-[60px] p-8 md:px-6'>
                 <div className='text-center text-4xl font-semibold mb-8 font-amiri bg-purple-text-bg w-fit m-auto bg-no-repeat bg-center bg-cover px-16'> {t('title')} </div>
                 <div className="flex items-center xl:h-scree">
                     <div className="p-4 mx-auto max-w-7xl">

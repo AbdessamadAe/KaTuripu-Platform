@@ -9,7 +9,7 @@ const Hero = ({ locale = 'en' }: HeroProps) => {
   const t = useTranslations('hero');
   const isRTL = locale === 'ar';
   return (
-    <div className={`w-full mt-12 px-auto flex items-center min-h-[80vh]`}>
+    <div className={`w-full mt-8 px-auto flex items-center min-h-[80vh]`}>
       <div className='flex flex-col lg:flex-row items-center md:mx-24 mr-0 px-4 sm:px-6 lg:px-2 relative w-full'>
         <div className="w-full lg:w-7/12 flex items-center">
           <div className={`w-full mx-auto mb-0 lg:mx-0`}>
