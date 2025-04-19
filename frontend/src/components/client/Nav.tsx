@@ -172,8 +172,8 @@ export default function Nav() {
           <div className="hidden lg:flex lg:flex-1 lg:items-stretch lg:justify-start">
             <div className="flex shrink-0 items-center">
               <Link 
-                onMouseEnter={() => router.prefetch('/roadmap')}
-                href="/roadmap" className="flex items-center">
+                onMouseEnter={() => router.prefetch('/')}
+                href="/" className="flex items-center">
                 <img
                   alt="katuripu"
                   src="/images/logo.png"
