@@ -11,12 +11,8 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from 'next-intl';
 
 const getCategoriesFromRoadmap = (roadmap: any): string[] => {
-    if (Array.isArray(roadmap.category)) {
-        return roadmap.category;
-    }
-    if (typeof roadmap.category === 'string') {
-        return [roadmap.category];
-    }
+    if (Array.isArray(roadmap.category)) return roadmap.category;
+    if (typeof roadmap.category === 'string') return [roadmap.category];
     return ['uncategorized'];
 };
 
@@ -30,28 +26,12 @@ const RoadmapsPage = () => {
     const [category, setCategory] = useState("all");
     const { user } = useAuth();
 
-
+    // Fetch roadmap data once
     useEffect(() => {
         async function loadData() {
             try {
                 const roadmapsData = await roadmapService.getAllRoadmaps();
                 setRoadmaps(roadmapsData);
-
-                const progressPerMap = await Promise.all(
-                    roadmapsData.map(async (roadmap) => {
-                        try {
-                            if (user?.id) {
-                                const progress = await userService.getUserProgressOnRoadmap(user.id, roadmap.id);
-                                return [roadmap.slug, progress?.progressPercent || 0];
-                            }
-                        } catch (e) {
-                            console.error(`Error loading progress for ${roadmap.slug}`, e);
-                        }
-                        return [roadmap.slug, 0];
-                    })
-                );
-
-                setProgressMap(Object.fromEntries(progressPerMap));
             } catch (error) {
                 console.error("Erreur lors du chargement des feuilles de route:", error);
             } finally {
@@ -59,9 +39,36 @@ const RoadmapsPage = () => {
             }
         }
         loadData();
-    }, [user?.id]);
+    }, []);
 
-    const filteredRoadmaps = roadmaps.filter(roadmap => {
+    // Fetch user-specific progress after roadmaps and user are ready
+    useEffect(() => {
+        if (!user || roadmaps.length === 0) return;
+
+        async function loadProgress() {
+            try {
+                const entries = await Promise.all(
+                    roadmaps.map(async (roadmap) => {
+                        try {
+                            const progress = await userService.getUserProgressOnRoadmap(user.id, roadmap.id);
+                            return [roadmap.slug, progress?.progressPercent || 0];
+                        } catch (e) {
+                            console.error(`Error loading progress for ${roadmap.slug}`, e);
+                            return [roadmap.slug, 0];
+                        }
+                    })
+                );
+                setProgressMap(Object.fromEntries(entries));
+            } catch (error) {
+                console.error("Error fetching progress map", error);
+            }
+        }
+
+        loadProgress();
+    }, [user, roadmaps]);
+
+    // Filtering logic
+    const filteredRoadmaps = roadmaps.filter((roadmap) => {
         const matchesSearch = roadmap.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             roadmap.description.toLowerCase().includes(searchTerm.toLowerCase());
 
@@ -82,26 +89,19 @@ const RoadmapsPage = () => {
         hidden: { opacity: 0 },
         visible: {
             opacity: 1,
-            transition: {
-                staggerChildren: 0.05
-            }
+            transition: { staggerChildren: 0.05 }
         }
     };
 
     const itemVariants = {
         hidden: { y: 10, opacity: 0 },
-        visible: {
-            y: 0,
-            opacity: 1
-        }
+        visible: { y: 0, opacity: 1 }
     };
 
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen">
-                <div className="flex flex-col items-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-                </div>
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
             </div>
         );
     }
@@ -118,9 +118,6 @@ const RoadmapsPage = () => {
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
-                        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 absolute right-4 top-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
                     </div>
 
                     <div className="flex gap-2 overflow-x-auto scrollbar-hide">
@@ -165,6 +162,6 @@ const RoadmapsPage = () => {
             </div>
         </div>
     );
-}
+};
 
 export default RoadmapsPage;

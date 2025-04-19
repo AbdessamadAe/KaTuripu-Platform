@@ -39,7 +39,10 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
   const previousProgressRef = useRef(0);
 
   const fetchCompleted = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      setCompletedExercises([]);
+      return;
+    }
     const completed = await getCompletedExercises(user.id);
     setCompletedExercises(completed);
   }, [user, roadmapData?.id]);
@@ -59,8 +62,6 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
   );
 
   const generateNodes = useCallback(async () => {
-    if (!user) return [];
-
     const nodePromises = roadmapData?.nodes.map(async (node: any) => {
       const progress = await getUserProgressOnNode(user.id, node.id);
       console.log("Node progress:", progress);
@@ -137,15 +138,13 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapData }) => {
   }, [fetchCompleted]);
 
   useEffect(() => {
-    const refreshNodes = async () => {
-      if (!user) return;
-  
+    const refreshNodes = async () => {  
       const newNodes = await generateNodes();
       setNodes(newNodes);
     };
   
     refreshNodes();
-  }, [generateNodes, completedExercises, user]);
+  }, [generateNodes, completedExercises]);
   
 
   useEffect(() => {
