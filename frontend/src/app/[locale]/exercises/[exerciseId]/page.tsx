@@ -10,6 +10,26 @@ import { motion } from 'framer-motion';
 import * as userService from '@/lib/services/userService';
 import { showAchievement } from '@/utils/gamificationUtils';
 
+// Utility function to format YouTube URLs for embedding
+const formatYouTubeUrl = (url: string): string => {
+  if (!url) return '';
+  
+  // Handle youtu.be short links
+  if (url.includes('youtu.be')) {
+    const videoId = url.split('/').pop();
+    return `https://www.youtube.com/embed/${videoId}`;
+  }
+  
+  // Handle standard youtube.com links
+  if (url.includes('youtube.com/watch')) {
+    const videoId = new URL(url).searchParams.get('v');
+    return `https://www.youtube.com/embed/${videoId}`;
+  }
+  
+  // If it's already an embed link or another format, return as is
+  return url;
+};
+
 const ExerciseDetailPage = () => {
   const params = useParams();
   const searchParams = useSearchParams();
@@ -135,9 +155,9 @@ const ExerciseDetailPage = () => {
           
           {/* Exercise description */}
           <div className="bg-gray-700 p-6 rounded-lg mb-8">
-            <MathJax>
-              <ReactMarkdown>{exercise?.description}</ReactMarkdown>
-            </MathJax>
+          <MathJax>
+                    <ReactMarkdown>{exercise?.solution}</ReactMarkdown>
+          </MathJax>
           </div>
 
           {/* Hints section with animations */}
@@ -228,7 +248,7 @@ const ExerciseDetailPage = () => {
               <h2 className="text-xl font-bold mb-4">Video Explanation</h2>
               <div className="relative pb-56.25 h-0 overflow-hidden rounded-lg">
                 <iframe
-                  src={exercise?.video_url}
+                  src={formatYouTubeUrl(exercise.video_url)}
                   className="absolute top-0 left-0 w-full h-full"
                   frameBorder="0"
                   allowFullScreen
