@@ -35,7 +35,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapSlug }) => {
   const [completedExercises, setCompletedExercises] = useState<string[] | null>([]);
   const [nodes, setNodes, onNodesChange] = useNodesState<any>([]);
   const [roadmapData, setRoadmapData] = useState<RoadmapData | null>(null);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<any>([]);
   const [selectedNode, setSelectedNode] = useState<any>(null);
   const [currentProgress, setCurrentProgress] = useState(0);
   const previousProgressRef = useRef(0);
@@ -123,7 +123,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapSlug }) => {
 
   const handleProblemToggle = useCallback(
     async (userId: string, exerciseId: string, completed: boolean, nodeId: string) => {
-      if (!user || !roadmapData) return;
+      if (!user || !roadmapData || !nodeId || !exerciseId) return;
 
       try {
         if (completed) {
@@ -173,7 +173,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapSlug }) => {
         console.log("Fetched roadmap data:", data);
         setRoadmapData(data);
         if (data?.edges) {
-          setEdges(data.edges);
+          setEdges(data?.edges);
         }
       } catch (error) {
         console.error("Error fetching roadmap data:", error);

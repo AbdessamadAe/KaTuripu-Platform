@@ -13,7 +13,7 @@ interface SidebarProps {
   userId: string;
   title: string;
   nodeId: string;
-  roadmapId: string;
+  roadmapId: string | undefined;
   prerequisites: Prerequisite[];
   problems: Exercise[];
   onClose: () => void;
