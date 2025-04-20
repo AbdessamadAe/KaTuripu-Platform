@@ -8,12 +8,12 @@
     "team": {
         "title": "Our Team",
         "member1": {
-            "name": "Abdesamad Ait Mouden",
-            "title": "Coffee Shop Owner's Friend",
+            "name": "Abdesamad Ait Elmouden",
+            "title": "His friend",
             "bio": "Bachelor's student at Al Akhawayn University in Ifrane, majoring in Computer Science and Mathematics."
         },
         "member2": {
-            "name": "Achraf Agghoug",
+            "name": "Achraf Ajrhourh",
             "title": "Coffee Shop Owner",
             "bio": "Master's graduate from Al Akhawayn University in Ifrane, specializing in Big Data Analytics."
         }
@@ -32,6 +32,14 @@
         "searchPlaceholder": "Search for a roadmap...",
         "all": "All",
         "noRoadmapsFound": "No roadmaps match your search",
-        "resetFilters": "Reset filters"
+        "resetFilters": "Reset filters",
+        "continue": "continue",
+        "start": "start",
+        "complete": "complete",
+        "inProgress": "in progress",
+        "notStarted": "not started",
+        "beginner": "Beginner",
+        "intermediate": "Intermediate",
+        "advanced": "Advanced"
     }
 }

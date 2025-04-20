@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 
 interface Roadmap {
   title: string;
@@ -17,6 +18,7 @@ interface RoadmapCardProps {
 
 const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const t = useTranslations('roadmap');
 
   const getPrimaryCategory = (): string => {
     if (Array.isArray(roadmap.category)) return roadmap.category[0]?.toLowerCase() || '';
@@ -85,11 +87,11 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
     const base = 'absolute top-3 right-3 text-xs font-semibold px-2 py-0.5 rounded-full';
     switch (roadmap.level) {
       case 'beginner':
-        return <span className={`${base} bg-green-100 text-green-700`}>Débutant</span>;
+        return <span className={`${base} bg-green-100 text-green-700`}>{t('beginner')}</span>;
       case 'intermediate':
-        return <span className={`${base} bg-yellow-100 text-yellow-700`}>Intermédiaire</span>;
+        return <span className={`${base} bg-yellow-100 text-yellow-700`}>{t('intermediate')}</span>;
       case 'advanced':
-        return <span className={`${base} bg-red-100 text-red-700`}>Avancé</span>;
+        return <span className={`${base} bg-red-100 text-red-700`}>{t('advanced')}</span>;
       default:
         return null;
     }
@@ -151,10 +153,12 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
           />
         </div>
         <div className="flex justify-between items-center mt-1 text-xs text-gray-500">
-          <span>{progress > 0 ? `${progress}% terminé` : 'Pas encore commencé'}</span>
+          <span>
+            {progress > 0 ? `${progress}% ${t('complete')}` : t('notStarted')}
+          </span>
           {progress === 100 && (
             <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-[10px]">
-              Terminé ✓
+              {t('complete')} ✓
             </span>
           )}
         </div>
@@ -165,7 +169,7 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
           isHovered ? 'bg-blue-400' : 'bg-blue-500 hover:bg-blue-400'
         } text-white`}
       >
-        {progress > 0 ? 'Continuer' : 'Commencer'}
+        {progress > 0 ? t('continue') : t('start')}
       </button>
     </div>
   );

@@ -32,6 +32,14 @@
         "searchPlaceholder": "          البحث عن خريطة أو مدرسة...",
         "all": "الكل",
         "noRoadmapsFound": "لا توجد مسارات تعليمية تطابق بحثك",
-        "resetFilters": "إعادة تعيين الفلاتر"
+        "resetFilters": "إعادة تعيين الفلاتر",
+        "continue": "استمر",
+        "complete": "مكتمل",
+        "inProgress": "قيد التقدم",
+        "notStarted": "لم يبدأ بعد",
+        "beginner": "مبتدئ",
+        "intermediate": "متوسط",
+        "advanced": "متقدم",
+        "start": "ابدأ"
     }
 }

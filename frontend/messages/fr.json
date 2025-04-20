@@ -8,12 +8,12 @@
     "team": {
         "title": "Notre Équipe",
         "member1": {
-            "name": "Abdesamad Ait Mouden",
-            "title": "Ami du Propriétaire de Café",
+            "name": "Abdesamad Ait Elmouden",
+            "title": "Son ami",
             "bio": "Étudiant en licence à l'Université Al Akhawayn à Ifrane, spécialisé en Informatique et Mathématiques."
         },
         "member2": {
-            "name": "Achraf Agghoug",
+            "name": "Achraf Ajrhourh",
             "title": "Propriétaire de Café",
             "bio": "Diplômé de Master de l'Université Al Akhawayn à Ifrane, spécialisé en Big Data Analytics."
         }
@@ -32,6 +32,14 @@
         "searchPlaceholder": "Rechercher un parcours...",
         "all": "Tous",
         "noRoadmapsFound": "Aucun parcours ne correspond à votre recherche",
-        "resetFilters": "Réinitialiser les filtres"
+        "resetFilters": "Réinitialiser les filtres",
+        "continue": "continuer",
+        "complete": "terminé",
+        "inProgress": "en cours",
+        "notStarted": "non commencé",
+        "beginner": "Débutant",
+        "intermediate": "Intermédiaire",
+        "advanced": "Avancé",
+        "start": "commencer"
     }
 }
