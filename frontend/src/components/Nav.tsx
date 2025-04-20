@@ -48,17 +48,12 @@ export default function Nav() {
         console.error('Error fetching session:', error);
       } finally {
         setLoading(false);
+        console.log('User:', user);
+        console.log('Is Authenticated:', isAuthenticated);
       }
     }
 
     getSession();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user || null);
-      setIsAuthenticated(!!session);
-    });
-
-    return () => subscription.unsubscribe();
   }, [supabase]);
 
   const switchLanguage = (langCode: string) => {
