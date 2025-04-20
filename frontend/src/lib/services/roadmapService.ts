@@ -44,6 +44,7 @@ function normalizeRoadmapData(rawData: any): RoadmapData {
             solution: exercise.solution || '',
             hints: Array.isArray(exercise.hints) ? exercise.hints : [],
             video_url: exercise.video_url || '',
+            question_image_url: exercise.question_image_url || ''
           };
         });
     } else if (node.exercises && Array.isArray(node.exercises)) {
@@ -56,6 +57,7 @@ function normalizeRoadmapData(rawData: any): RoadmapData {
         solution: ex.solution || '',
         hints: Array.isArray(ex.hints) ? ex.hints : [],
         video_url: ex.video_url || '',
+        question_image_url: ex.question_image_url || ''
       }));
     }
     
