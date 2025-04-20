@@ -1,5 +1,5 @@
 // src/lib/roadmapService.ts
-import supabase from '../db/supabase';
+import createClientForBrowser from '../db/client';
 import { RoadmapData, Exercise, RoadmapNodeType } from '@/types/types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -100,6 +100,7 @@ function normalizeRoadmapData(rawData: any): RoadmapData {
  * @returns Complete roadmap data with nodes and edges
  */
 export async function getRoadmap(id: string): Promise<RoadmapData> {
+  const supabase = createClientForBrowser();
   try {
     const { data: roadmap, error } = await supabase
       .from('roadmaps')
@@ -151,6 +152,7 @@ export async function getRoadmap(id: string): Promise<RoadmapData> {
  * @returns Array of roadmap basic information
  */
 export async function getAllRoadmaps() {
+  const supabase = createClientForBrowser();
   try {
     const { data, error } = await supabase.from('roadmaps').select('*');
     if (error) throw new Error(`Failed to fetch roadmaps: ${error.message}`);
@@ -167,6 +169,7 @@ export async function getAllRoadmaps() {
  * @returns Roadmap data or null if not found
  */
 export async function getRoadmapBySlug(slug: string) {
+  const supabase = createClientForBrowser();
   try {
     const { data, error } = await supabase
       .from('roadmaps')
@@ -193,6 +196,7 @@ export async function getRoadmapBySlug(slug: string) {
  * @returns The created roadmap
  */
 export async function createRoadmap(roadmapData: RoadmapData) {
+  const supabase = createClientForBrowser();
   try {
     const { nodes, edges, ...roadmapFields } = roadmapData;
 
@@ -290,6 +294,7 @@ export async function createRoadmap(roadmapData: RoadmapData) {
  * @param roadmapData Updated roadmap data
  */
 export async function updateRoadmap(id: string, roadmapData: RoadmapData) {
+  const supabase = createClientForBrowser();
   try {
     const { nodes, edges, ...roadmapFields } = roadmapData;
 
@@ -448,6 +453,7 @@ export async function updateRoadmap(id: string, roadmapData: RoadmapData) {
  * @returns True if deletion was successful
  */
 export async function deleteRoadmap(id: string): Promise<boolean> {
+  const supabase = createClientForBrowser();
   try {
     // Delete edges first (due to foreign key constraints)
     const { error: edgesError } = await supabase

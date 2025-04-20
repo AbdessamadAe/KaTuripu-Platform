@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
-import supabase from '@/lib/db/supabase';
+import createClientForBrowser from '@/lib/db/client';
 import { Exercise } from '@/types/types';
 import { MathJax } from 'better-react-mathjax';
 import ReactMarkdown from 'react-markdown';
 import { motion } from 'framer-motion';
 import * as userService from '@/lib/services/userService';
-import { showAchievement } from '@/utils/gamificationUtils';
+import { showAchievement } from '@/utils/utils';
 
 // Utility function to format YouTube URLs for embedding
 const formatYouTubeUrl = (url: string): string => {
@@ -47,6 +47,8 @@ const ExerciseDetailPage = () => {
   const [completed, setCompleted] = useState(false);
   const [hintAnimation, setHintAnimation] = useState(false);
   const [isFirstView, setIsFirstView] = useState(true);
+
+  const supabase = createClientForBrowser();
 
   useEffect(() => {
     const fetchUserData = async () => {

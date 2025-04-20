@@ -13,9 +13,8 @@ import {
 import "@xyflow/react/dist/style.css";
 import ExerciseSidebar from "./sidebar";
 import { Exercise, RoadmapData } from "@/types/types";
-import { celebrateProgress } from "@/utils/gamificationUtils";
-import { useAuth } from "@/contexts/AuthContext";
-import { NodeLabel } from "@/components/client/NodeLabel";
+import { celebrateProgress } from "@/utils/utils";
+import { NodeLabel } from "@/components/NodeLabel";
 import { getRoadmapBySlug } from "@/lib/api";
 import {
   getUserProgressOnNode,
@@ -23,6 +22,7 @@ import {
   completeExercise,
   uncompleteExercise,
 } from "@/lib/services/userService";
+import createClientForBrowser from "@/lib/db/client";
 
 interface RoadmapProps {
   roadmapSlug: string | undefined;
@@ -31,7 +31,9 @@ interface RoadmapProps {
 const nodeClassName = (node: any) => node.type;
 
 const Roadmap: React.FC<RoadmapProps> = ({ roadmapSlug }) => {
-  const { user } = useAuth();
+  
+  const supabase = createClientForBrowser();
+  const [user, setUser] = useState<any>(null);
   const [completedExercises, setCompletedExercises] = useState<string[] | null>([]);
   const [nodes, setNodes, onNodesChange] = useNodesState<any>([]);
   const [roadmapData, setRoadmapData] = useState<RoadmapData | null>(null);
@@ -40,6 +42,27 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapSlug }) => {
   const [currentProgress, setCurrentProgress] = useState(0);
   const previousProgressRef = useRef(0);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Check auth state on component mount
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user || null);
+    };
+    
+    fetchUser();
+    
+    // Set up listener for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setUser(session?.user || null);
+      }
+    );
+    
+    return () => {
+      subscription?.unsubscribe();
+    };
+  }, [supabase]);
 
   const fetchCompleted = useCallback(async () => {
     if (!user) {

@@ -1,12 +1,14 @@
 "use client";
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon, UserIcon, ArrowRightOnRectangleIcon, LanguageIcon } from '@heroicons/react/24/outline'
-import { SignInButton } from '@/components/client/sing-in-button'
-import { useAuth } from '@/contexts/AuthContext'
+import { SignInButton } from '@/components/sing-in-button'
 import { Fragment, useEffect, useMemo, useState } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl';
 import Link from 'next/link'
+import createClientForBrowser from '@/lib/db/client';
+import { handleSignOut } from '@/lib/db/actions';
+import { useRouter } from 'next/navigation';
 
 const navigation = [
   { name: 'Concours', href: '/roadmap', current: true },
@@ -19,11 +21,15 @@ function classNames(...classes: (string | undefined | false | null)[]) {
 }
 
 export default function Nav() {
-  const { user, loading, isAuthenticated, logout } = useAuth();
+  const supabase = createClientForBrowser();
+  
   const router = useRouter();
   const pathname = usePathname();
   const locale = useLocale();
   const [currentLang, setCurrentLang] = useState(locale);
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const languages = [
     { code: 'fr', name: 'Français' },
@@ -31,9 +37,29 @@ export default function Nav() {
     { code: 'ar', name: 'العربية' }
   ];
 
-  const handleSignOut = async () => {
-    await logout();
-  };
+  useEffect(() => {
+    async function getSession() {
+      try {
+        setLoading(true);
+        const { data: { session } } = await supabase.auth.getSession();
+        setUser(session?.user || null);
+        setIsAuthenticated(!!session);
+      } catch (error) {
+        console.error('Error fetching session:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    getSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null);
+      setIsAuthenticated(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase]);
 
   const switchLanguage = (langCode: string) => {
     setCurrentLang(langCode);

@@ -1,4 +1,4 @@
-import Roadmap from "@/components/client/RoadmapViewer";
+import Roadmap from "@/components/RoadmapViewer";
 
 export default async function RoadmapPage({ params }: any) {
   const resolvedparams = await params;

@@ -1,12 +1,13 @@
 // src/lib/userService.ts
-import supabase from '../db/supabase';
+import createClientForBrowser from '../db/client';
 
 /**
  * Fetch user completed exercises
  */
 export const getCompletedExercises = async (userId: string): Promise<string[] | null> => {
+  
   if (!userId) return null;
-
+  const supabase = createClientForBrowser();
   try {
     const { data, error } = await supabase
       .from('user_completed_exercises')
@@ -35,7 +36,7 @@ export const completeExercise = async (
   roadmapId: string | undefined
 ): Promise<{ success: boolean }> => {
   if (!userId || !exerciseId) return { success: false };
-
+  const supabase = createClientForBrowser();
   try {
     const { error } = await supabase.from('user_completed_exercises').insert({
       user_id: userId,
@@ -60,7 +61,7 @@ export const uncompleteExercise = async (
   roadmapId: string | undefined
 ): Promise<{ success: boolean }> => {
   if (!userId || !exerciseId) return { success: false };
-
+  const supabase = createClientForBrowser();
   try {
 
     console.log('Uncompleting exercise:', { userId, exerciseId });
@@ -80,7 +81,7 @@ export const uncompleteExercise = async (
 
 export const getUserProgressOnRoadmap = async (userId: string, roadmapId: string) => {
   if (!userId || !roadmapId) return null;
-
+  const supabase = createClientForBrowser();
   try {
     const { data, error } = await supabase
       .from('user_roadmap_progress')
@@ -103,7 +104,7 @@ export const getUserProgressOnRoadmap = async (userId: string, roadmapId: string
 
 export const getUserProgressOnNode = async (userId: string, nodeId: string) => {
   if (!userId || !nodeId) return null;
-
+  const supabase = createClientForBrowser();
   try {
     const { data, error } = await supabase
       .from('user_node_progress')

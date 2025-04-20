@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Node } from '@xyflow/react';
-import supabase from '@/lib/db/supabase';
+import createClientForBrowser from '@/lib/db/client';
 import { MathJax } from 'better-react-mathjax';
 import ReactMarkdown from 'react-markdown';
 import { Modal } from './Modal';
@@ -24,6 +24,7 @@ interface NodeEditModalProps {
 }
 
 export function NodeEditModal({ node, isOpen, onClose, onChange }: NodeEditModalProps) {
+  const supabase = createClientForBrowser();
   const [label, setLabel] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [exercises, setExercises] = useState<Exercise[]>([]);

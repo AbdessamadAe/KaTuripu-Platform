@@ -1,4 +1,4 @@
-import Hero from "@/components/client/Hero";
+import Hero from "@/components/Hero";
 import { useLocale } from "next-intl";
 
 export default function HomePage() {

@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import RoadmapCard from "@/components/client/RoadmapCard";
+import RoadmapCard from "@/components/RoadmapCard";
 import * as roadmapService from '@/lib/services/roadmapService';
 import * as userService from '@/lib/services/userService';
 import { motion } from 'framer-motion';
-import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { useTranslations } from 'next-intl';
+import createClientForBrowser from "@/lib/db/client";
 
 const getCategoriesFromRoadmap = (roadmap: any): string[] => {
     if (Array.isArray(roadmap.category)) return roadmap.category;
@@ -17,6 +17,7 @@ const getCategoriesFromRoadmap = (roadmap: any): string[] => {
 };
 
 const RoadmapsPage = () => {
+    const supabase = createClientForBrowser();
     const router = useRouter();
     const t = useTranslations('roadmap');
     const [roadmaps, setRoadmaps] = useState<any[]>([]);
@@ -24,7 +25,28 @@ const RoadmapsPage = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [category, setCategory] = useState("all");
-    const { user } = useAuth();
+    const [user, setUser] = useState<any>(null);
+    
+    // Check auth state on component mount
+    useEffect(() => {
+        const fetchUser = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            setUser(session?.user || null);
+        };
+        
+        fetchUser();
+        
+        // Set up listener for auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+            (event, session) => {
+                setUser(session?.user || null);
+            }
+        );
+        
+        return () => {
+            subscription?.unsubscribe();
+        };
+    }, [supabase]);
 
     // Fetch roadmap data once
     useEffect(() => {

@@ -1,13 +1,11 @@
 "use client";
 
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
-import { useAuth } from "@/contexts/AuthContext";
-
+import { signInWithGoogle } from "@/lib/db/actions";
 export function SignInButton() {
-  const { loginWithGoogle } = useAuth();
 
   const handleGoogleSignIn = async () => {
-    await loginWithGoogle();
+    await signInWithGoogle();
   };
 
   return (

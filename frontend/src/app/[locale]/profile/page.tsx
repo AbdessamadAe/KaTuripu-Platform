@@ -1,8 +1,9 @@
 "use client";
 
-import { useAuth } from '@/contexts/AuthContext';
 import { Disclosure } from '@headlessui/react';
 import { ArrowLeftIcon, PencilIcon } from '@heroicons/react/24/outline';
+import createClientForBrowser from '@/lib/db/client';
+import { useState, useEffect } from 'react';
 
 interface UserMetadata {
   avatar_url?: string;
@@ -21,8 +22,51 @@ interface UserData {
 }
 
 export default function ProfilePage() {
-  const { user, loading } = useAuth();
-  const userData = user as UserData | null;
+  const supabase = createClientForBrowser();
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch the session when the component mounts
+    const fetchSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Error fetching session:', error);
+          setLoading(false);
+          return;
+        }
+        
+        if (session?.user) {
+          setUserData(session.user as UserData);
+        }
+      } catch (error) {
+        console.error('Unexpected error:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSession();
+
+    // Set up a listener for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (session?.user) {
+          setUserData(session.user as UserData);
+        } else {
+          setUserData(null);
+        }
+        setLoading(false);
+      }
+    );
+
+    // Clean up the subscription when the component unmounts
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
 
   if (loading) {
     return (

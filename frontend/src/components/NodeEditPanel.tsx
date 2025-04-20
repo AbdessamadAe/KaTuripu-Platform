@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Node } from '@xyflow/react';
-import supabase from '@/lib/db/supabase';
+import createClientForBrowser from '@/lib/db/client';
 import { MathJax } from 'better-react-mathjax';
 import ReactMarkdown from 'react-markdown';
 import { ExerciseEditModal } from './ExerciseEditModal';
@@ -23,6 +23,7 @@ interface NodeEditPanelProps {
 }
 
 export function NodeEditPanel({ node, onChange }: NodeEditPanelProps) {
+  const supabase = createClientForBrowser();
   const [label, setLabel] = useState<string>(typeof node.data?.label === 'string' ? node.data.label : '');
   const [description, setDescription] = useState<string>(node.data?.description as string || '');
   const [exercises, setExercises] = useState<Exercise[]>(Array.isArray(node.data?.exercises) ? node.data.exercises : []);

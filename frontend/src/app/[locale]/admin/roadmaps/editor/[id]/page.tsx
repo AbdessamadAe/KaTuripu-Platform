@@ -3,7 +3,7 @@
 import { useCallback, useState, useEffect } from 'react';
 import { ReactFlow, Background, Controls, useNodesState, useEdgesState, addEdge, Connection, Edge, Node } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { NodeEditPanel } from '@/components/admin/NodeEditPanel';
+import { NodeEditPanel } from '@/components/NodeEditPanel';
 import { useRouter } from 'next/navigation';
 import { RoadmapData, RoadmapNodeType, Exercise } from '@/types/types';
 import { getRoadmap, createRoadmap, updateRoadmap } from '@/lib/services/roadmapService';
