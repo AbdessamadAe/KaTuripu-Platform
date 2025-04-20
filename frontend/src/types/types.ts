@@ -9,6 +9,7 @@ export type Exercise = {
     hints?: string[];
     video_url?: string;
     completed?: boolean;
+    question_image_url?: string;
   };
   
   export type RoadmapNodeType = {

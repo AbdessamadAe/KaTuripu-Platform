@@ -6,6 +6,9 @@ const singInWith = (provider:any) => async () => {
         provider,
         options: {
             redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback`,
+            queryParams: {
+              prompt: 'select_account',
+            },
         },
     })
     if (error) {

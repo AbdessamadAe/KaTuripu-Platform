@@ -14,6 +14,8 @@ type Exercise = {
   hints: string[];
   solution?: string;
   video_url?: string;
+  question_image_url?: string;
+
 };
 
 interface NodeEditModalProps {

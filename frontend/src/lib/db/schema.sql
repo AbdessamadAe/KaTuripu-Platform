@@ -46,7 +46,8 @@ CREATE TABLE exercises (
   hints TEXT,
   solution TEXT,
   video_url TEXT,
-  description TEXT
+  description TEXT,
+  question_image_url TEXT,
 );
 
 -- NODE EXERCISES (many-to-many between nodes and exercises)

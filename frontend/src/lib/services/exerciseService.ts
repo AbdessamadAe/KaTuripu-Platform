@@ -19,6 +19,8 @@ export async function getExerciseById(id: string): Promise<Exercise | null> {
       .select('*')
       .eq('id', id)
       .single();
+
+    console.log('Exercise data:', data);
       
     if (error) {
       if (error.code === 'PGRST116') return null;
@@ -63,6 +65,7 @@ export async function createExercise(exercise: Partial<Exercise>): Promise<Exerc
 export async function updateExercise(id: string, exercise: Partial<Exercise>): Promise<boolean> {
   const supabase = createClientForBrowser();
   try {
+    console.log('Updating exercise with ID:', id, 'Data:', exercise);
     const { error } = await supabase
       .from('exercises')
       .update(exercise)
@@ -103,5 +106,73 @@ export async function deleteExercise(id: string): Promise<boolean> {
   } catch (error) {
     console.error('Error in deleteExercise:', error);
     throw error;
+  }
+}
+
+/**
+ * Upload an image for an exercise question
+ * @param exerciseId Exercise ID
+ * @param file Image file to upload
+ * @returns The public URL of the uploaded image
+ */
+export async function uploadQuestionImage(exerciseId: string, file: File): Promise<string> {
+  const supabase = createClientForBrowser();
+  try { 
+    // Create a unique file name to prevent collisions
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${exerciseId}-${Date.now()}.${fileExt}`;
+    const filePath = `question_images/${fileName}`;
+    
+    // Upload the file to the "exercises" bucket
+    const { error: uploadError } = await supabase.storage
+      .from('exercises')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: true,
+      });
+      
+    if (uploadError) throw uploadError;
+    
+    // Get the public URL
+    const { data: urlData } = supabase.storage
+      .from('exercises')
+      .getPublicUrl(filePath);
+      
+    return urlData.publicUrl;
+  } catch (error) {
+    console.error('Error uploading question image:', error);
+    throw new Error('Failed to upload question image. Please try again.');
+  }
+}
+
+/**
+ * Delete a question image from storage
+ * @param imageUrl The URL of the image to delete
+ * @returns Success status
+ */
+export async function deleteQuestionImage(imageUrl: string): Promise<boolean> {
+  const supabase = createClientForBrowser();
+  try {
+    // Extract the path from the URL
+    const urlObj = new URL(imageUrl);
+    const pathParts = urlObj.pathname.split('/');
+    const bucketIndex = pathParts.findIndex(part => part === 'exercises');
+    
+    if (bucketIndex === -1) {
+      throw new Error('Invalid image URL format');
+    }
+    
+    // Get the path within the bucket
+    const filePath = pathParts.slice(bucketIndex + 1).join('/');
+    
+    const { error } = await supabase.storage
+      .from('exercises')
+      .remove([filePath]);
+      
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('Error deleting question image:', error);
+    return false; // Don't throw here - it's not critical if image deletion fails
   }
 }

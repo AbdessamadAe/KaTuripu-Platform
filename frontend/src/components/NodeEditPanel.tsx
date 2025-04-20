@@ -15,6 +15,7 @@ type Exercise = {
   hints: string[];
   solution?: string;
   video_url?: string;
+  question_image_url?: string;
 };
 
 interface NodeEditPanelProps {
@@ -115,7 +116,8 @@ export function NodeEditPanel({ node, onChange }: NodeEditPanelProps) {
       difficulty: updatedExercise.difficulty,
       hints: updatedExercise.hints || [],
       solution: updatedExercise.solution,
-      video_url: updatedExercise.video_url || ''
+      video_url: updatedExercise.video_url || '',
+      question_image_url: updatedExercise.question_image_url || '',
     };
     
     const updatedExercises = exercises.map(ex => 

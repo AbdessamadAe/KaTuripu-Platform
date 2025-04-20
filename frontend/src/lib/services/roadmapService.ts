@@ -406,7 +406,9 @@ export async function updateRoadmap(id: string, roadmapData: RoadmapData) {
             difficulty: exercise.difficulty,
             hints: exercise.hints || [],
             solution: exercise.solution || '',
-            video_url: exercise.video_url || ''
+            video_url: exercise.video_url || '',
+            question_image_url: exercise.question_image_url || '',
+            description: exercise.description
           };
           
           const { error: exUpdateErr } = await supabase

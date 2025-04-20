@@ -90,7 +90,7 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
       {/* Exercises */}
       <div className="flex-grow">
         <div className="flex justify-between items-center mb-2">
-          <h3 className="text-lg font-semibold text-white">Exercices</h3>
+          <h3 className="text-lg font-semibold text-white">Exercises</h3>
           <span className="text-gray-400 text-sm">
             {problems.filter(p => p.completed).length}/{problems.length} terminés
           </span>

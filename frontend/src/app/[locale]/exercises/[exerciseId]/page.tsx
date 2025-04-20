@@ -8,6 +8,7 @@ import { MathJax } from 'better-react-mathjax';
 import ReactMarkdown from 'react-markdown';
 import { motion } from 'framer-motion';
 import * as userService from '@/lib/services/userService';
+import { getExerciseById } from '@/lib/services/exerciseService';
 import { showAchievement } from '@/utils/utils';
 
 // Utility function to format YouTube URLs for embedding
@@ -104,16 +105,7 @@ const ExerciseDetailPage = () => {
   useEffect(() => {
     const fetchExercise = async () => {
       try {
-        const { data, error } = await supabase
-          .from('exercises')
-          .select('*')
-          .eq('id', exerciseId)
-          .single();
-
-        if (error || !data) {
-          throw new Error('Exercise not found');
-        }
-
+        const data = await getExerciseById(exerciseId);
         setExercise(data as Exercise);
       } catch (error) {
         console.error('Error fetching exercise:', error);
@@ -155,11 +147,17 @@ const ExerciseDetailPage = () => {
             </span>
           </div>
           
-          {/* Exercise description */}
+          {/* Exercise Question */}
           <div className="bg-gray-700 p-6 rounded-lg mb-8">
-          <MathJax>
-                    <ReactMarkdown>{exercise?.solution}</ReactMarkdown>
-          </MathJax>
+            {exercise?.question_image_url && (
+              <div className="mt-4 flex justify-center">
+                <img 
+                  src={exercise?.question_image_url} 
+                  alt="Exercise question illustration"
+                  className="max-w-full rounded-lg shadow-lg max-h-[500px] object-contain" 
+                />
+              </div>
+            )}
           </div>
 
           {/* Hints section with animations */}
