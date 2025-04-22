@@ -19,22 +19,22 @@ const TestimonialCard: React.FC<TestimonialProps> = ({
   rating
 }) => {
   return (
-    <div className="bg-white dark:bg-gray-800/90 p-6 md:p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-[#e9e3ff]/60 dark:border-gray-700/50 relative overflow-hidden">
+    <div className="bg-white dark:bg-gray-800/90 p-6 md:p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-[#c5b3ff]/60 dark:border-gray-700/50 relative overflow-hidden">
       {/* Decorative elements */}
-      <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-[#a7d1cf]/30 dark:bg-[#a7d1cf]/15 rounded-full blur-xl"></div>
-      <div className="absolute -left-4 -top-4 w-20 h-20 bg-[#f0b9ae]/30 dark:bg-[#f0b9ae]/15 rounded-full blur-xl"></div>
+      <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-[#66c2bc]/40 dark:bg-[#66c2bc]/20 rounded-full blur-xl"></div>
+      <div className="absolute -left-4 -top-4 w-20 h-20 bg-[#ff9d8a]/40 dark:bg-[#ff9d8a]/20 rounded-full blur-xl"></div>
       
       {/* Quote icon */}
       <div className="mb-6 flex items-center justify-between">
-        <div className="w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-br from-[#e9e3ff]/80 to-[#f0b9ae]/30 dark:from-[#e9e3ff]/20 dark:to-[#f0b9ae]/20">
-          <ChatBubbleLeftRightIcon className="w-5 h-5 text-[#5a8aaf] dark:text-[#7d9bbf]" />
+        <div className="w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-br from-[#c5b3ff]/80 to-[#ff9d8a]/40 dark:from-[#c5b3ff]/30 dark:to-[#ff9d8a]/30">
+          <ChatBubbleLeftRightIcon className="w-5 h-5 text-[#4a7ab0] dark:text-[#6b9bd1]" />
         </div>
         
         <div className="flex">
           {[...Array(5)].map((_, i) => (
             <StarIcon 
               key={i} 
-              className={`w-5 h-5 ${i < rating ? 'text-[#e99888]' : 'text-gray-200 dark:text-gray-700'}`} 
+              className={`w-5 h-5 ${i < rating ? 'text-[#ff8066]' : 'text-gray-200 dark:text-gray-700'}`} 
             />
           ))}
         </div>
@@ -46,21 +46,21 @@ const TestimonialCard: React.FC<TestimonialProps> = ({
       </blockquote>
       
       {/* Author info */}
-      <footer className="flex items-center mt-6 pt-4 border-t border-[#e9e3ff]/40 dark:border-gray-700">
+      <footer className="flex items-center mt-6 pt-4 border-t border-[#c5b3ff]/40 dark:border-gray-700">
         {avatarUrl ? (
           <img 
             src={avatarUrl} 
             alt={author}
-            className="w-12 h-12 rounded-full object-cover border-2 border-[#a7d1cf]/30 dark:border-gray-700"
+            className="w-12 h-12 rounded-full object-cover border-2 border-[#66c2bc]/40 dark:border-gray-700"
           />
         ) : (
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#5a8aaf] to-[#7d9bbf] flex items-center justify-center text-white">
+          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#4a7ab0] to-[#6b9bd1] flex items-center justify-center text-white">
             <UserCircleIcon className="w-8 h-8" />
           </div>
         )}
         <div className="ml-4">
           <p className="font-semibold text-gray-900 dark:text-white">{author}</p>
-          <p className="text-sm text-[#5a8aaf] dark:text-[#7d9bbf]">{role}</p>
+          <p className="text-sm text-[#4a7ab0] dark:text-[#6b9bd1]">{role}</p>
         </div>
       </footer>
     </div>
@@ -99,19 +99,16 @@ const Testimonials: React.FC<TestimonialsProps> = ({ id = "testimonials" }) => {
   ];
 
   return (
-    <section id={id} className="py-20 bg-gradient-to-b from-white to-[#f5f3ff] dark:from-gray-900 dark:to-indigo-950/30 overflow-hidden relative">
+    <section id={id} className="py-20 bg-gradient-to-b from-white to-[#eae6ff] dark:from-gray-900 dark:to-indigo-900/30 overflow-hidden relative">
       {/* Background decorative elements */}
-      <div className="absolute top-40 right-1/4 w-72 h-72 bg-[#a7d1cf]/30 dark:bg-[#a7d1cf]/15 rounded-full blur-3xl opacity-30"></div>
-      <div className="absolute -bottom-20 left-1/3 w-64 h-64 bg-[#f0b9ae]/20 dark:bg-[#f0b9ae]/10 rounded-full blur-3xl opacity-30"></div>
+      <div className="absolute top-40 right-1/4 w-72 h-72 bg-[#66c2bc]/40 dark:bg-[#66c2bc]/20 rounded-full blur-3xl opacity-40"></div>
+      <div className="absolute -bottom-20 left-1/3 w-64 h-64 bg-[#ff9d8a]/30 dark:bg-[#ff9d8a]/20 rounded-full blur-3xl opacity-40"></div>
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
-          <span className="text-[#5a8aaf] dark:text-[#7d9bbf] font-semibold text-lg mb-2 block">
-            {t('tagline')}
-          </span>
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-5xl mb-6">
             <span className="relative">
-              <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#a7d1cf] to-[#f0b9ae] blur-lg opacity-30"></span>
+              <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#66c2bc] to-[#ff9d8a] blur-lg opacity-40"></span>
               <span className="relative">{t('heading')}</span>
             </span>
           </h2>
@@ -136,7 +133,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({ id = "testimonials" }) => {
         <div className="mt-16 text-center">
           <a 
             href="/roadmap"
-            className="inline-flex items-center justify-center px-8 py-3 text-lg font-medium rounded-xl text-white bg-gradient-to-r from-[#5a8aaf] to-[#7d9bbf] hover:from-[#4d7a9d] hover:to-[#6c8bad] shadow-md hover:shadow-lg transition-all duration-300"
+            className="inline-flex items-center justify-center px-8 py-3 text-lg font-medium rounded-xl text-white bg-gradient-to-r from-[#4a7ab0] to-[#6b9bd1] hover:from-[#3d699d] hover:to-[#588ac0] shadow-md hover:shadow-lg transition-all duration-300"
           >
             {t('actionButton')}
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">

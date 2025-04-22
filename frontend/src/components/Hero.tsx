@@ -19,7 +19,7 @@ const Hero = ({ locale = 'en' }: HeroProps) => {
   };
 
   return (
-    <div className="w-full min-h-[90vh] flex items-center overflow-hidden bg-gradient-to-b from-white to-[#f5f3ff] dark:from-gray-900 dark:to-indigo-950/30 pt-10 pb-16">
+    <div className="w-full min-h-[90vh] flex items-center overflow-hidden bg-gradient-to-b from-white to-[#eae6ff] dark:from-gray-900 dark:to-indigo-900/30 pt-10 pb-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-12">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
 
@@ -28,15 +28,15 @@ const Hero = ({ locale = 'en' }: HeroProps) => {
             className={`w-full lg:w-1/2 text-center ${isRTL ? 'lg:text-right' : 'lg:text-left'}`}
           >
             <div className="relative mb-8">
-              <span className="absolute -left-2 -top-2 w-16 h-16 bg-[#a7d1cf]/50 dark:bg-[#a7d1cf]/20 rounded-full blur-2xl opacity-60"></span>
-              <span className="absolute -right-10 bottom-0 w-20 h-20 bg-[#f0b9ae]/50 dark:bg-[#f0b9ae]/20 rounded-full blur-2xl opacity-60"></span>
+              <span className="absolute -left-2 -top-2 w-16 h-16 bg-[#66c2bc]/60 dark:bg-[#66c2bc]/30 rounded-full blur-2xl opacity-70"></span>
+              <span className="absolute -right-10 bottom-0 w-20 h-20 bg-[#ff9d8a]/60 dark:bg-[#ff9d8a]/30 rounded-full blur-2xl opacity-70"></span>
 
               <h1 className={`relative font-bold ${locale === 'fr' ? 'text-3xl sm:text-4xl md:text-5xl' : 'text-4xl sm:text-5xl md:text-6xl'} tracking-tight`}>
                 <span className="block text-gray-900 dark:text-white">{t('tagline')}</span>
                 <span className="block mt-2">
                   <span className="relative">
-                    <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#7d9bbf] to-[#f0b9ae] blur-lg opacity-30"></span>
-                    <span className="relative bg-gradient-to-r from-[#5a8aaf] to-[#e99888] bg-clip-text text-transparent dark:from-[#7d9bbf] dark:to-[#f0b9ae]">
+                    <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#6b9bd1] to-[#ff9d8a] blur-lg opacity-40"></span>
+                    <span className="relative bg-gradient-to-r from-[#4a7ab0] to-[#ff8066] bg-clip-text text-transparent dark:from-[#6b9bd1] dark:to-[#ff9d8a]">
                       {t('highlight1')}
                     </span>
                   </span>
@@ -55,7 +55,7 @@ const Hero = ({ locale = 'en' }: HeroProps) => {
             >
               <a
                 href="/roadmap"
-                className="px-8 py-4 text-lg font-bold text-white bg-gradient-to-r from-[#5a8aaf] to-[#7d9bbf] hover:from-[#4d7a9d] hover:to-[#6c8bad] dark:from-[#5a8aaf] dark:to-[#7d9bbf] dark:hover:from-[#4d7a9d] dark:hover:to-[#6c8bad] rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 focus:ring-4 focus:ring-[#7d9bbf]/50"
+                className="px-8 py-4 text-lg font-bold text-white bg-gradient-to-r from-[#4a7ab0] to-[#6b9bd1] hover:from-[#3d699d] hover:to-[#588ac0] dark:from-[#4a7ab0] dark:to-[#6b9bd1] dark:hover:from-[#3d699d] dark:hover:to-[#588ac0] rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 focus:ring-4 focus:ring-[#6b9bd1]/50"
                 role="button"
               >
                 {t('getStarted')}
@@ -87,8 +87,8 @@ const Hero = ({ locale = 'en' }: HeroProps) => {
           >
             <div className="relative">
               {/* Decorative elements */}
-              <div className="absolute -z-10 w-40 h-40 bg-[#a7d1cf]/40 dark:bg-[#a7d1cf]/20 rounded-full blur-3xl top-1/4 left-1/4 opacity-70"></div>
-              <div className="absolute -z-10 w-32 h-32 bg-[#f0b9ae]/40 dark:bg-[#f0b9ae]/20 rounded-full blur-3xl bottom-1/3 right-1/4 opacity-70"></div>
+              <div className="absolute -z-10 w-40 h-40 bg-[#66c2bc]/50 dark:bg-[#66c2bc]/30 rounded-full blur-3xl top-1/4 left-1/4 opacity-70"></div>
+              <div className="absolute -z-10 w-32 h-32 bg-[#ff9d8a]/50 dark:bg-[#ff9d8a]/30 rounded-full blur-3xl bottom-1/3 right-1/4 opacity-70"></div>
 
               <img
                 src="/images/hero.svg"

@@ -99,15 +99,15 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
 
   return (
     <div
-      className={`transition-all w-full h-[400px] bg-white dark:bg-gray-800/90 rounded-2xl border border-[#e9e3ff]/60 dark:border-gray-700/50 p-5 flex flex-col justify-between gap-3 relative overflow-hidden ${
+      className={`transition-all w-full h-[400px] bg-white dark:bg-gray-800/90 rounded-2xl border border-[#c5b3ff]/60 dark:border-gray-700/50 p-5 flex flex-col justify-between gap-3 relative overflow-hidden ${
         isHovered ? 'shadow-xl scale-[1.02] border-transparent' : 'hover:shadow-lg'
       }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Decorative elements similar to Hero */}
-      <div className="absolute -z-10 -bottom-6 -right-6 w-24 h-24 bg-[#a7d1cf]/30 dark:bg-[#a7d1cf]/15 rounded-full blur-xl opacity-60"></div>
-      <div className="absolute -z-10 -top-6 -left-6 w-24 h-24 bg-[#f0b9ae]/30 dark:bg-[#f0b9ae]/15 rounded-full blur-xl opacity-50"></div>
+      {/* Decorative elements with vibrant colors */}
+      <div className="absolute -z-10 -bottom-6 -right-6 w-24 h-24 bg-[#66c2bc]/40 dark:bg-[#66c2bc]/20 rounded-full blur-xl opacity-60"></div>
+      <div className="absolute -z-10 -top-6 -left-6 w-24 h-24 bg-[#ff9d8a]/40 dark:bg-[#ff9d8a]/20 rounded-full blur-xl opacity-50"></div>
       
       {getLevelBadge()}
 
@@ -148,7 +148,7 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
           <div
             className={`absolute left-0 top-0 h-full transition-all duration-700 rounded-full ${
               progress === 100
-                ? 'bg-gradient-to-r from-[#66c2bc] to-[#4db6b0]'
+                ? 'bg-[#4ade80]'
                 : progress > 50
                 ? 'bg-gradient-to-r from-[#6b9bd1] to-[#4a7ab0]'
                 : 'bg-gradient-to-r from-[#4a7ab0] to-[#6b9bd1]'
