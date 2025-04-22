@@ -5,34 +5,34 @@ export const Footer: React.FC = () => {
     const d = new Date();
     return (
         <div className="max-w-screen-xl px-4 py-6 mx-auto overflow-hidden sm:px-6 lg:px-8">
-            <div className=" space-y-2 text-center text-gray-400">
-                <p className="text-base leading-6 text-gray-400">
+            <div className="space-y-2 text-center text-gray-400 dark:text-gray-500">
+                <p className="text-base leading-6 text-gray-400 dark:text-gray-500">
                     © {d.getFullYear()} KaTuripu | All Rights Reserved
                 </p>
                 {/* <div className="justify-center space-x-6 hidden md:flex">
-                    <a href="https://www.youtube.com/@KaTuripu" className="text-gray-400 hover:text-gray-500">
+                    <a href="https://www.youtube.com/@KaTuripu" className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-400">
                         <FaYoutube className='w-6 h-6' />
                     </a>
-                    <a href="https://www.linkedin.com/company/katuripu" className="text-gray-400 hover:text-gray-500">
+                    <a href="https://www.linkedin.com/company/katuripu" className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-400">
                         <FaLinkedin className='w-6 h-6' />
                     </a>
-                    <a href="https://www.facebook.com/KaTuriipu/" className="text-gray-400 hover:text-gray-500">
+                    <a href="https://www.facebook.com/KaTuriipu/" className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-400">
                         <FaFacebook className='w-6 h-6' />
                     </a>
-                    <a href="https://www.instagram.com/katuriipu/" className="text-gray-400 hover:text-gray-500">
+                    <a href="https://www.instagram.com/katuriipu/" className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-400">
                         <FaInstagram className='w-6 h-6' />
                     </a>
-                    <a href="https://www.tiktok.com/@katuripu?lang=en" className="text-gray-400 hover:text-gray-500">
+                    <a href="https://www.tiktok.com/@katuripu?lang=en" className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-400">
                         <FaTiktok className='w-6 h-6' />
                     </a>
                 </div> */}
-                <p className="text-sm leading-6 hover:text-gray-300 transition-colors duration-300">
+                <p className="text-sm leading-6 hover:text-gray-300 dark:hover:text-gray-400 transition-colors duration-300">
                     <span className="font-light italic">Developed by </span>
                     <a
                         href="https://github.com/abdessamadae"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-medium hover:text-indigo-400"
+                        className="font-medium hover:text-indigo-400 dark:hover:text-indigo-300"
                     >
                         Abdessamad Ait Elmouden
                     </a>
