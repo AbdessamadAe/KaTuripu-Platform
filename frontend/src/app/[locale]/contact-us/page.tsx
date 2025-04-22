@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl'
 const ContactUs = () => {
   const t = useTranslations('contact-us')
   return (
-    <div className="min-h-[calc(100vh-200px)] py-8 lg:py-16">
+    <div className=" bg-gradient-to-b from-white to-blue-50 dark:from-gray-900 dark:to-gray-800 min-h-[calc(100vh-200px)] py-8 lg:py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:grid sm:grid-flow-col sm:grid-cols-2 items-center gap-8 lg:gap-12">
           <div className="w-full max-w-md mx-auto bg-transparent dark:bg-transparent font-amiri">
