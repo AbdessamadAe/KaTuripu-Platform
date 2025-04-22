@@ -236,7 +236,7 @@ const ExerciseDetailPage = () => {
                               scale: hintAnimation ? [1, 1.02, 1] : 1
                             }}
                             transition={{ duration: 0.3 }}
-                            className="mt-2 p-4 bg-white dark:bg-gray-750 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm"
+                            className="mt-2 p-4 bg-gray-100 dark:bg-gray-700 dark:text-white rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm"
                           >
                             <MathJax>
                               <div className="prose dark:prose-invert max-w-none">
@@ -295,7 +295,7 @@ const ExerciseDetailPage = () => {
 
               {/* Video section with enhanced styling */}
               {exercise?.video_url && (
-                <div className="mt-8 bg-gray-50 dark:bg-gray-750 p-6 rounded-xl border border-gray-100 dark:border-gray-700">
+                <div className="mt-8 bg-gray-100 dark:bg-gray-700 p-6 rounded-xl border border-gray-100 dark:border-gray-700">
                   <h2 className="text-xl font-semibold mb-4 flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-red-500" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
