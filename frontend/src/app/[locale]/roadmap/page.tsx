@@ -129,7 +129,7 @@ const RoadmapsPage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-white via-blue-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-gray-800 dark:text-gray-200 font-sans">
+        <div className="min-h-screen bg-gradient-to-b from-white via-blue-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-gray-800 dark:text-gray-200">
             <div className="container mt-12 mx-auto px-4 md:px-8 lg:px-16 pb-16">
                 <div className="mb-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                     <div className="relative w-full lg:w-1/2">

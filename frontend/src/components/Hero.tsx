@@ -31,7 +31,7 @@ const Hero = ({ locale = 'en' }: HeroProps) => {
               <span className="absolute -left-2 -top-2 w-16 h-16 bg-blue-200 dark:bg-blue-700 rounded-full blur-2xl opacity-60"></span>
               <span className="absolute -right-10 bottom-0 w-20 h-20 bg-purple-200 dark:bg-purple-700 rounded-full blur-2xl opacity-60"></span>
 
-              <h1 className={`relative font-extrabold ${locale === 'fr' ? 'text-3xl sm:text-4xl md:text-5xl' : 'text-4xl sm:text-5xl md:text-6xl'} tracking-tight`}>
+              <h1 className={`relative font-bold ${locale === 'fr' ? 'text-3xl sm:text-4xl md:text-5xl' : 'text-4xl sm:text-5xl md:text-6xl'} tracking-tight`}>
                 <span className="block text-gray-900 dark:text-white">{t('tagline')}</span>
                 <span className="block mt-2">
                   <span className="relative">
