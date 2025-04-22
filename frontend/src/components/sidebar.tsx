@@ -45,18 +45,18 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
 
   return (
     <motion.div
-      className="bg-gray-800 h-full w-96 p-6 overflow-y-auto flex flex-col"
+      className="bg-white dark:bg-gray-900 h-full w-96 p-6 overflow-y-auto flex flex-col shadow-xl"
       initial={{ x: 300 }}
       animate={{ x: 0 }}
       exit={{ x: 300 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
     >
       {/* Header */}
-      <div className="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
-        <h2 className="text-2xl font-bold text-white">{title}</h2>
+      <div className="flex justify-between items-center mb-6 border-b border-gray-200 dark:border-gray-800 pb-4">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{title}</h2>
         <button
           onClick={onClose}
-          className="text-gray-400 hover:text-white transition-colors"
+          className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white transition-colors"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -77,10 +77,10 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
 
       {/* Prerequisites */}
       <div className="mb-6">
-        <h3 className="text-lg font-semibold text-white mb-2">Prerequisites</h3>
-        <div className="bg-gray-700 p-3 rounded-lg">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Prerequisites</h3>
+        <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg">
           {prerequisites.map((prereq, index) => (
-            <div key={index} className="mb-2 last:mb-0 text-gray-300">
+            <div key={index} className="mb-2 last:mb-0 text-gray-700 dark:text-gray-300">
               {prereq.label}
             </div>
           ))}
@@ -90,8 +90,8 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
       {/* Exercises */}
       <div className="flex-grow">
         <div className="flex justify-between items-center mb-2">
-          <h3 className="text-lg font-semibold text-white">Exercises</h3>
-          <span className="text-gray-400 text-sm">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Exercises</h3>
+          <span className="text-gray-500 dark:text-gray-400 text-sm">
             {problems.filter(p => p.completed).length}/{problems.length} terminés
           </span>
         </div>
@@ -100,7 +100,7 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
           {problems.map((problem) => (
             <div
               key={problem.id}
-              className={`relative bg-gray-700 rounded-lg overflow-hidden border-l-4 ${problem.completed ? getDifficultyStyle(problem.difficulty) : ""
+              className={`relative bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden border-l-4 ${problem.completed ? getDifficultyStyle(problem.difficulty) : ""
                 }`}
             >
               {problem.completed && <div className="absolute inset-0 bg-green-500 opacity-10" />}
@@ -111,7 +111,7 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
                     pathname: `/exercises/${problem.id}`,
                     query: { nodeId, roadmapId }
                   }} passHref>
-                    <div className="text-white font-semibold hover:text-blue-400 transition-colors cursor-pointer">{problem.name}</div>
+                    <div className="text-gray-800 dark:text-white font-semibold hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">{problem.name}</div>
                   </Link>
                   <div className="flex mt-2 items-center">
                     <span className={`px-2 py-0.5 rounded-full text-xs ${getDifficultyStyle(problem.difficulty, true)}`}>

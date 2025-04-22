@@ -16,7 +16,7 @@
             "name": "أشرف أجغوغ",
             "title": "مول القهوة",
             "bio": "خريج سلك الماستر بجامعة الأخوين بإفران، تخصص تحليل البيانات الضخمة."
-       }
+        }
     },
     "contact-us": {
         "contact": "تواصل معنا",
@@ -41,5 +41,28 @@
         "intermediate": "متوسط",
         "advanced": "متقدم",
         "start": "ابدأ"
+    },
+    "exercise": {
+        "backToRoadmap": "  العودة إلى الخريطة",
+        "exercise": "تمرين",
+        "question": "السؤال",
+        "hints": "تلميحات",
+        "showHint": "عرض التلميح {number}",
+        "hideHint": "إخفاء التلميح",
+        "showSolution": "عرض الحل",
+        "hideSolution": "إخفاء الحل",
+        "solution": "الحل",
+        "completed": "مكتمل!",
+        "videoExplanation": "شرح الفيديو",
+        "nextExercise": "التمرين التالي",
+        "studyTip": {
+            "title": "نصيحة دراسية",
+            "content": "حاول حل المشكلة بنفسك قبل النظر إلى التلميحات. خذ وقتك وقم بتفكيكها خطوة بخطوة."
+        },
+        "difficulty": {
+            "easy": "سهل",
+            "medium": "متوسط",
+            "hard": "صعب"
+        }
     }
 }

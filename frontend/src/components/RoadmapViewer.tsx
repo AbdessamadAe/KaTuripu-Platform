@@ -241,14 +241,14 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapSlug }) => {
 
   return (
     isLoading ? (
-      <div className="w-full h-screen flex items-center justify-center">
+      <div className="w-full h-screen flex items-center justify-center dark:bg-gray-900">
         <div className="flex flex-col items-center gap-4">
           <div className="h-16 w-16 rounded-full border-4 border-t-blue-600 border-b-transparent border-l-transparent border-r-transparent animate-spin"></div>
         </div>
       </div>
     ) : (
       <ReactFlowProvider>
-        <div style={{ position: "relative", width: "100%", height: "90vh" }}>
+        <div style={{ position: "relative", width: "100%", height: "90vh" }} className="dark:bg-gray-900">
           <div style={{ width: "100%", height: "100%" }}>
             <ReactFlow
               nodes={nodes}
@@ -259,11 +259,17 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapSlug }) => {
               nodesDraggable={false}
               fitView
               attributionPosition="top-right"
-              style={{ backgroundColor: "#F7F9FB" }}
+              className="dark:bg-gray-900"
             >
-              <MiniMap className="hidden md:block" zoomable pannable nodeClassName={nodeClassName as any} />
-              <Controls />
-              <Background variant={undefined} />
+              <MiniMap 
+                className="hidden md:block dark:bg-gray-800" 
+                zoomable 
+                pannable 
+                nodeClassName={nodeClassName as any}
+                maskColor="rgba(0, 0, 0, 0.1)"
+              />
+              <Controls className="dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700" />
+              <Background variant="dots" gap={12} size={1} className="dark:bg-gray-900 dark:text-gray-700" />
             </ReactFlow>
           </div>
 

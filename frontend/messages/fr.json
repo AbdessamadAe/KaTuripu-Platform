@@ -41,5 +41,28 @@
         "intermediate": "Intermédiaire",
         "advanced": "Avancé",
         "start": "commencer"
+    },
+    "exercise": {
+        "backToRoadmap": "Retour au Parcours",
+        "exercise": "Exercice",
+        "question": "Question",
+        "hints": "Indices",
+        "showHint": "Afficher l'indice {number}",
+        "hideHint": "Masquer l'indice",
+        "showSolution": "Afficher la solution",
+        "hideSolution": "Masquer la solution",
+        "solution": "Solution",
+        "completed": "Terminé !",
+        "videoExplanation": "Explication Vidéo",
+        "nextExercise": "Exercice Suivant",
+        "studyTip": {
+            "title": "Conseil d'Étude",
+            "content": "Essayez de résoudre le problème vous-même avant de regarder les indices. Prenez votre temps et décomposez-le étape par étape."
+        },
+        "difficulty": {
+            "easy": "Facile",
+            "medium": "Moyen",
+            "hard": "Difficile"
+        }
     }
 }

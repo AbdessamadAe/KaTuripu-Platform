@@ -41,5 +41,29 @@
         "beginner": "Beginner",
         "intermediate": "Intermediate",
         "advanced": "Advanced"
+    },
+    "exercise": {
+        "backToRoadmap": "Back to Roadmap",
+        "exercise": "Exercise",
+        "question": "Question",
+        "hints": "Hints",
+        "showHint": "Show Hint {number}",
+        "hideHint": "Hide Hint",
+        "showSolution": "Show Solution",
+        "hideSolution": "Hide Solution",
+        "solution": "Solution",
+        "completed": "Completed!",
+        "videoExplanation": "Video Explanation",
+        "nextExercise": "Next Exercise",
+        "studyTip": {
+            "title": "Study Tip",
+            "content": "Try to solve the problem yourself before looking at the hints. Take your time and break it down step by step."
+        },
+        "difficulty": {
+            "easy": "Easy",
+            "medium": "Medium",
+            "hard": "Hard",
+            "unknown": "Unknown"
+        }
     }
 }
