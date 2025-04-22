@@ -66,7 +66,7 @@ export default function Nav() {
 
   return (
     <Disclosure as="nav" className="border-b border-gray-200 dark:border-gray-700 shadow-sm sticky top-0 z-50 bg-white dark:bg-gray-900">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto px-4">
         <div className="relative flex h-16 items-center justify-between">
           {/* Mobile logo - centered */}
           <div className="flex w-full items-center justify-between lg:hidden">
@@ -81,13 +81,10 @@ export default function Nav() {
                 className="h-6 w-auto dark:filter dark:brightness-90"
               />
             </Link>
-            <div>
-              <Switch />
-            </div>
             <div className="flex items-center">
               {/* Language Switcher */}
-              <Menu as="div" className="relative mr-2">
-                <Menu.Button className="flex items-center space-x-1 rounded-md px-2 py-1.5 text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 text-gray-700 dark:text-gray-300">
+              <Menu as="div" className="relative">
+                <Menu.Button className="flex items-center space-x-1 rounded-md py-1.5 text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 text-gray-700 dark:text-gray-300">
                   <LanguageIcon className="h-5 w-5" />
                   <span className="sr-only md:not-sr-only">{currentLang.toUpperCase()}</span>
                 </Menu.Button>
@@ -120,7 +117,9 @@ export default function Nav() {
                   </Menu.Items>
                 </Transition>
               </Menu>
-
+            <div className='mx-2'>
+              <Switch />
+            </div>  
               {loading ? (
                 // Show skeleton loader while auth state is loading
                 <div className="flex items-center space-x-4">
@@ -223,10 +222,7 @@ export default function Nav() {
           </div>
 
           {/* Desktop right side actions */}
-          <div className="hidden lg:flex lg:items-center lg:justify-end lg:flex-1">
-            <div className="hidden lg:flex lg:items-center lg:justify-end lg:flex-1 mr-4">
-              <Switch />
-            </div>
+          <div className="hidden w-fit lg:items-center lg:justify-end lg:flex">
             {/* Language Switcher */}
             <Menu as="div" className="relative mr-4">
               <Menu.Button className="flex items-center space-x-1 rounded-md px-2 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200">
@@ -262,7 +258,9 @@ export default function Nav() {
                 </Menu.Items>
               </Transition>
             </Menu>
-
+            <div className="relative hidden lg:flex lg:items-center lg:justify-end lg:flex-1 mr-4 ">
+              <Switch />
+            </div>
             {loading ? (
               // Show skeleton loader while auth state is loading
               <div className="flex items-center space-x-4">
