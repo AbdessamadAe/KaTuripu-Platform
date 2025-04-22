@@ -269,7 +269,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapSlug }) => {
                 maskColor="rgba(0, 0, 0, 0.1)"
               />
               <Controls className="dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700" />
-              <Background variant="dots" gap={12} size={1} className="dark:bg-gray-900 dark:text-gray-700" />
+              <Background gap={12} size={1} className="dark:bg-gray-900 dark:text-gray-700" />
             </ReactFlow>
           </div>
 
