@@ -97,5 +97,26 @@
             "title": "Support Community",
             "description": "Connect with peers and mentors for guidance, encouragement, and additional learning resources."
         }
-    }
+    },
+    "testimonials": {
+  "tagline": "What Students Say",
+  "heading": "Success Stories from Our Students",
+  "subheading": "Discover how KaTuripu has helped students achieve their academic goals and gain admission to their dream institutions.",
+  "actionButton": "Start Your Journey",
+  "testimonial1": {
+    "content": "The roadmap approach completely changed how I prepare for entrance exams. I was able to track my progress and focus on my weak areas. I got admitted to my first-choice university!",
+    "author": "Sofia Martinez",
+    "role": "Computer Science Student"
+  },
+  "testimonial2": {
+    "content": "The practice exercises were incredibly helpful. The detailed solutions and video explanations made complex concepts easy to understand. Highly recommended for anyone preparing for exams.",
+    "author": "Ahmed Khalid",
+    "role": "Engineering Student"
+  },
+  "testimonial3": {
+    "content": "KaTuripu's structured approach helped me organize my study time effectively. The achievement system kept me motivated throughout my preparation journey.",
+    "author": "Abderrahman",
+    "role": "Mathematics Student"
+  }
+}
 }
