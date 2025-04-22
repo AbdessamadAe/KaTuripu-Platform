@@ -131,7 +131,7 @@ export default function Nav() {
                     <img
                       src={user?.user_metadata?.avatar_url}
                       alt="User Avatar"
-                      className="h-7 w-7 rounded-full object-cover"
+                      className="h-9 w-9 rounded-full object-cover"
                     />
                   </Menu.Button>
                   <Transition
@@ -272,7 +272,7 @@ export default function Nav() {
                   <img
                     src={user?.user_metadata?.avatar_url}
                     alt="User Avatar"
-                    className="h-8 w-8 rounded-full object-cover"
+                    className="h-9 w-9 rounded-full object-cover"
                   />
                 </Menu.Button>
                 <Transition
