@@ -8,6 +8,7 @@
     },
     "team": {
         "title": "Our Team",
+        "description": "We are a group of passionate students and graduates who are dedicated to helping you succeed in your academic journey.",
         "member1": {
             "name": "Abdesamad Ait Elmouden",
             "title": "His friend",
@@ -30,6 +31,7 @@
         }
     },
     "roadmap": {
+        "Concours": "Concours",
         "searchPlaceholder": "Search for a roadmap...",
         "all": "All",
         "noRoadmapsFound": "No roadmaps match your search",

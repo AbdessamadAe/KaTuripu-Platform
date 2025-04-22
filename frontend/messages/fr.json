@@ -8,6 +8,7 @@
     },
     "team": {
         "title": "Notre Équipe",
+        "description": "Nous sommes un groupe d'étudiants et de diplômés passionnés qui se consacrent à vous aider à réussir votre parcours académique.",
         "member1": {
             "name": "Abdesamad Ait Elmouden",
             "title": "Son ami",
@@ -30,6 +31,7 @@
         }
     },
     "roadmap": {
+        "Concours": "Concours",
         "searchPlaceholder": "Rechercher un parcours...",
         "all": "Tous",
         "noRoadmapsFound": "Aucun parcours ne correspond à votre recherche",
