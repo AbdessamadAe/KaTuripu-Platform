@@ -37,24 +37,24 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
     switch (category) {
       case 'math':
       case 'mathematics':
-        return 'bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/60 dark:to-blue-800/40';
+        return 'bg-gradient-to-br from-[#66c2bc]/60 to-[#4db6b0]/80 dark:from-[#66c2bc]/40 dark:to-[#4db6b0]/30';
       case 'physics':
-        return 'bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-900/60 dark:to-purple-800/40';
+        return 'bg-gradient-to-br from-[#ff9d8a]/60 to-[#ff8066]/80 dark:from-[#ff9d8a]/40 dark:to-[#ff8066]/30';
       case 'chemistry':
-        return 'bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/60 dark:to-green-800/40';
+        return 'bg-gradient-to-br from-[#c5b3ff]/60 to-[#a48eff]/80 dark:from-[#c5b3ff]/40 dark:to-[#a48eff]/30';
       case 'biology':
-        return 'bg-gradient-to-br from-yellow-100 to-yellow-200 dark:from-yellow-900/60 dark:to-yellow-800/40';
+        return 'bg-gradient-to-br from-[#ff9d8a]/50 to-[#66c2bc]/50 dark:from-[#ff9d8a]/40 dark:to-[#66c2bc]/30';
       case 'computer science':
       case 'programming':
-        return 'bg-gradient-to-br from-indigo-100 to-indigo-200 dark:from-indigo-900/60 dark:to-indigo-800/40';
+        return 'bg-gradient-to-br from-[#6b9bd1]/60 to-[#4a7ab0]/80 dark:from-[#6b9bd1]/40 dark:to-[#4a7ab0]/30';
       case 'languages':
-        return 'bg-gradient-to-br from-pink-100 to-pink-200 dark:from-pink-900/60 dark:to-pink-800/40';
+        return 'bg-gradient-to-br from-[#c5b3ff]/60 to-[#6b9bd1]/60 dark:from-[#c5b3ff]/40 dark:to-[#6b9bd1]/30';
       case 'science':
-        return 'bg-gradient-to-br from-teal-100 to-teal-200 dark:from-teal-900/60 dark:to-teal-800/40';
+        return 'bg-gradient-to-br from-[#66c2bc]/50 to-[#6b9bd1]/50 dark:from-[#66c2bc]/40 dark:to-[#6b9bd1]/30';
       case 'engineering':
-        return 'bg-gradient-to-br from-amber-100 to-amber-200 dark:from-amber-900/60 dark:to-amber-800/40';
+        return 'bg-gradient-to-br from-[#6b9bd1]/50 to-[#ff9d8a]/50 dark:from-[#6b9bd1]/40 dark:to-[#ff9d8a]/30';
       default:
-        return 'bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800/60 dark:to-slate-700/40';
+        return 'bg-gradient-to-br from-[#c5b3ff]/40 to-[#c5b3ff]/60 dark:from-[#c5b3ff]/30 dark:to-[#c5b3ff]/20';
     }
   };
 
@@ -87,11 +87,11 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
     const base = 'absolute top-3 right-3 text-xs font-semibold px-3 py-1 rounded-full shadow-sm';
     switch (roadmap.level) {
       case 'beginner':
-        return <span className={`${base} bg-gradient-to-r from-green-500 to-green-600 text-white`}>{t('beginner')}</span>;
+        return <span className={`${base} bg-gradient-to-r from-[#66c2bc] to-[#4db6b0] text-white`}>{t('beginner')}</span>;
       case 'intermediate':
-        return <span className={`${base} bg-gradient-to-r from-yellow-500 to-yellow-600 text-white`}>{t('intermediate')}</span>;
+        return <span className={`${base} bg-gradient-to-r from-[#6b9bd1] to-[#4a7ab0] text-white`}>{t('intermediate')}</span>;
       case 'advanced':
-        return <span className={`${base} bg-gradient-to-r from-red-500 to-red-600 text-white`}>{t('advanced')}</span>;
+        return <span className={`${base} bg-gradient-to-r from-[#ff9d8a] to-[#ff8066] text-white`}>{t('advanced')}</span>;
       default:
         return null;
     }
@@ -99,15 +99,15 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
 
   return (
     <div
-      className={`transition-all w-full h-[400px] bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-5 flex flex-col justify-between gap-3 relative overflow-hidden ${
+      className={`transition-all w-full h-[400px] bg-white dark:bg-gray-800/90 rounded-2xl border border-[#e9e3ff]/60 dark:border-gray-700/50 p-5 flex flex-col justify-between gap-3 relative overflow-hidden ${
         isHovered ? 'shadow-xl scale-[1.02] border-transparent' : 'hover:shadow-lg'
       }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Decorative elements similar to Hero */}
-      <div className="absolute -z-10 -bottom-6 -right-6 w-24 h-24 bg-blue-100 dark:bg-blue-900/30 rounded-full blur-xl opacity-60"></div>
-      <div className="absolute -z-10 -top-6 -left-6 w-24 h-24 bg-purple-100 dark:bg-purple-900/30 rounded-full blur-xl opacity-50"></div>
+      <div className="absolute -z-10 -bottom-6 -right-6 w-24 h-24 bg-[#a7d1cf]/30 dark:bg-[#a7d1cf]/15 rounded-full blur-xl opacity-60"></div>
+      <div className="absolute -z-10 -top-6 -left-6 w-24 h-24 bg-[#f0b9ae]/30 dark:bg-[#f0b9ae]/15 rounded-full blur-xl opacity-50"></div>
       
       {getLevelBadge()}
 
@@ -148,10 +148,10 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
           <div
             className={`absolute left-0 top-0 h-full transition-all duration-700 rounded-full ${
               progress === 100
-                ? 'bg-gradient-to-r from-green-400 to-green-500'
+                ? 'bg-gradient-to-r from-[#66c2bc] to-[#4db6b0]'
                 : progress > 50
-                ? 'bg-gradient-to-r from-blue-500 to-purple-500'
-                : 'bg-gradient-to-r from-indigo-500 to-blue-500'
+                ? 'bg-gradient-to-r from-[#6b9bd1] to-[#4a7ab0]'
+                : 'bg-gradient-to-r from-[#4a7ab0] to-[#6b9bd1]'
             }`}
             style={{ width: `${progress}%` }}
           />
@@ -161,7 +161,7 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
             {progress > 0 ? `${progress}% ${t('complete')}` : t('notStarted')}
           </span>
           {progress === 100 && (
-            <span className="bg-gradient-to-r from-green-400 to-green-500 text-white px-2 py-0.5 rounded-full text-[10px] font-medium">
+            <span className="bg-gradient-to-r from-[#66c2bc] to-[#4db6b0] text-white px-2 py-0.5 rounded-full text-[10px] font-medium">
               {t('complete')} ✓
             </span>
           )}
@@ -171,8 +171,8 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
       <button
         className={`w-full mt-2 rounded-xl px-6 py-3 text-sm font-semibold transition-all duration-300 ${
           isHovered 
-            ? 'bg-gradient-to-r from-blue-400 to-purple-500 text-white shadow-lg' 
-            : 'bg-gradient-to-r from-blue-500/90 to-purple-500/90 text-white shadow hover:shadow-md'
+            ? 'bg-gradient-to-r from-[#4a7ab0] to-[#6b9bd1] text-white shadow-lg' 
+            : 'bg-gradient-to-r from-[#4a7ab0] to-[#6b9bd1] text-white shadow hover:shadow-md'
         }`}
       >
         {progress > 0 ? t('continue') : t('start')}

@@ -17,13 +17,13 @@ interface FeatureItemProps {
 
 const FeatureItem: React.FC<FeatureItemProps> = ({ icon, title, description }) => {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 relative overflow-hidden transform hover:-translate-y-1">
+    <div className="bg-white dark:bg-gray-800/90 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-[#e9e3ff]/60 dark:border-gray-700/50 relative overflow-hidden transform hover:-translate-y-1">
       {/* Decorative gradient blob */}
-      <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-blue-100/50 dark:bg-blue-900/20 rounded-full blur-xl"></div>
-      <div className="absolute -left-6 -top-6 w-16 h-16 bg-purple-100/50 dark:bg-purple-900/20 rounded-full blur-xl"></div>
+      <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-[#a7d1cf]/30 dark:bg-[#a7d1cf]/15 rounded-full blur-xl"></div>
+      <div className="absolute -left-6 -top-6 w-16 h-16 bg-[#f0b9ae]/30 dark:bg-[#f0b9ae]/15 rounded-full blur-xl"></div>
       
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 relative z-10">
-        <div className="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-500 dark:from-blue-600 dark:to-purple-600 rounded-xl flex items-center justify-center text-white shadow-md">
+        <div className="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-[#5a8aaf] to-[#7d9bbf] dark:from-[#5a8aaf] dark:to-[#7d9bbf] rounded-xl flex items-center justify-center text-white shadow-md">
           {icon}
         </div>
         <div>
@@ -78,10 +78,10 @@ const Features: React.FC<FeaturesProps> = ({ id = "features", locale = 'en' }) =
   ];
 
   return (
-    <section id={id} className="py-20 bg-gradient-to-b from-blue-50 to-white dark:from-gray-800 dark:to-gray-900 overflow-hidden relative">
+    <section id={id} className="py-20 bg-gradient-to-b from-[#f5f3ff] to-white dark:from-indigo-950/30 dark:to-gray-900 overflow-hidden relative">
       {/* Background decorative elements to match Hero */}
-      <div className="absolute top-20 left-1/4 w-72 h-72 bg-blue-200 dark:bg-blue-900/30 rounded-full blur-3xl opacity-30"></div>
-      <div className="absolute bottom-20 right-1/4 w-64 h-64 bg-purple-200 dark:bg-purple-900/30 rounded-full blur-3xl opacity-30"></div>
+      <div className="absolute top-20 left-1/4 w-72 h-72 bg-[#a7d1cf]/30 dark:bg-[#a7d1cf]/10 rounded-full blur-3xl opacity-30"></div>
+      <div className="absolute bottom-20 right-1/4 w-64 h-64 bg-[#f0b9ae]/20 dark:bg-[#f0b9ae]/10 rounded-full blur-3xl opacity-30"></div>
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className={`text-center mb-16 ${isRTL ? 'lg:text-right' : ''}`}>   
@@ -103,6 +103,15 @@ const Features: React.FC<FeaturesProps> = ({ id = "features", locale = 'en' }) =
             />
           ))}
         </div>
+      </div>
+
+      <div className="mt-16 text-center">
+        <a 
+          href="/roadmap" 
+          className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-xl text-white bg-gradient-to-r from-[#5a8aaf] to-[#7d9bbf] hover:from-[#4d7a9d] hover:to-[#6c8bad] dark:from-[#5a8aaf] dark:to-[#7d9bbf] dark:hover:from-[#4d7a9d] dark:hover:to-[#6c8bad] shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+        >
+          {t('exploreButton')}
+        </a>
       </div>
     </section>
   );

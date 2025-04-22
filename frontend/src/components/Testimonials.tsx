@@ -19,22 +19,22 @@ const TestimonialCard: React.FC<TestimonialProps> = ({
   rating
 }) => {
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 relative overflow-hidden">
+    <div className="bg-white dark:bg-gray-800/90 p-6 md:p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-[#e9e3ff]/60 dark:border-gray-700/50 relative overflow-hidden">
       {/* Decorative elements */}
-      <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-blue-100/40 dark:bg-blue-900/20 rounded-full blur-xl"></div>
-      <div className="absolute -left-4 -top-4 w-20 h-20 bg-purple-100/40 dark:bg-purple-900/20 rounded-full blur-xl"></div>
+      <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-[#a7d1cf]/30 dark:bg-[#a7d1cf]/15 rounded-full blur-xl"></div>
+      <div className="absolute -left-4 -top-4 w-20 h-20 bg-[#f0b9ae]/30 dark:bg-[#f0b9ae]/15 rounded-full blur-xl"></div>
       
       {/* Quote icon */}
       <div className="mb-6 flex items-center justify-between">
-        <div className="w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/40 dark:to-purple-900/40">
-          <ChatBubbleLeftRightIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+        <div className="w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-br from-[#e9e3ff]/80 to-[#f0b9ae]/30 dark:from-[#e9e3ff]/20 dark:to-[#f0b9ae]/20">
+          <ChatBubbleLeftRightIcon className="w-5 h-5 text-[#5a8aaf] dark:text-[#7d9bbf]" />
         </div>
         
         <div className="flex">
           {[...Array(5)].map((_, i) => (
             <StarIcon 
               key={i} 
-              className={`w-5 h-5 ${i < rating ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600'}`} 
+              className={`w-5 h-5 ${i < rating ? 'text-[#e99888]' : 'text-gray-200 dark:text-gray-700'}`} 
             />
           ))}
         </div>
@@ -46,21 +46,21 @@ const TestimonialCard: React.FC<TestimonialProps> = ({
       </blockquote>
       
       {/* Author info */}
-      <footer className="flex items-center mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
+      <footer className="flex items-center mt-6 pt-4 border-t border-[#e9e3ff]/40 dark:border-gray-700">
         {avatarUrl ? (
           <img 
             src={avatarUrl} 
             alt={author}
-            className="w-12 h-12 rounded-full object-cover border-2 border-gray-100 dark:border-gray-700"
+            className="w-12 h-12 rounded-full object-cover border-2 border-[#a7d1cf]/30 dark:border-gray-700"
           />
         ) : (
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white">
+          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#5a8aaf] to-[#7d9bbf] flex items-center justify-center text-white">
             <UserCircleIcon className="w-8 h-8" />
           </div>
         )}
         <div className="ml-4">
           <p className="font-semibold text-gray-900 dark:text-white">{author}</p>
-          <p className="text-sm text-gray-500 dark:text-gray-400">{role}</p>
+          <p className="text-sm text-[#5a8aaf] dark:text-[#7d9bbf]">{role}</p>
         </div>
       </footer>
     </div>
@@ -99,16 +99,19 @@ const Testimonials: React.FC<TestimonialsProps> = ({ id = "testimonials" }) => {
   ];
 
   return (
-    <section id={id} className="py-20 bg-gradient-to-b from-white to-blue-50 dark:from-gray-900 dark:to-gray-800 overflow-hidden relative">
+    <section id={id} className="py-20 bg-gradient-to-b from-white to-[#f5f3ff] dark:from-gray-900 dark:to-indigo-950/30 overflow-hidden relative">
       {/* Background decorative elements */}
-      <div className="absolute top-40 right-1/4 w-72 h-72 bg-blue-200 dark:bg-blue-900/30 rounded-full blur-3xl opacity-30"></div>
-      <div className="absolute -bottom-20 left-1/3 w-64 h-64 bg-purple-200 dark:bg-purple-900/30 rounded-full blur-3xl opacity-30"></div>
+      <div className="absolute top-40 right-1/4 w-72 h-72 bg-[#a7d1cf]/30 dark:bg-[#a7d1cf]/15 rounded-full blur-3xl opacity-30"></div>
+      <div className="absolute -bottom-20 left-1/3 w-64 h-64 bg-[#f0b9ae]/20 dark:bg-[#f0b9ae]/10 rounded-full blur-3xl opacity-30"></div>
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
+          <span className="text-[#5a8aaf] dark:text-[#7d9bbf] font-semibold text-lg mb-2 block">
+            {t('tagline')}
+          </span>
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-5xl mb-6">
             <span className="relative">
-              <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-400 to-purple-500 blur-lg opacity-30"></span>
+              <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#a7d1cf] to-[#f0b9ae] blur-lg opacity-30"></span>
               <span className="relative">{t('heading')}</span>
             </span>
           </h2>
@@ -133,7 +136,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({ id = "testimonials" }) => {
         <div className="mt-16 text-center">
           <a 
             href="/roadmap"
-            className="inline-flex items-center justify-center px-8 py-3 text-lg font-medium rounded-xl text-white bg-gradient-to-r from-blue-500/90 to-purple-500/90 hover:from-blue-600 hover:to-purple-600 shadow-md hover:shadow-lg transition-all duration-300"
+            className="inline-flex items-center justify-center px-8 py-3 text-lg font-medium rounded-xl text-white bg-gradient-to-r from-[#5a8aaf] to-[#7d9bbf] hover:from-[#4d7a9d] hover:to-[#6c8bad] shadow-md hover:shadow-lg transition-all duration-300"
           >
             {t('actionButton')}
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
