@@ -9,6 +9,7 @@ import { motion } from 'framer-motion';
 import { useRouter } from "next/navigation";
 import { useTranslations } from 'next-intl';
 import createClientForBrowser from "@/lib/db/client";
+import { signInWithGoogle } from "@/lib/db/actions";
 
 const getCategoriesFromRoadmap = (roadmap: any): string[] => {
     if (Array.isArray(roadmap.category)) return roadmap.category;
@@ -26,6 +27,8 @@ const RoadmapsPage = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [category, setCategory] = useState("all");
     const [user, setUser] = useState<any>(null);
+    const [showLoginModal, setShowLoginModal] = useState(false);
+    const [selectedRoadmap, setSelectedRoadmap] = useState<string | null>(null);
     
     // Check auth state on component mount
     useEffect(() => {
@@ -120,6 +123,20 @@ const RoadmapsPage = () => {
         visible: { y: 0, opacity: 1 }
     };
 
+    const handleRoadmapClick = (roadmap: any) => {
+        if (!user) {
+            setSelectedRoadmap(roadmap.slug);
+            setShowLoginModal(true);
+        } else {
+            router.push(`/roadmap/${roadmap.slug}`);
+        }
+    };
+
+    const closeModal = () => {
+        setShowLoginModal(false);
+        setSelectedRoadmap(null);
+    };
+
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen dark:bg-gray-900">
@@ -130,6 +147,46 @@ const RoadmapsPage = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-white to-[#f5f3ff] dark:from-gray-900 dark:to-indigo-950/30 text-gray-800 dark:text-gray-200 py-12">
+            {/* Login Modal */}
+            {showLoginModal && (
+                <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+                    <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg max-w-md w-11/12 relative border border-[#c5b3ff]/60 dark:border-gray-700/50">
+                        {/* Close button */}
+                        <button 
+                            onClick={closeModal}
+                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+
+                        {/* Decorative elements */}
+                        <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-[#66c2bc]/30 dark:bg-[#66c2bc]/15 rounded-full blur-xl -z-10"></div>
+                        <div className="absolute -left-4 -top-4 w-24 h-24 bg-[#ff9d8a]/30 dark:bg-[#ff9d8a]/15 rounded-full blur-xl -z-10"></div>
+
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Sign In Required</h3>
+                        <p className="text-gray-600 dark:text-gray-300 mb-6">
+                            Please sign in to access this roadmap and track your progress.
+                        </p>
+                        
+                        <div className="flex justify-center">
+                            <button
+                                onClick={signInWithGoogle}
+                                className="flex items-center px-6 py-3 text-base font-medium rounded-xl transition-all 
+                                           bg-gradient-to-r from-[#4a7ab0] to-[#6b9bd1] text-white
+                                           hover:from-[#3d699d] hover:to-[#588ac0] shadow-md hover:shadow-lg"
+                            >
+                                <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
+                                    <path fill="currentColor" d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44C8.36 19.27 5 16.25 5 12c0-4.1 3.2-7.27 7.2-7.27 3.09 0 4.9 1.97 4.9 1.97L19 4.72S16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12c0 5.05 4.13 10 10.22 10 5.35 0 9.25-3.67 9.25-9.09 0-1.15-.15-1.81-.15-1.81z" />
+                                </svg>
+                                Sign in with Google
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Page header */}
                 <div className="max-w-3xl mx-auto text-center mb-16">
@@ -207,14 +264,12 @@ const RoadmapsPage = () => {
                         >
                             {filteredRoadmaps.map((roadmap) => (
                                 <motion.div key={roadmap.id} variants={itemVariants}>
-                                    <Link 
-                                      href={`/roadmap/${roadmap?.slug}`} 
-                                      prefetch={false}
-                                      onMouseEnter={() => {
-                                        router.prefetch(`/roadmap/${roadmap?.slug}`);
-                                      }}>
+                                    <div 
+                                        onClick={() => handleRoadmapClick(roadmap)} 
+                                        className="cursor-pointer"
+                                    >
                                         <RoadmapCard roadmap={roadmap} progress={progressMap[roadmap.slug] || 0} />
-                                    </Link>
+                                    </div>
                                 </motion.div>
                             ))}
                         </motion.div>
