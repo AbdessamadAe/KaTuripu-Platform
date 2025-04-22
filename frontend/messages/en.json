@@ -66,5 +66,34 @@
             "hard": "Hard",
             "unknown": "Unknown"
         }
+    },
+    "features": {   
+        "heading": "Everything you need to excel in admissions",
+        "subheading": "Our platform offers comprehensive tools to help you master each subject and succeed in your entrance exams.",
+        "exploreButton": "Explore All Features",
+        "roadmaps": {
+            "title": "Interactive Roadmaps",
+            "description": "Follow personalized learning paths specifically designed for different entrance exams and institutions."
+        },
+        "exercises": {
+            "title": "Practice Problems",
+            "description": "Access hundreds of practice problems with detailed solutions to strengthen your understanding and test your knowledge."
+        },
+        "progress": {
+            "title": "Progress Tracking",
+            "description": "Keep track of your learning journey with visual progress indicators and milestone celebrations."
+        },
+        "achievements": {
+            "title": "Achievements & Goals",
+            "description": "Stay motivated with achievement badges and clearly defined learning goals to keep you on track."
+        },
+        "learning": {
+            "title": "Multi-format Learning",
+            "description": "Learn through various formats including text explanations, video content, and interactive exercises."
+        },
+        "community": {
+            "title": "Support Community",
+            "description": "Connect with peers and mentors for guidance, encouragement, and additional learning resources."
+        }
     }
 }

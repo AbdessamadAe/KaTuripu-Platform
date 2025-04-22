@@ -65,5 +65,34 @@
             "medium": "Moyen",
             "hard": "Difficile"
         }
+    },
+    "features" : {
+        "heading": "Tout ce dont vous avez besoin pour réussir vos admissions",
+        "subheading": "Notre plateforme propose des outils complets pour vous aider à maîtriser chaque matière et réussir vos examens d'entrée.",
+        "exploreButton": "Explorer toutes les fonctionnalités",
+        "roadmaps": {
+            "title": "Parcours interactifs",
+            "description": "Suivez des chemins d'apprentissage personnalisés spécialement conçus pour différents concours et établissements."
+        },
+        "exercises": {
+            "title": "Exercices pratiques",
+            "description": "Accédez à des centaines d'exercices avec des solutions détaillées pour renforcer votre compréhension et tester vos connaissances."
+        },
+        "progress": {
+            "title": "Suivi de progression",
+            "description": "Suivez votre parcours d'apprentissage avec des indicateurs visuels de progression et des célébrations d'étapes."
+        },
+        "achievements": {
+            "title": "Réussites et objectifs",
+            "description": "Restez motivé avec des badges d'accomplissement et des objectifs d'apprentissage clairement définis."
+        },
+        "learning": {
+            "title": "Apprentissage multiformat",
+            "description": "Apprenez à travers différents formats incluant des explications textuelles, du contenu vidéo et des exercices interactifs."
+        },
+        "community": {
+            "title": "Communauté de soutien",
+            "description": "Connectez-vous avec vos pairs et des mentors pour obtenir des conseils, des encouragements et des ressources d'apprentissage supplémentaires."
+        }
     }
 }
