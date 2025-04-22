@@ -78,7 +78,7 @@ const Features: React.FC<FeaturesProps> = ({ id = "features", locale = 'en' }) =
   ];
 
   return (
-    <section id={id} className="py-20 bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800 overflow-hidden relative">
+    <section id={id} className="py-20 bg-gradient-to-b from-blue-50 to-white dark:from-gray-800 dark:to-gray-900 overflow-hidden relative">
       {/* Background decorative elements to match Hero */}
       <div className="absolute top-20 left-1/4 w-72 h-72 bg-blue-200 dark:bg-blue-900/30 rounded-full blur-3xl opacity-30"></div>
       <div className="absolute bottom-20 right-1/4 w-64 h-64 bg-purple-200 dark:bg-purple-900/30 rounded-full blur-3xl opacity-30"></div>
