@@ -58,29 +58,11 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
     }
   };
 
-  const getCategoryEmoji = () => {
+  // Replace the emoji function with an image path function
+  const getCategoryImage = () => {
     const category = getPrimaryCategory();
-    switch (category) {
-      case 'math':
-        return '🧮';
-      case 'physics':
-        return '⚛️';
-      case 'chemistry':
-        return '🧪';
-      case 'biology':
-        return '🧬';
-      case 'computer science':
-      case 'programming':
-        return '💻';
-      case 'languages':
-        return '🔤';
-      case 'science':
-        return '🔬';
-      case 'engineering':
-        return '⚙️';
-      default:
-        return '📚';
-    }
+    // Use roadmap name (slug) for the image filename
+    return `/images/schools/${roadmap.slug}.png`;
   };
 
   const getLevelBadge = () => {
@@ -122,9 +104,11 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
             className="object-cover"
           />
         ) : (
-          <span className="text-5xl filter drop-shadow-md" role="img" aria-label="icon">
-            {getCategoryEmoji()}
-          </span>
+          <img
+            src={getCategoryImage()}
+            alt={roadmap.title}
+            className="object-contain h-32 w-32 filter drop-shadow-md"
+          />
         )}
         <div className="absolute bottom-2 left-2 flex gap-1 flex-wrap">
           {getCategories().map((cat, i) => (
