@@ -35,7 +35,7 @@ const Hero = ({ locale = 'en' }: HeroProps) => {
                 <span className="block text-gray-900 dark:text-white">{t('tagline')}</span>
                 <span className="block mt-2">
                   <span className="relative">
-                    <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#6b9bd1] to-[#ff9d8a] blur-lg opacity-40"></span>
+                    <span className="absolute dark:hidden inset-0 w-full h-full bg-gradient-to-r from-[#6b9bd1] to-[#ff9d8a] blur-lg opacity-40"></span>
                     <span className="relative bg-gradient-to-r from-[#4a7ab0] to-[#ff8066] bg-clip-text text-transparent dark:from-[#6b9bd1] dark:to-[#ff9d8a]">
                       {t('highlight1')}
                     </span>
@@ -74,7 +74,13 @@ const Hero = ({ locale = 'en' }: HeroProps) => {
             >
               <div className="flex -space-x-2">
                 {[1, 2, 3].map(i => (
-                  <div key={i} className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 border-2 border-white dark:border-gray-800"></div>
+                  <div key={i} className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 border-2 border-white dark:border-gray-800">
+                    <img
+                      src={`/images/testimonials/student${i}.jpg`}
+                      alt={`Student ${i}`}
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  </div>
                 ))}
               </div>
               <span className="text-sm font-medium">Join 2,000+ students</span>

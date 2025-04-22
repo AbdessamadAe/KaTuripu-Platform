@@ -108,7 +108,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({ id = "testimonials" }) => {
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-5xl mb-6">
             <span className="relative">
-              <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#66c2bc] to-[#ff9d8a] blur-lg opacity-40"></span>
+              <span className="absolute dark:hidden inset-0 w-full h-full bg-gradient-to-r from-[#66c2bc] to-[#ff9d8a] blur-lg opacity-40"></span>
               <span className="relative">{t('heading')}</span>
             </span>
           </h2>
