@@ -18,7 +18,6 @@ const singInWith = (provider:any) => async () => {
 const signInWithGoogle = singInWith('google')
 
 const handleSignOut = async () => {
-    const supabase = await createClientForBrowser()
     try {
       await supabase.auth.signOut();
       window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}`;
