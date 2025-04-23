@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { MathJax } from 'better-react-mathjax';
 import ReactMarkdown from 'react-markdown';
 import { Modal } from './Modal';
-import createClientForBrowser from '@/lib/db/client';
+import { supabase } from '@/lib/db/client';
 import { uploadQuestionImage, deleteQuestionImage } from '@/lib/services/exerciseService';
 
 type Exercise = {
@@ -121,7 +121,6 @@ export function ExerciseEditModal({ exercise, isOpen, onClose, onSave }: Exercis
       
       // Only attempt to delete from storage if there's an existing URL
       // and it's not an external URL (starts with the Supabase URL)
-      const supabase = createClientForBrowser();
       const storageUrl = supabase.storage.from('exercises').getPublicUrl('test').data.publicUrl;
       const baseStorageUrl = new URL(storageUrl).origin;
       
@@ -246,25 +245,6 @@ export function ExerciseEditModal({ exercise, isOpen, onClose, onSave }: Exercis
                   onChange={handleImageUpload}
                   className="hidden"
                 />
-              </div>
-            )}
-            {uploadError && (
-              <div className="mt-2 text-red-500 text-sm bg-red-50 p-3 rounded border border-red-200">
-                <p className="font-medium">Error: {uploadError}</p>
-                {uploadError.includes('RLS policy') || uploadError.includes('permission denied') ? (
-                  <div className="mt-2">
-                    <p className="text-xs">
-                      A Supabase administrator needs to:
-                    </p>
-                    <ol className="text-xs list-decimal pl-5 mt-1">
-                      <li>Go to the Supabase dashboard</li>
-                      <li>Navigate to Storage → Buckets</li>
-                      <li>Create a bucket called "exercises" if it doesn't exist</li>
-                      <li>Set the bucket to public</li>
-                      <li>Configure RLS policies to allow authenticated users to upload files</li>
-                    </ol>
-                  </div>
-                ) : null}
               </div>
             )}
           </div>

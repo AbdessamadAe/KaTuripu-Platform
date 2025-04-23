@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
-import createClientForBrowser from '@/lib/db/client';
+import { supabase } from '@/lib/db/client';
 import { Exercise } from '@/types/types';
 import { MathJax } from 'better-react-mathjax';
 import ReactMarkdown from 'react-markdown';
@@ -51,7 +51,6 @@ const ExerciseDetailPage = () => {
   const [hintAnimation, setHintAnimation] = useState(false);
   const [isFirstView, setIsFirstView] = useState(true);
 
-  const supabase = createClientForBrowser();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -283,7 +282,7 @@ const ExerciseDetailPage = () => {
                           initial={{ scale: 0 }}
                           animate={{ scale: 1, rotate: [0, 10, -10, 0] }}
                           transition={{ duration: 0.5 }}
-                          className="mt-4 inline-block bg-green-600 text-white px-4 py-2 rounded-lg font-bold"
+                          className="mt-4 inline-block bg-gradient-to-r from-[#66c2bc] to-[#4db6b0] text-white px-4 py-2 rounded-lg font-bold shadow-md"
                         >
                           {t('completed')} ✓
                         </motion.div>
@@ -295,14 +294,18 @@ const ExerciseDetailPage = () => {
 
               {/* Video section with enhanced styling */}
               {exercise?.video_url && (
-                <div className="mt-8 bg-gray-100 dark:bg-gray-700 p-6 rounded-xl border border-gray-100 dark:border-gray-700">
-                  <h2 className="text-xl font-semibold mb-4 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                <div className="mt-8 bg-white dark:bg-gray-800/90 p-6 rounded-xl border border-[#c5b3ff]/60 dark:border-gray-700/50 shadow-lg relative overflow-hidden">
+                  {/* Decorative elements */}
+                  <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-[#66c2bc]/30 dark:bg-[#66c2bc]/15 rounded-full blur-xl -z-10"></div>
+                  <div className="absolute -left-4 -top-4 w-20 h-20 bg-[#ff9d8a]/30 dark:bg-[#ff9d8a]/15 rounded-full blur-xl -z-10"></div>
+                  
+                  <h2 className="text-xl font-semibold mb-4 flex items-center relative z-10">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-[#ff8066]" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
                     </svg>
                     {t('videoExplanation')}
                   </h2>
-                  <div className="relative pt-[56.25%] h-0 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg">
+                  <div className="relative pt-[56.25%] h-0 overflow-hidden rounded-lg border border-[#e9e3ff]/60 dark:border-gray-700 shadow-lg">
                     <iframe
                       src={formatYouTubeUrl(exercise.video_url)}
                       className="absolute top-0 left-0 w-full h-full"

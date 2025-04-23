@@ -6,7 +6,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl';
 import Link from 'next/link'
-import createClientForBrowser from '@/lib/db/client';
+import { supabase } from '@/lib/db/client';
 import { handleSignOut } from '@/lib/db/actions';
 import { useRouter } from 'next/navigation';
 import { Switch } from './Switch';
@@ -22,7 +22,6 @@ function classNames(...classes: (string | undefined | false | null)[]) {
 }
 
 export default function Nav() {
-  const supabase = createClientForBrowser();
 
   const router = useRouter();
   const pathname = usePathname();

@@ -2,7 +2,7 @@
 
 import { Disclosure } from '@headlessui/react';
 import { ArrowLeftIcon, PencilIcon } from '@heroicons/react/24/outline';
-import createClientForBrowser from '@/lib/db/client';
+import { supabase } from '@/lib/db/client';
 import { useState, useEffect } from 'react';
 
 interface UserMetadata {
@@ -22,7 +22,6 @@ interface UserData {
 }
 
 export default function ProfilePage() {
-  const supabase = createClientForBrowser();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
 

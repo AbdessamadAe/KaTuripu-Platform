@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# KaTuripu
 
-## Getting Started
+## Code Review Findings
 
-First, run the development server:
+### Architectural Issues
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. **Inconsistent Error Handling**
+   - Different parts of the codebase handle errors differently
+   - Some functions throw errors while others return null/false
+   - Recommendation: Adopt a consistent error handling strategy across all services
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Supabase Client Creation on Each Request**
+   - Creating a new Supabase client for every service function call is inefficient
+   - Recommendation: Create a singleton pattern for the Supabase client
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. **Direct Database Access in Components**
+   - Components directly call database services instead of using a data access layer
+   - Recommendation: Implement a proper data access layer between UI components and data services
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. **Authentication Logic Spread Throughout Codebase**
+   - Authentication handling is duplicated across components
+   - Recommendation: Create an authentication context/provider to centralize auth logic
 
-## Learn More
+5. **Inconsistent State Management**
+   - Mix of component state and prop drilling for state management
+   - Recommendation: Use a more robust state management solution (Redux, Zustand, Context API)
 
-To learn more about Next.js, take a look at the following resources:
+6. **Database Schema in Frontend Code**
+   - SQL schema definitions included in frontend codebase
+   - Recommendation: Move database schema to a backend repository
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+7. **Client-Side Data Fetching Security Concerns**
+   - Sensitive operations handled directly from the client
+   - Recommendation: Move sensitive operations to a backend API with proper authorization checks
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Code Quality Issues
 
-## Deploy on Vercel
+1. **TypeScript Type Issues**
+   - Unsafe typecasting with `as any`
+   - Overuse of `any` type
+   - Recommendation: Define proper interfaces and avoid type assertions
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. **Large Component Files**
+   - Some components contain hundreds of lines of code with multiple responsibilities
+   - Recommendation: Break down large components into smaller, single-responsibility components
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. **Direct DOM Manipulation**
+   - Instances of direct DOM access instead of React's declarative approach
+   - Recommendation: Prefer declarative React patterns
+
+4. **Inconsistent Async/Await Usage**
+   - Mixing Promises and async/await patterns
+   - Recommendation: Standardize on async/await for more readable asynchronous code
+
+5. **Environment Variables in Client-Side Code**
+   - Including potentially sensitive configuration in client-side code
+   - Recommendation: Ensure sensitive values are only used in server-side code
+
+## Action Items
+
+1. Create consistent error handling strategy
+2. Implement Supabase client singleton
+3. Add proper data access layer
+4. Centralize authentication with context provider
+5. Adopt consistent state management solution
+6. Refactor large components
+7. Move sensitive operations to backend API
+8. Fix TypeScript type issues
+9. Convert imperative DOM operations to declarative patterns
+10. Standardize on async/await for async code
+11. Review environment variable usage

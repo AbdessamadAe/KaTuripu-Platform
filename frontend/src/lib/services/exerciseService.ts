@@ -1,5 +1,5 @@
 // src/lib/exerciseService.ts
-import createClientForBrowser from '../db/client';
+import { supabase } from '../db/client';
 import { Exercise } from '@/types/types';
 
 /**
@@ -12,7 +12,7 @@ import { Exercise } from '@/types/types';
  * @returns Exercise data or null if not found
  */
 export async function getExerciseById(id: string): Promise<Exercise | null> {
-  const supabase = createClientForBrowser();
+  
   try {
     const { data, error } = await supabase
       .from('exercises')
@@ -40,7 +40,7 @@ export async function getExerciseById(id: string): Promise<Exercise | null> {
  * @returns Created exercise
  */
 export async function createExercise(exercise: Partial<Exercise>): Promise<Exercise> {
-  const supabase = createClientForBrowser();
+  
   try {
     const { data, error } = await supabase
       .from('exercises')
@@ -63,7 +63,7 @@ export async function createExercise(exercise: Partial<Exercise>): Promise<Exerc
  * @returns Success status
  */
 export async function updateExercise(id: string, exercise: Partial<Exercise>): Promise<boolean> {
-  const supabase = createClientForBrowser();
+  
   try {
     console.log('Updating exercise with ID:', id, 'Data:', exercise);
     const { error } = await supabase
@@ -85,7 +85,7 @@ export async function updateExercise(id: string, exercise: Partial<Exercise>): P
  * @returns Success status
  */
 export async function deleteExercise(id: string): Promise<boolean> {
-  const supabase = createClientForBrowser();
+  
   try {
     // First, remove all node-exercise relationships
     const { error: relError } = await supabase
@@ -116,7 +116,7 @@ export async function deleteExercise(id: string): Promise<boolean> {
  * @returns The public URL of the uploaded image
  */
 export async function uploadQuestionImage(exerciseId: string, file: File): Promise<string> {
-  const supabase = createClientForBrowser();
+  
   try { 
     // Create a unique file name to prevent collisions
     const fileExt = file.name.split('.').pop();
@@ -151,7 +151,7 @@ export async function uploadQuestionImage(exerciseId: string, file: File): Promi
  * @returns Success status
  */
 export async function deleteQuestionImage(imageUrl: string): Promise<boolean> {
-  const supabase = createClientForBrowser();
+  
   try {
     // Extract the path from the URL
     const urlObj = new URL(imageUrl);

@@ -22,7 +22,7 @@ import {
   completeExercise,
   uncompleteExercise,
 } from "@/lib/services/userService";
-import createClientForBrowser from "@/lib/db/client";
+import { supabase } from "@/lib/db/client";
 
 interface RoadmapProps {
   roadmapSlug: string | undefined;
@@ -32,7 +32,6 @@ const nodeClassName = (node: any) => node.type;
 
 const Roadmap: React.FC<RoadmapProps> = ({ roadmapSlug }) => {
   
-  const supabase = createClientForBrowser();
   const [user, setUser] = useState<any>(null);
   const [completedExercises, setCompletedExercises] = useState<string[] | null>([]);
   const [nodes, setNodes, onNodesChange] = useNodesState<any>([]);

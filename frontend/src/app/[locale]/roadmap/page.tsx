@@ -8,7 +8,7 @@ import * as userService from '@/lib/services/userService';
 import { motion } from 'framer-motion';
 import { useRouter } from "next/navigation";
 import { useTranslations } from 'next-intl';
-import createClientForBrowser from "@/lib/db/client";
+import { supabase } from "@/lib/db/client";
 import { signInWithGoogle } from "@/lib/db/actions";
 
 const getCategoriesFromRoadmap = (roadmap: any): string[] => {
@@ -18,7 +18,6 @@ const getCategoriesFromRoadmap = (roadmap: any): string[] => {
 };
 
 const RoadmapsPage = () => {
-    const supabase = createClientForBrowser();
     const router = useRouter();
     const t = useTranslations('roadmap');
     const [roadmaps, setRoadmaps] = useState<any[]>([]);

@@ -1,7 +1,5 @@
-import createClientForBrowser from "./client"
-
+import { supabase } from "./client"
 const singInWith = (provider:any) => async () => {
-    const supabase = await createClientForBrowser()
     const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {

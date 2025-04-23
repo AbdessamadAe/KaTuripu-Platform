@@ -20,4 +20,4 @@ const createClientForBrowser = () =>
     }
   )
 
-export default createClientForBrowser
+  export const supabase = createClientForBrowser();
