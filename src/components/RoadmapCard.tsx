@@ -153,10 +153,10 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
       </div>
 
       <button
-        className={`w-full mt-2 rounded-xl px-6 py-3 text-sm font-semibold transition-all duration-300 ${
+        className={`w-full mt-2 rounded-xl px-6 py-3 text-sm font-semibold transition-all duration-300 cursor-pointer ${
           isHovered 
-            ? 'bg-gradient-to-r from-[#4a7ab0] to-[#6b9bd1] text-white shadow-lg' 
-            : 'bg-gradient-to-r from-[#4a7ab0] to-[#6b9bd1] text-white shadow hover:shadow-md'
+        ? 'bg-gradient-to-r from-[#4a7ab0] to-[#6b9bd1] text-white shadow-lg' 
+        : 'bg-gradient-to-r from-[#4a7ab0] to-[#6b9bd1] text-white shadow hover:shadow-md'
         }`}
       >
         {progress > 0 ? t('continue') : t('start')}
