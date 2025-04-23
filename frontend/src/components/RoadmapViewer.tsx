@@ -22,7 +22,7 @@ import {
   completeExercise,
   uncompleteExercise,
 } from "@/lib/services/userService";
-import { supabase } from "@/lib/db/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface RoadmapProps {
   roadmapSlug: string | undefined;
@@ -32,7 +32,6 @@ const nodeClassName = (node: any) => node.type;
 
 const Roadmap: React.FC<RoadmapProps> = ({ roadmapSlug }) => {
   
-  const [user, setUser] = useState<any>(null);
   const [completedExercises, setCompletedExercises] = useState<string[] | null>([]);
   const [nodes, setNodes, onNodesChange] = useNodesState<any>([]);
   const [roadmapData, setRoadmapData] = useState<RoadmapData | null>(null);
@@ -41,27 +40,7 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapSlug }) => {
   const [currentProgress, setCurrentProgress] = useState(0);
   const previousProgressRef = useRef(0);
   const [isLoading, setIsLoading] = useState(true);
-
-  // Check auth state on component mount
-  useEffect(() => {
-    const fetchUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user || null);
-    };
-    
-    fetchUser();
-    
-    // Set up listener for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setUser(session?.user || null);
-      }
-    );
-    
-    return () => {
-      subscription?.unsubscribe();
-    };
-  }, [supabase]);
+  const { user, isAuthenticated } = useAuth();
 
   const fetchCompleted = useCallback(async () => {
     if (!user) {

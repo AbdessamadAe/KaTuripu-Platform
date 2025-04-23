@@ -6,10 +6,10 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl';
 import Link from 'next/link'
-import { supabase } from '@/lib/db/client';
 import { handleSignOut } from '@/lib/db/actions';
 import { useRouter } from 'next/navigation';
 import { Switch } from './Switch';
+import { useAuth } from '@/contexts/AuthContext';
 
 const navigation = [
   { name: 'Concours', href: '/roadmap', current: true },
@@ -27,32 +27,13 @@ export default function Nav() {
   const pathname = usePathname();
   const locale = useLocale();
   const [currentLang, setCurrentLang] = useState(locale);
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { user, isAuthenticated, isLoading } = useAuth();
 
   const languages = [
     { code: 'fr', name: 'Français' },
     { code: 'en', name: 'English' },
     { code: 'ar', name: 'العربية' }
   ];
-
-  useEffect(() => {
-    async function getSession() {
-      try {
-        setLoading(true);
-        const { data: { session } } = await supabase.auth.getSession();
-        setUser(session?.user || null);
-        setIsAuthenticated(!!session);
-      } catch (error) {
-        console.error('Error fetching session:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    getSession();
-  }, [supabase]);
 
   const switchLanguage = (langCode: string) => {
     setCurrentLang(langCode);
@@ -119,7 +100,7 @@ export default function Nav() {
             <div className='mx-2'>
               <Switch />
             </div>  
-              {loading ? (
+              {isLoading ? (
                 // Show skeleton loader while auth state is loading
                 <div className="flex items-center space-x-4">
                   <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
@@ -260,7 +241,7 @@ export default function Nav() {
             <div className="relative hidden lg:flex lg:items-center lg:justify-end lg:flex-1 mr-4 ">
               <Switch />
             </div>
-            {loading ? (
+            {isLoading ? (
               // Show skeleton loader while auth state is loading
               <div className="flex items-center space-x-4">
                 <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse"></div>

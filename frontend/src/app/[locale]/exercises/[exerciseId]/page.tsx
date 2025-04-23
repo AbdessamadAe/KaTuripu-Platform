@@ -46,23 +46,17 @@ const ExerciseDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [showHint, setShowHint] = useState<number | null>(null);
   const [showSolution, setShowSolution] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
   const [completed, setCompleted] = useState(false);
   const [hintAnimation, setHintAnimation] = useState(false);
   const [isFirstView, setIsFirstView] = useState(true);
+  const { user, isAuthenticated } = useAuth();
+  
 
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      if (session?.user) {
-        const currentUserId = session.user.id;
-        setUserId(currentUserId);
-
-        const completedExercises = await userService.getCompletedExercises(currentUserId);
+      if (user?.id) {
+        const completedExercises = await userService.getCompletedExercises(user?.id);
         if (completedExercises && completedExercises.includes(exerciseId)) {
           setCompleted(true);
         }
@@ -74,10 +68,10 @@ const ExerciseDetailPage = () => {
 
   useEffect(() => {
     const markAsCompleted = async () => {
-      if (showSolution && userId && !completed && exercise) {
+      if (showSolution && user?.id && !completed && exercise) {
         try {
           const { success } = await userService.completeExercise(
-            userId,
+            user?.id,
             exerciseId,
             nodeId,
             roadmapId
@@ -101,7 +95,7 @@ const ExerciseDetailPage = () => {
     };
 
     markAsCompleted();
-  }, [showSolution, userId, completed, exerciseId, exercise, nodeId, roadmapId]);
+  }, [showSolution, user?.id, completed, exerciseId, exercise, nodeId, roadmapId]);
 
   useEffect(() => {
     const fetchExercise = async () => {

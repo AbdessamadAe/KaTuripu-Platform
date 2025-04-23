@@ -8,8 +8,8 @@ import * as userService from '@/lib/services/userService';
 import { motion } from 'framer-motion';
 import { useRouter } from "next/navigation";
 import { useTranslations } from 'next-intl';
-import { supabase } from "@/lib/db/client";
 import { signInWithGoogle } from "@/lib/db/actions";
+import { useAuth } from "@/contexts/AuthContext";
 
 const getCategoriesFromRoadmap = (roadmap: any): string[] => {
     if (Array.isArray(roadmap.category)) return roadmap.category;
@@ -25,30 +25,10 @@ const RoadmapsPage = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [category, setCategory] = useState("all");
-    const [user, setUser] = useState<any>(null);
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [selectedRoadmap, setSelectedRoadmap] = useState<string | null>(null);
+    const { user, isAuthenticated, isLoading } = useAuth();
     
-    // Check auth state on component mount
-    useEffect(() => {
-        const fetchUser = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            setUser(session?.user || null);
-        };
-        
-        fetchUser();
-        
-        // Set up listener for auth changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(
-            (event, session) => {
-                setUser(session?.user || null);
-            }
-        );
-        
-        return () => {
-            subscription?.unsubscribe();
-        };
-    }, [supabase]);
 
     // Fetch roadmap data once
     useEffect(() => {

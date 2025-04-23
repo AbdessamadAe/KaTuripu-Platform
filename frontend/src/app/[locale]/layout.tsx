@@ -1,13 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import {NextIntlClientProvider} from "next-intl";
+import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import MathJaxProvider from "@/components/MathJaxProvider";
 import Nav from "@/components/Nav";
 import ToastProvider from "@/components/ToastProvider";
 import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 export const metadata: Metadata = {
   title: "KaTuripu",
@@ -27,23 +28,25 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: { locale: string };
 }>) {
-  const {locale} = await params;
+  const { locale } = await params;
   const messages = await getMessages(locale as any);
-  
+
   return (
     <html lang={locale}>
       <body className={`antialiased min-h-screen w-full overflow-x-hidden`}>
         <NextIntlClientProvider messages={messages} locale={locale}>
-        <ThemeProvider>
-          <MathJaxProvider>
-                <Nav />
-                <div dir={locale == "ar" ? "rtl" : "ltr"} className={`${locale == "ar" ? 'font-amiri' : ''}`}>
+        <AuthProvider>
+          <ThemeProvider>
+            <MathJaxProvider>
+              <Nav />
+              <div dir={locale == "ar" ? "rtl" : "ltr"} className={`${locale == "ar" ? 'font-amiri' : ''}`}>
                 {children}
-                </div>
-                <Footer />
-                <ToastProvider />
-          </MathJaxProvider>
-        </ThemeProvider>
+              </div>
+              <Footer />
+              <ToastProvider /> 
+            </MathJaxProvider>
+          </ThemeProvider>
+        </AuthProvider>
         </NextIntlClientProvider>
       </body>
     </html>
