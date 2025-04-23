@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import RoadmapCard from "@/components/RoadmapCard";
-import * as roadmapService from '@/lib/services/roadmapService';
-import * as userService from '@/lib/services/userService';
+import * as roadmapService from '@/services/roadmapService';
+import * as userService from '@/services/userService';
 import { motion } from 'framer-motion';
 import { useRouter } from "next/navigation";
 import { useTranslations } from 'next-intl';

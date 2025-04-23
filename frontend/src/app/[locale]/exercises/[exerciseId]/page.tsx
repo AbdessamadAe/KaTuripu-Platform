@@ -7,10 +7,11 @@ import { Exercise } from '@/types/types';
 import { MathJax } from 'better-react-mathjax';
 import ReactMarkdown from 'react-markdown';
 import { motion } from 'framer-motion';
-import * as userService from '@/lib/services/userService';
-import { getExerciseById } from '@/lib/services/exerciseService';
+import * as userService from '@/services/userService';
+import { getExerciseById } from '@/services/exerciseService';
 import { showAchievement } from '@/utils/utils';
 import { useTranslations } from 'next-intl';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Utility function to format YouTube URLs for embedding
 const formatYouTubeUrl = (url: string): string => {

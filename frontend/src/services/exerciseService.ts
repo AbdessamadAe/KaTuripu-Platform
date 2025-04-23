@@ -1,5 +1,5 @@
 // src/lib/exerciseService.ts
-import { supabase } from '../db/client';
+import { supabase } from '@/lib/db/client';
 import { Exercise } from '@/types/types';
 
 /**

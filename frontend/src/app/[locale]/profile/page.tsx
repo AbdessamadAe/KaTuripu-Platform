@@ -88,7 +88,7 @@ export default function ProfilePage() {
                 <div className="sm:w-1/3 flex justify-center mb-6 sm:mb-0">
                   <div className="relative">
                     <img
-                      src={userData.user_metadata.avatar_url || '/default-avatar.png'}
+                      src={user?.user_metadata?.avatar_url || '/default-avatar.png'}
                       alt="Profile"
                       className="h-48 w-48 rounded-full object-cover border-4 border-white dark:border-gray-700 shadow-lg"
                     />
@@ -98,32 +98,32 @@ export default function ProfilePage() {
                   <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
                     <div className="sm:col-span-1">
                       <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Full name</dt>
-                      <dd className="mt-1 text-sm text-gray-900 dark:text-gray-200">{userData.user_metadata.full_name || userData.user_metadata.name || 'Not provided'}</dd>
+                      <dd className="mt-1 text-sm text-gray-900 dark:text-gray-200">{user?.user_metadata?.full_name || user?.user_metadata?.name || 'Not provided'}</dd>
                     </div>
 
                     <div className="sm:col-span-1">
                       <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Email address</dt>
-                      <dd className="mt-1 text-sm text-gray-900 dark:text-gray-200">{userData.email || userData.user_metadata.email || 'Not provided'}</dd>
+                      <dd className="mt-1 text-sm text-gray-900 dark:text-gray-200">{user?.email || user?.user_metadata?.email || 'Not provided'}</dd>
                     </div>
 
-                    {userData.user_metadata.user_name && (
+                    {user?.user_metadata?.user_name && (
                       <div className="sm:col-span-1">
                         <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Username</dt>
-                        <dd className="mt-1 text-sm text-gray-900 dark:text-gray-200">{userData.user_metadata.user_name}</dd>
+                        <dd className="mt-1 text-sm text-gray-900 dark:text-gray-200">{user.user_metadata.user_name}</dd>
                       </div>
                     )}
 
                     <div className="sm:col-span-1">
                       <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Account created</dt>
                       <dd className="mt-1 text-sm text-gray-900 dark:text-gray-200">
-                        {new Date(userData.created_at).toLocaleDateString()}
+                        {user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'Not available'}
                       </dd>
                     </div>
 
-                    {userData.user_metadata.provider && (
+                    {user?.user_metadata?.provider && (
                       <div className="sm:col-span-1">
                         <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Login provider</dt>
-                        <dd className="mt-1 text-sm text-gray-900 dark:text-gray-200 capitalize">{userData.user_metadata.provider}</dd>
+                        <dd className="mt-1 text-sm text-gray-900 dark:text-gray-200 capitalize">{user.user_metadata.provider}</dd>
                       </div>
                     )}
                   </dl>
@@ -133,6 +133,6 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
-    );
+    )
   );
 }

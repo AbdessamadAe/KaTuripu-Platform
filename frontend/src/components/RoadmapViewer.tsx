@@ -21,7 +21,7 @@ import {
   getCompletedExercises,
   completeExercise,
   uncompleteExercise,
-} from "@/lib/services/userService";
+} from "@/services/userService";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface RoadmapProps {

@@ -1,5 +1,5 @@
 // src/lib/userService.ts
-import { supabase } from "../db/client";
+import { supabase } from '@/lib/db/client';
 /**
  * Fetch user completed exercises
  */

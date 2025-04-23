@@ -1,5 +1,5 @@
 // src/lib/roadmapService.ts
-import { supabase } from '../db/client';
+import { supabase } from '@/lib/db/client';
 import { RoadmapData, Exercise, RoadmapNodeType } from '@/types/types';
 import { v4 as uuidv4 } from 'uuid';
 

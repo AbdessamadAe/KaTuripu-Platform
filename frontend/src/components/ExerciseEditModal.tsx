@@ -5,7 +5,7 @@ import { MathJax } from 'better-react-mathjax';
 import ReactMarkdown from 'react-markdown';
 import { Modal } from './Modal';
 import { supabase } from '@/lib/db/client';
-import { uploadQuestionImage, deleteQuestionImage } from '@/lib/services/exerciseService';
+import { uploadQuestionImage, deleteQuestionImage } from '@/services/exerciseService';
 
 type Exercise = {
   id: string;

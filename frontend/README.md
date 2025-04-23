@@ -18,7 +18,7 @@
    - Recommendation: Use a more robust state management solution (Redux, Zustand, Context API)
 
 6. **Database Schema in Frontend Code**
-   - SQL schema definitions included in frontend codebase
+   - SQL schema definitions included in katuripu codebase
    - Recommendation: Move database schema to a backend repository
 
 7. **Client-Side Data Fetching Security Concerns**
