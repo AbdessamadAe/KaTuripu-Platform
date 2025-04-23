@@ -9,17 +9,9 @@
    - Some functions throw errors while others return null/false
    - Recommendation: Adopt a consistent error handling strategy across all services
 
-2. **Supabase Client Creation on Each Request**
-   - Creating a new Supabase client for every service function call is inefficient
-   - Recommendation: Create a singleton pattern for the Supabase client
-
 3. **Direct Database Access in Components**
    - Components directly call database services instead of using a data access layer
    - Recommendation: Implement a proper data access layer between UI components and data services
-
-4. **Authentication Logic Spread Throughout Codebase**
-   - Authentication handling is duplicated across components
-   - Recommendation: Create an authentication context/provider to centralize auth logic
 
 5. **Inconsistent State Management**
    - Mix of component state and prop drilling for state management
@@ -59,9 +51,7 @@
 ## Action Items
 
 1. Create consistent error handling strategy
-2. Implement Supabase client singleton
 3. Add proper data access layer
-4. Centralize authentication with context provider
 5. Adopt consistent state management solution
 6. Refactor large components
 7. Move sensitive operations to backend API
@@ -69,3 +59,48 @@
 9. Convert imperative DOM operations to declarative patterns
 10. Standardize on async/await for async code
 11. Review environment variable usage
+
+
+# Adopt the following structure:
+src/
+├── app/                        # App router (server-centric by default)
+│   ├── (marketing)/            # Public pages (e.g., landing, about)
+│   ├── (dashboard)/            # Auth-protected app (layout grouping)
+│   ├── api/                    # Route handlers (server-only)
+│   ├── layout.tsx             # Root layout
+│   ├── globals.css
+│   └── page.tsx
+│
+├── components/                # Reusable UI components (client/server mixed)
+│   ├── ui/                    # Primitive design system (Button, Modal, etc.)
+│   └── shared/                # Shared layout components (Navbar, Footer, etc.)
+│
+├── features/                  # App features (domain logic + components)
+│   ├── roadmap/
+│   │   ├── components/        # Client components only used in roadmap
+│   │   ├── server/            # Server-only helpers (getRoadmap, etc.)
+│   │   └── hooks/             # Client-side hooks (e.g., useRoadmapStore)
+│   ├── auth/
+│   │   ├── components/
+│   │   ├── server/
+│   │   └── hooks/
+│   └── ...
+│
+├── lib/                       # Utils and libraries (shared code)
+│   ├── supabase/              # Singleton Supabase client
+│   ├── auth/                  # Centralized auth logic (e.g., getSession)
+│   ├── api-client/            # Client-side fetchers (fetchWithAuth, etc.)
+│   └── helpers.ts
+│
+├── services/                  # Business logic (used only by server-side code)
+│   ├── roadmapService.ts
+│   └── userService.ts
+│
+├── stores/                    # Zustand or Context state stores (client only)
+│   └── roadmapStore.ts
+│
+├── types/                     # Global TypeScript types
+│   └── index.ts
+│
+├── middleware.ts              # Edge middleware
+└── env.d.ts
