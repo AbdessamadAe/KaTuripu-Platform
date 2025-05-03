@@ -1,5 +1,6 @@
 import { supabase } from "./client"
-const singInWith = (provider:any) => async () => {
+
+const signInWith = (provider:any) => async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
@@ -15,7 +16,7 @@ const singInWith = (provider:any) => async () => {
     return data
 }
 
-const signInWithGoogle = singInWith('google')
+const signInWithGoogle = signInWith('google')
 
 const handleSignOut = async () => {
     try {

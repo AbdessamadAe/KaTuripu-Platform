@@ -1,10 +1,11 @@
 // src/lib/userService.ts
-import { supabase } from '@/lib/db/client';
+import { createClient } from '@/lib/db/server';
 /**
+ * ---------------to be removed---------------
  * Fetch user completed exercises
  */
 export const getCompletedExercises = async (userId: string): Promise<string[] | null> => {
-  
+  const supabase = await createClient();
   if (!userId) return null;
   
   try {
@@ -34,6 +35,7 @@ export const completeExercise = async (
   nodeId: string,
   roadmapId: string | undefined
 ): Promise<{ success: boolean }> => {
+  const supabase = await createClient();
   if (!userId || !exerciseId) return { success: false };
   
   try {
@@ -59,11 +61,11 @@ export const uncompleteExercise = async (
   nodeId: string,
   roadmapId: string | undefined
 ): Promise<{ success: boolean }> => {
+  const supabase = await createClient();
   if (!userId || !exerciseId) return { success: false };
   
   try {
 
-    console.log('Uncompleting exercise:', { userId, exerciseId });
     const { error } = await supabase
       .from('user_completed_exercises')
       .delete()
@@ -79,6 +81,7 @@ export const uncompleteExercise = async (
 
 
 export const getUserProgressOnRoadmap = async (userId: string, roadmapId: string) => {
+  const supabase = await createClient();
   if (!userId || !roadmapId) return null;
   
   try {
@@ -102,6 +105,7 @@ export const getUserProgressOnRoadmap = async (userId: string, roadmapId: string
 };
 
 export const getUserProgressOnNode = async (userId: string, nodeId: string) => {
+  const supabase = await createClient();
   if (!userId || !nodeId) return null;
   
   try {

@@ -10,8 +10,6 @@ export default getRequestConfig(async () => {
   const detected = h.get('x-next-intl-locale'); // Set by middleware
   const locale = detected && locales.includes(detected) ? detected : defaultLocale;
 
-  console.log('Patched Detected locale:', locale);
-
   return {
     locale,
     messages: (await import(`./messages/${locale}.json`)).default

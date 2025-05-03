@@ -108,7 +108,7 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
               <div className="p-4 flex justify-between items-center relative z-10">
                 <div className="flex-grow pr-4">
                   <Link href={{
-                    pathname: `/exercises/${problem.id}`,
+                    pathname: `/exercise/${problem.id}`,
                     query: { nodeId, roadmapId }
                   }} passHref>
                     <div className="text-gray-800 dark:text-white font-semibold hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">{problem.name}</div>

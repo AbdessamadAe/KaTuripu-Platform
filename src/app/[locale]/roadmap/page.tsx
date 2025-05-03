@@ -3,8 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import RoadmapCard from "@/components/RoadmapCard";
-import * as roadmapService from '@/services/roadmapService';
-import * as userService from '@/services/userService';
 import { motion } from 'framer-motion';
 import { useRouter } from "next/navigation";
 import { useTranslations } from 'next-intl';
@@ -34,8 +32,19 @@ const RoadmapsPage = () => {
     useEffect(() => {
         async function loadData() {
             try {
-                const roadmapsData = await roadmapService.getAllRoadmaps();
-                setRoadmaps(roadmapsData);
+                // const roadmapsData = await roadmapService.getAllRoadmaps();
+                const res = await fetch('/api/roadmap');
+
+                if (!res.ok) {
+                    // handle not found or error
+                    const errorData = await res.json();
+                    console.error(errorData.error);
+                    return;
+                  }
+
+                const data = await res.json();
+
+                setRoadmaps(data?.roadmaps);
             } catch (error) {
                 console.error("Erreur lors du chargement des feuilles de route:", error);
             } finally {
@@ -54,7 +63,17 @@ const RoadmapsPage = () => {
                 const entries = await Promise.all(
                     roadmaps.map(async (roadmap) => {
                         try {
-                            const progress = await userService.getUserProgressOnRoadmap(user.id, roadmap.id);
+                            const res = await fetch(`/api/user-progress/roadmap/${roadmap.id}`);
+
+                            if (!res.ok) {
+                                const errorData = await res.json();
+                                console.error(errorData.error);
+                                return [roadmap.slug, 0];
+                              }
+
+                            const progressData = await res.json();
+                            const progress = progressData.userProgressOnRoadmap;
+
                             return [roadmap.slug, progress?.progressPercent || 0];
                         } catch (e) {
                             console.error(`Error loading progress for ${roadmap.slug}`, e);
@@ -72,7 +91,7 @@ const RoadmapsPage = () => {
     }, [user, roadmaps]);
 
     // Filtering logic
-    const filteredRoadmaps = roadmaps.filter((roadmap) => {
+    const filteredRoadmaps = roadmaps?.filter((roadmap) => {
         const matchesSearch = roadmap.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             roadmap.description.toLowerCase().includes(searchTerm.toLowerCase());
 

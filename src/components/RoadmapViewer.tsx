@@ -15,13 +15,12 @@ import ExerciseSidebar from "./sidebar";
 import { Exercise, RoadmapData } from "@/types/types";
 import { celebrateProgress } from "@/utils/utils";
 import { NodeLabel } from "@/components/NodeLabel";
-import { getRoadmapBySlug } from "@/lib/api";
-import {
-  getUserProgressOnNode,
-  getCompletedExercises,
-  completeExercise,
-  uncompleteExercise,
-} from "@/services/userService";
+// import {
+//   getUserProgressOnNode,
+//   getCompletedExercises,
+//   completeExercise,
+//   uncompleteExercise,
+// } from "@/services/userService";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface RoadmapProps {
@@ -48,7 +47,15 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapSlug }) => {
       return [];
     }
     try {
-      const completed = await getCompletedExercises(user.id);
+      // const completed = await getCompletedExercises(user.id);
+      const res = await fetch(`/api/user/${user.id}/completed-exercises`);
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch completed exercises");
+      }
+
+      const { completed } = await res.json();
+
       setCompletedExercises(completed);
       return completed;
     } catch (error) {
@@ -77,7 +84,15 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapSlug }) => {
     try {
       setIsLoading(true);
       const nodePromises = roadmapData.nodes.map(async (node: any) => {
-        const progress = await getUserProgressOnNode(user.id, node.id);
+        // const progress = await getUserProgressOnNode(user.id, node.id);
+        const res = await fetch(`/api/user/${user.id}/progress/${node.id}`);
+        
+        if (!res.ok) {
+          throw new Error("Failed to fetch user progress");
+        }
+
+        const { progress } = await res.json();
+
         const exercisesWithStatus = getExercisesWithStatus(node.exercises);
 
         return {
@@ -128,9 +143,34 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapSlug }) => {
 
       try {
         if (completed) {
-          await completeExercise(userId, exerciseId, nodeId, roadmapData.id);
+          // await completeExercise(userId, exerciseId, nodeId, roadmapData.id);
+          const res = await fetch(`/api/user/${userId}/complete-exercise`, {
+            method: "POST",
+            body: JSON.stringify({
+              user_id: userId,
+              exercise_id: exerciseId,
+              node_id: nodeId,
+              roadmap_id: roadmapData.id,
+            }),
+          });
+          if (!res.ok) {
+            throw new Error("Failed to complete exercise");
+          }
         } else {
-          await uncompleteExercise(userId, exerciseId, nodeId, roadmapData.id);
+          // await uncompleteExercise(userId, exerciseId, nodeId, roadmapData.id);
+
+          const res = await fetch(`/api/user/${userId}/uncomplete-exercise`, {
+            method: "DELETE",
+            body: JSON.stringify({
+              user_id: userId,
+              exercise_id: exerciseId,
+            }),
+          });
+
+          if (!res.ok) {
+            throw new Error("Failed to uncomplete exercise");
+          }
+
         }
 
         // Update local state immediately for better UX
@@ -170,8 +210,14 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapSlug }) => {
       }
 
       try {
-        const data = await getRoadmapBySlug(roadmapSlug);
-        console.log("Fetched roadmap data:", data);
+        // const data = await getRoadmapBySlug(roadmapSlug);
+        const res = await fetch(`/api/roadmap/${roadmapSlug}`);
+        if (!res.ok) {
+          throw new Error("Failed to fetch roadmap data");
+        }
+
+        const data = await res.json();
+        
         setRoadmapData(data);
         if (data?.edges) {
           setEdges(data?.edges);

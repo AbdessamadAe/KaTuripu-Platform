@@ -1,5 +1,5 @@
 // src/lib/roadmapService.ts
-import { supabase } from '@/lib/db/client';
+import { createClient } from '@/lib/db/server';
 import { RoadmapData, Exercise, RoadmapNodeType } from '@/types/types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -101,8 +101,8 @@ function normalizeRoadmapData(rawData: any): RoadmapData {
  * @param id Roadmap ID
  * @returns Complete roadmap data with nodes and edges
  */
-export async function getRoadmap(id: string): Promise<RoadmapData> {
-  
+export async function getRoadmapById(id: string): Promise<RoadmapData> {
+  const supabase = await createClient();
   try {
     const { data: roadmap, error } = await supabase
       .from('roadmaps')
@@ -154,7 +154,7 @@ export async function getRoadmap(id: string): Promise<RoadmapData> {
  * @returns Array of roadmap basic information
  */
 export async function getAllRoadmaps() {
-  
+  const supabase = await createClient();
   try {
     const { data, error } = await supabase.from('roadmaps').select('*');
     if (error) throw new Error(`Failed to fetch roadmaps: ${error.message}`);
@@ -166,39 +166,12 @@ export async function getAllRoadmaps() {
 }
 
 /**
- * Get a roadmap by its slug
- * @param slug The roadmap slug
- * @returns Roadmap data or null if not found
- */
-export async function getRoadmapBySlug(slug: string) {
-  
-  try {
-    const { data, error } = await supabase
-      .from('roadmaps')
-      .select('*')
-      .eq('slug', slug)
-      .single();
-
-    if (error) {
-      if (error.code === 'PGRST116') return null;
-      throw new Error(`Failed to fetch roadmap by slug: ${error.message}`);
-    }
-
-    // Use the normalized getRoadmap function
-    return getRoadmap(data.id);
-  } catch (error) {
-    console.error('Error in getRoadmapBySlug:', error);
-    throw error;
-  }
-}
-
-/**
  * Create a new roadmap and related nodes/exercises
  * @param roadmapData Complete roadmap data including nodes and edges
  * @returns The created roadmap
  */
 export async function createRoadmap(roadmapData: RoadmapData) {
-  
+  const supabase = await createClient();
   try {
     const { nodes, edges, ...roadmapFields } = roadmapData;
 
@@ -296,7 +269,7 @@ export async function createRoadmap(roadmapData: RoadmapData) {
  * @param roadmapData Updated roadmap data
  */
 export async function updateRoadmap(id: string, roadmapData: RoadmapData) {
-  
+  const supabase = await createClient();
   try {
     const { nodes, edges, ...roadmapFields } = roadmapData;
 
@@ -457,7 +430,7 @@ export async function updateRoadmap(id: string, roadmapData: RoadmapData) {
  * @returns True if deletion was successful
  */
 export async function deleteRoadmap(id: string): Promise<boolean> {
-  
+  const supabase = await createClient();
   try {
     // Delete edges first (due to foreign key constraints)
     const { error: edgesError } = await supabase
