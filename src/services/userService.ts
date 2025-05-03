@@ -116,11 +116,13 @@ export const getUserProgressOnNode = async (userId: string, nodeId: string) => {
       .eq('node_id', nodeId)
       .single();
 
-    if (error || !data) return null;
+    console.log(data);
+
+
     return {
-      totalExercises: data.total_exercises,
-      completedExercises: data.completed_exercises,
-      progressPercent: data.progress_percent,
+      totalExercises: data?.total_exercises || null,
+      completedExercises: data?.completed_exercises || 0,
+      progressPercent: data?.progress_percent || 0,
     };
   } catch (error) {
     console.error('Error in getUserProgressOnNode:', error);

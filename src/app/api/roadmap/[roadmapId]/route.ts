@@ -3,9 +3,10 @@ import { NextResponse } from "next/server";
 
 export async function GET(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: { roadmapId: string } }
 ) {
-    const roadmap = wait getRoadmapById(params.id);
+    const {roadmapId} = await params;
+    const roadmap = await getRoadmapById(roadmapId);
     if (!roadmap) {
         return NextResponse.json(
             { success: false, error: "Roadma Not Found" },

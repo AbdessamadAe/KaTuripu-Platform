@@ -2,10 +2,10 @@ import Roadmap from "@/components/RoadmapViewer";
 
 export default async function RoadmapPage({ params }: any) {
   const resolvedparams = await params;
-  const slug = resolvedparams?.slug;
+  const roadmapId = resolvedparams?.roadmapId;
   return (
     <div>
-      <Roadmap roadmapSlug={slug} />
+      <Roadmap roadmapId={roadmapId} />
     </div>
   )
 }

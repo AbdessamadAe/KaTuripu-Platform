@@ -1,12 +1,8 @@
-import { getUserProgressOnNode } from "@/services/userService";
+import { getCompletedExercises } from "@/services/userService";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/db/server";
 
-export async function GET(
-    request: Request,
-    { params }: { params: { nodeId: string } }
-) {
-    const {nodeId} = await params;
+export async function GET() {
     const supabase = await createClient();
 
     const {
@@ -18,13 +14,14 @@ export async function GET(
         return NextResponse.json({success: false, error: "Unauthorized"}, {status: 401});
     }
     
-    const userProgressOnNode = await getUserProgressOnNode(user.id, nodeId);
-    if (!userProgressOnNode) {
+    const userCompletedExercises = await getCompletedExercises(user.id);
+    
+    if (!userCompletedExercises) {
         return NextResponse.json(
-            { success: false, error: "Node Not Found" },
+            { success: false, error: "Roadmap Not Found" },
             { status: 404 }
         );
     }
 
-    return NextResponse.json({success: true, userProgressOnNode});
+    return NextResponse.json({success: true, userCompletedExercises});
 }

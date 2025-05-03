@@ -126,7 +126,7 @@ const RoadmapsPage = () => {
             setSelectedRoadmap(roadmap.slug);
             setShowLoginModal(true);
         } else {
-            router.push(`/roadmap/${roadmap.slug}`);
+            router.push(`/roadmap/${roadmap.id}`);
         }
     };
 

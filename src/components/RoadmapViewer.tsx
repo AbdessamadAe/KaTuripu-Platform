@@ -16,7 +16,6 @@ import { Exercise, RoadmapData } from "@/types/types";
 import { celebrateProgress } from "@/utils/utils";
 import { NodeLabel } from "@/components/NodeLabel";
 // import {
-//   getUserProgressOnNode,
 //   getCompletedExercises,
 //   completeExercise,
 //   uncompleteExercise,
@@ -24,12 +23,12 @@ import { NodeLabel } from "@/components/NodeLabel";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface RoadmapProps {
-  roadmapSlug: string | undefined;
+  roadmapId: string | undefined;
 }
 
 const nodeClassName = (node: any) => node.type;
 
-const Roadmap: React.FC<RoadmapProps> = ({ roadmapSlug }) => {
+const Roadmap: React.FC<RoadmapProps> = ({ roadmapId }) => {
   
   const [completedExercises, setCompletedExercises] = useState<string[] | null>([]);
   const [nodes, setNodes, onNodesChange] = useNodesState<any>([]);
@@ -48,16 +47,16 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapSlug }) => {
     }
     try {
       // const completed = await getCompletedExercises(user.id);
-      const res = await fetch(`/api/user/${user.id}/completed-exercises`);
+      const res = await fetch(`/api/user-progress/completed-exercises`);
 
       if (!res.ok) {
         throw new Error("Failed to fetch completed exercises");
       }
 
-      const { completed } = await res.json();
+      const { userCompletedExercises } = await res.json();
 
-      setCompletedExercises(completed);
-      return completed;
+      setCompletedExercises(userCompletedExercises);
+      return userCompletedExercises;
     } catch (error) {
       console.error("Error fetching completed exercises:", error);
       return [];
@@ -85,13 +84,15 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapSlug }) => {
       setIsLoading(true);
       const nodePromises = roadmapData.nodes.map(async (node: any) => {
         // const progress = await getUserProgressOnNode(user.id, node.id);
-        const res = await fetch(`/api/user/${user.id}/progress/${node.id}`);
+        const res = await fetch(`/api/user-progress/node/${node.id}`);
         
         if (!res.ok) {
           throw new Error("Failed to fetch user progress");
         }
 
-        const { progress } = await res.json();
+        const { userProgressOnNode: progress } = await res.json();
+
+        // console.log(progress);
 
         const exercisesWithStatus = getExercisesWithStatus(node.exercises);
 
@@ -204,31 +205,28 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapSlug }) => {
   // Initial data fetching
   useEffect(() => {
     const fetchRoadmap = async () => {
-      if (!roadmapSlug) {
+      if (!roadmapId) {
         setIsLoading(false);
         return;
       }
 
       try {
-        // const data = await getRoadmapBySlug(roadmapSlug);
-        const res = await fetch(`/api/roadmap/${roadmapSlug}`);
+        const res = await fetch(`/api/roadmap/${roadmapId}`);
         if (!res.ok) {
           throw new Error("Failed to fetch roadmap data");
         }
-
-        const data = await res.json();
-        
-        setRoadmapData(data);
-        if (data?.edges) {
-          setEdges(data?.edges);
+        const {roadmap: roadmapData} = await res.json();
+        setRoadmapData(roadmapData);
+        if (roadmapData?.edges) {
+          setEdges(roadmapData?.edges);
         }
       } catch (error) {
-        console.error("Error fetching roadmap data:", error);
+        console.error(error);
       }
     };
 
     fetchRoadmap();
-  }, [roadmapSlug, setEdges]);
+  }, [roadmapId, setEdges]);
 
   // Fetch completed exercises when user changes
   useEffect(() => {

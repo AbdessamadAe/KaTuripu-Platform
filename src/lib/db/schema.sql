@@ -7,8 +7,6 @@ CREATE TABLE users (
   role TEXT,
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now(),
-  xp BIGINT DEFAULT 0,
-  completedExercises TEXT  -- Optional: denormalized quick list
 );
 
 -- ROADMAPS
