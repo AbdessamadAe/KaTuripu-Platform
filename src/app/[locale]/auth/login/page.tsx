@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useState } from 'react';
-import { signInWithGoogle } from '@/lib/db/actions';
+import { signInWithGoogle } from '@/lib/supabase/actions';
 
 export default function LoginPage() {
   const t = useTranslations('Auth');

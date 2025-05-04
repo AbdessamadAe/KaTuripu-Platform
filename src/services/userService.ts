@@ -1,1 +1,1 @@
-import { createClient } from '@/lib/db/server';
+import { createClient } from "@/lib/supabase/server";

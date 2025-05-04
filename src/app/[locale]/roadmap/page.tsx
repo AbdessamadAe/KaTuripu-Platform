@@ -26,9 +26,6 @@ const RoadmapsPage = () => {
                 const res = await fetch('/api/roadmap');
 
                 if (!res.ok) {
-                    // handle not found or error
-                    const errorData = await res.json();
-                    console.error(errorData.error);
                     return;
                   }
 

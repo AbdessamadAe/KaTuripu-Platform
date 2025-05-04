@@ -6,7 +6,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl';
 import Link from 'next/link'
-import { handleSignOut } from '@/lib/db/actions';
+import { handleSignOut } from '@/lib/supabase/actions';
 import { useRouter } from 'next/navigation';
 import { Switch } from './Switch';
 import { useAuth } from '@/contexts/AuthContext';
