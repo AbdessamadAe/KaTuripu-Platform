@@ -1,7 +1,7 @@
 "use client";
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon, UserIcon, ArrowRightOnRectangleIcon, LanguageIcon } from '@heroicons/react/24/outline'
-import { SignInButton } from '@/components/sign-in-button'
+import { SignInButton } from '@/components/Sign-in-button'
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl';

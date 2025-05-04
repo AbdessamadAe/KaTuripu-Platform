@@ -8,11 +8,10 @@ export type Exercise = {
     solution?: string;
     hints?: string[];
     video_url?: string;
-    completed?: boolean;
     question_image_url?: string;
   };
   
-  export type RoadmapNodeType = {
+  export type RoadmapNode = {
     id: string;
     label: string;
     description: string;
@@ -20,7 +19,7 @@ export type Exercise = {
     exercises: Exercise[];
   };
   
-  export type RoadmapData = {
+  export type Roadmap = {
     id?: string;
     title: string;
     description: string;
@@ -28,7 +27,7 @@ export type Exercise = {
     category?: any;
     created_at?: any;
     updated_at?: any;
-    nodes: RoadmapNodeType[];
+    nodes: RoadmapNode[];
     edges: {
       id: string;
       source: string;
