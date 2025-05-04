@@ -1,11 +1,11 @@
-import Roadmap from "@/components/RoadmapViewer";
+import Canvas from "@/components/Canvas";
 
 export default async function RoadmapPage({ params }: any) {
   const resolvedparams = await params;
   const roadmapId = resolvedparams?.roadmapId;
   return (
     <div>
-      <Roadmap roadmapId={roadmapId} />
+      <Canvas roadmapId={roadmapId} />
     </div>
   )
 }

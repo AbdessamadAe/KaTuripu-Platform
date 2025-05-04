@@ -52,10 +52,9 @@ const ExerciseDetailPage = () => {
 
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchProgressData = async () => {
       if (user?.id) {
-        // const completedExercises = await userService.getCompletedExercises(user?.id);
-        const res = await fetch(`/api/user/${user.id}/completed-exercises`);
+        const res = await fetch(`/api/user-progress/is-exercise-completed/${exerciseId}`);
 
         if (!res.ok) {
           // handle not found or error
@@ -64,15 +63,11 @@ const ExerciseDetailPage = () => {
           return;
         }
 
-        const { completedExercises } = await res.json();
-
-        if (completedExercises && completedExercises.includes(exerciseId)) {
-          setCompleted(true);
-        }
+        setCompleted(res?.isCompleted)
       }
     };
 
-    fetchUserData();
+    fetchProgressData();
   }, [exerciseId]);
 
   useEffect(() => {

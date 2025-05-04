@@ -1,31 +1,31 @@
 import createIntlMiddleware from 'next-intl/middleware';
 import { NextResponse, type NextRequest } from 'next/server';
-import { updateSession } from './utils/supabase/middleware';
+import { updateSession } from '@/utils/supabase/middleware'
+
+const intlMiddleware = createIntlMiddleware({
+  locales: ['en', 'es'],
+  defaultLocale: 'en',
+  localeDetection: true,
+});
 
 export async function middleware(request: NextRequest) {
-  // First, handle authentication with Supabase
-  const authResponse = await updateSession(request);
-  
-  // If the auth middleware redirected the user, return that response
-  if (authResponse.status !== 200) {
-    return authResponse;
+  const { pathname } = request.nextUrl;
+
+  // Skip auth session update on public/auth pages
+  if (
+    pathname.startsWith('/home') ||
+    pathname.startsWith('/auth') ||
+    pathname.startsWith('/error') ||
+    pathname.startsWith('/api')
+  ) {
+    return intlMiddleware(request);
   }
-  
-  // Otherwise, continue with internationalization middleware
-  const intlMiddleware = createIntlMiddleware({
-    locales: ['en', 'fr', 'ar'],
-    defaultLocale: 'en',
-  });
-  
-  // Apply the internationalization middleware to the request
-  const response = intlMiddleware(request);
-  
-  // Copy cookies from the auth response to the intl response
-  authResponse.cookies.getAll().forEach(cookie => {
-    response.cookies.set(cookie.name, cookie.value, cookie.options);
-  });
-  
-  return response;
+
+  // Refresh Supabase session for protected routes
+  const sessionResponse = await updateSession(request);
+
+  // Apply i18n logic on top of session handling
+  return intlMiddleware(request, sessionResponse);
 }
 
 export const config = {

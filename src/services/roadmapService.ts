@@ -101,17 +101,27 @@ function normalizeRoadmapData(rawData: any): RoadmapData {
  * @param id Roadmap ID
  * @returns Complete roadmap data with nodes and edges
  */
-export async function getRoadmapById(id: string): Promise<RoadmapData> {
+export async function getRoadmapById(id: string): Promise<{ success: boolean, roadmap?: RoadmapData, error?: string, status?: number }> {
   const supabase = await createClient();
   try {
+    // For fetching roadmap data, we don't require authentication but we keep consistent return structure
+    
     const { data: roadmap, error } = await supabase
       .from('roadmaps')
       .select('*')
       .eq('id', id)
       .single();
 
-    if (error) throw new Error(`Failed to fetch roadmap: ${error.message}`);
-    if (!roadmap) throw new Error('Roadmap not found');
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return { success: false, error: 'Roadmap not found', status: 404 };
+      }
+      return { success: false, error: `Failed to fetch roadmap: ${error.message}`, status: 500 };
+    }
+    
+    if (!roadmap) {
+      return { success: false, error: 'Roadmap not found', status: 404 };
+    }
 
     // Fetch nodes with their exercises
     const { data: nodes, error: nodeError } = await supabase
@@ -125,7 +135,9 @@ export async function getRoadmapById(id: string): Promise<RoadmapData> {
       `)
       .eq('roadmap_id', id);
 
-    if (nodeError) throw new Error(`Failed to fetch nodes: ${nodeError.message}`);
+    if (nodeError) {
+      return { success: false, error: `Failed to fetch nodes: ${nodeError.message}`, status: 500 };
+    }
 
     // Fetch edges
     const { data: edges, error: edgeError } = await supabase
@@ -133,7 +145,9 @@ export async function getRoadmapById(id: string): Promise<RoadmapData> {
       .select('*')
       .eq('roadmap_id', id);
 
-    if (edgeError) throw new Error(`Failed to fetch edges: ${edgeError.message}`);
+    if (edgeError) {
+      return { success: false, error: `Failed to fetch edges: ${edgeError.message}`, status: 500 };
+    }
 
     // Build and normalize the complete roadmap data
     const rawRoadmapData = {
@@ -142,10 +156,11 @@ export async function getRoadmapById(id: string): Promise<RoadmapData> {
       edges
     };
     
-    return normalizeRoadmapData(rawRoadmapData);
+    const normalizedRoadmap = normalizeRoadmapData(rawRoadmapData);
+    return { success: true, roadmap: normalizedRoadmap };
   } catch (error) {
-    console.error('Error in getRoadmap:', error);
-    throw error;
+    console.error('Error in getRoadmapById:', error);
+    return { success: false, error: "Internal Server Error", status: 500 };
   }
 }
 
@@ -153,15 +168,23 @@ export async function getRoadmapById(id: string): Promise<RoadmapData> {
  * Get all available roadmaps
  * @returns Array of roadmap basic information
  */
-export async function getAllRoadmaps() {
+export async function getAllRoadmaps(): Promise<{ success: boolean, roadmaps?: any[], error?: string, status?: number }> {
   const supabase = await createClient();
   try {
+    // For getAllRoadmaps, we allow unauthenticated users to read roadmaps
+    // but we keep the response structure consistent with other authenticated endpoints
+    
     const { data, error } = await supabase.from('roadmaps').select('*');
-    if (error) throw new Error(`Failed to fetch roadmaps: ${error.message}`);
-    return data || [];
+    
+    if (error) {
+      console.error(`Failed to fetch roadmaps: ${error.message}`);
+      return { success: false, error: "Failed to fetch roadmaps", status: 500 };
+    }
+    
+    return { success: true, roadmaps: data || [] };
   } catch (error) {
     console.error('Error in getAllRoadmaps:', error);
-    throw error;
+    return { success: false, error: "Internal Server Error", status: 500 };
   }
 }
 
@@ -170,9 +193,18 @@ export async function getAllRoadmaps() {
  * @param roadmapData Complete roadmap data including nodes and edges
  * @returns The created roadmap
  */
-export async function createRoadmap(roadmapData: RoadmapData) {
+export async function createRoadmap(roadmapData: RoadmapData): Promise<{ success: boolean, roadmap?: any, error?: string, status?: number }> {
   const supabase = await createClient();
   try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user?.id) {
+      return { success: false, error: "Unauthorized", status: 401 };
+    }
+    
     const { nodes, edges, ...roadmapFields } = roadmapData;
 
     // Check if slug exists and generate a unique one if needed
@@ -198,7 +230,10 @@ export async function createRoadmap(roadmapData: RoadmapData) {
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to create roadmap: ${error.message}`);
+    if (error) {
+      console.error(`Failed to create roadmap: ${error.message}`);
+      return { success: false, error: "Failed to create roadmap", status: 500 };
+    }
 
     // Map to track original node IDs to new clean UUIDs
     const nodeIdMap: Record<string, string> = {};
@@ -223,7 +258,10 @@ export async function createRoadmap(roadmapData: RoadmapData) {
         .select()
         .single();
 
-      if (nodeErr) throw new Error(`Failed to insert node: ${nodeErr.message}`);
+      if (nodeErr) {
+        console.error(`Failed to insert node: ${nodeErr.message}`);
+        return { success: false, error: "Failed to insert node", status: 500 };
+      }
 
       // Create node-exercise relationships
       for (const exercise of node.exercises) {
@@ -234,7 +272,10 @@ export async function createRoadmap(roadmapData: RoadmapData) {
             exercise_id: exercise.id,
           });
 
-        if (exErr) throw new Error(`Failed to insert node-exercise relationship: ${exErr.message}`);
+        if (exErr) {
+          console.error(`Failed to insert node-exercise relationship: ${exErr.message}`);
+          return { success: false, error: "Failed to insert node-exercise relationship", status: 500 };
+        }
       }
     }
 
@@ -253,13 +294,16 @@ export async function createRoadmap(roadmapData: RoadmapData) {
           target_node_id: targetId,
         });
 
-      if (edgeErr) throw new Error(`Failed to insert edge: ${edgeErr.message}`);
+      if (edgeErr) {
+        console.error(`Failed to insert edge: ${edgeErr.message}`);
+        return { success: false, error: "Failed to insert edge", status: 500 };
+      }
     }
 
-    return roadmap;
+    return { success: true, roadmap };
   } catch (error) {
     console.error('Error in createRoadmap:', error);
-    throw error;
+    return { success: false, error: "Internal Server Error", status: 500 };
   }
 }
 
@@ -268,9 +312,18 @@ export async function createRoadmap(roadmapData: RoadmapData) {
  * @param id Roadmap ID to update
  * @param roadmapData Updated roadmap data
  */
-export async function updateRoadmap(id: string, roadmapData: RoadmapData) {
+export async function updateRoadmap(id: string, roadmapData: RoadmapData): Promise<{ success: boolean, error?: string, status?: number }> {
   const supabase = await createClient();
   try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user?.id) {
+      return { success: false, error: "Unauthorized", status: 401 };
+    }
+    
     const { nodes, edges, ...roadmapFields } = roadmapData;
 
     const { error: roadmapError } = await supabase
@@ -278,7 +331,10 @@ export async function updateRoadmap(id: string, roadmapData: RoadmapData) {
       .update(roadmapFields)
       .eq('id', id);
 
-    if (roadmapError) throw new Error(`Failed to update roadmap: ${roadmapError.message}`);
+    if (roadmapError) {
+      console.error(`Failed to update roadmap: ${roadmapError.message}`);
+      return { success: false, error: "Failed to update roadmap", status: 500 };
+    }
 
     // Get existing nodes to compare
     const { data: existingNodes } = await supabase
@@ -418,20 +474,32 @@ export async function updateRoadmap(id: string, roadmapData: RoadmapData) {
 
       if (edgeErr) throw new Error(`Failed to update edge: ${edgeErr.message}`);
     }
+
+    return { success: true };
   } catch (error) {
     console.error('Error in updateRoadmap:', error);
-    throw error;
+    return { success: false, error: "Internal Server Error", status: 500 };
   }
 }
 
 /**
  * Delete a roadmap and all its related data
  * @param id Roadmap ID to delete
- * @returns True if deletion was successful
+ * @returns Success status
  */
-export async function deleteRoadmap(id: string): Promise<boolean> {
+export async function deleteRoadmap(id: string): Promise<{success: boolean, error?: string, status?: number}> {
   const supabase = await createClient();
   try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user?.id) {
+      return { success: false, error: "Unauthorized", status: 401 };
+    }
+    
+    // Continue with deletion operations
     // Delete edges first (due to foreign key constraints)
     const { error: edgesError } = await supabase
       .from('roadmap_edges')
@@ -474,9 +542,9 @@ export async function deleteRoadmap(id: string): Promise<boolean> {
 
     if (roadmapError) throw new Error(`Failed to delete roadmap: ${roadmapError.message}`);
 
-    return true;
+    return { success: true };
   } catch (error) {
     console.error('Error in deleteRoadmap:', error);
-    throw error;
+    return { success: false, error: "Internal Server Error", status: 500 };
   }
 }

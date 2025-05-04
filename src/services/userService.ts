@@ -1,7 +1,45 @@
 // src/lib/userService.ts
 import { createClient } from '@/lib/db/server';
+
+
 /**
- * ---------------to be removed---------------
+ * Is exercise completed by user 
+**/
+
+export const isExerciseCompleted = async (exerciseId: string): Promise<boolean> => {
+  const supabase = await createClient();
+  
+  try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user?.id) {
+      return false;
+    }
+
+    const {data, error} = await supabase
+      .from('user_completed_exercises')
+      .select('exercise_id')
+      .eq('user_id', user.id)
+      .eq('exercise_id', exerciseId)
+      .single();
+    
+    if (error) {
+      if (error.code === 'PGRST116') return false;
+      console.error(`Failed to check if exercise is completed: ${error.message}`);
+      return false;
+    }
+
+    return !!data;
+  } catch (error) {
+    console.error('Error in isExerciseCompleted:', error);
+    return false;
+  }
+}
+
+/**
  * Fetch user completed exercises
  */
 export const getCompletedExercises = async (userId: string): Promise<string[] | null> => {
@@ -80,52 +118,86 @@ export const uncompleteExercise = async (
 };
 
 
-export const getUserProgressOnRoadmap = async (userId: string, roadmapId: string) => {
+export const getUserProgressOnRoadmap = async (roadmapId: string) => {
   const supabase = await createClient();
-  if (!userId || !roadmapId) return null;
   
   try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user?.id) {
+      return { success: false, error: "Unauthorized", status: 401 };
+    }
+    
+    if (!roadmapId) {
+      return { success: false, error: "Roadmap ID is required", status: 400 };
+    }
+    
     const { data, error } = await supabase
       .from('user_roadmap_progress')
       .select('total_exercises, completed_exercises, progress_percent')
-      .eq('user_id', userId)
+      .eq('user_id', user.id)
       .eq('roadmap_id', roadmapId)
       .single();
 
-    if (error || !data) return null;
+    if (error || !data) {
+      return { success: false, error: "Roadmap progress not found", status: 404 };
+    }
+
     return {
-      totalExercises: data.total_exercises,
-      completedExercises: data.completed_exercises,
-      progressPercent: data.progress_percent,
+      success: true,
+      userProgressOnRoadmap: {
+        totalExercises: data.total_exercises,
+        completedExercises: data.completed_exercises,
+        progressPercent: data.progress_percent,
+      }
     };
   } catch (error) {
     console.error('Error in getUserProgressOnRoadmap:', error);
-    return null;
+    return { success: false, error: "Internal Server Error", status: 500 };
   }
 };
 
-export const getUserProgressOnNode = async (userId: string, nodeId: string) => {
+export const getUserProgressOnNode = async (nodeId: string) => {
   const supabase = await createClient();
-  if (!userId || !nodeId) return null;
   
   try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user?.id) {
+      return { success: false, error: "Unauthorized", status: 401 };
+    }
+    
+    if (!nodeId) {
+      return { success: false, error: "Node ID is required", status: 400 };
+    }
+    
     const { data, error } = await supabase
       .from('user_node_progress')
       .select('total_exercises, completed_exercises, progress_percent')
-      .eq('user_id', userId)
+      .eq('user_id', user.id)
       .eq('node_id', nodeId)
       .single();
 
-    console.log(data);
-
+    if (error) {
+      console.log('Error fetching user progress on node:', error);
+    }
 
     return {
-      totalExercises: data?.total_exercises || null,
-      completedExercises: data?.completed_exercises || 0,
-      progressPercent: data?.progress_percent || 0,
+      success: true, 
+      userProgressOnNode: {
+        totalExercises: data?.total_exercises || null,
+        completedExercises: data?.completed_exercises || 0,
+        progressPercent: data?.progress_percent || 0,
+      }
     };
   } catch (error) {
     console.error('Error in getUserProgressOnNode:', error);
-    return null;
+    return { success: false, error: "Internal Server Error", status: 500 };
   }
 };

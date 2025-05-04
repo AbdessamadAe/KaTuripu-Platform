@@ -15,11 +15,6 @@ import ExerciseSidebar from "./sidebar";
 import { Exercise, RoadmapData } from "@/types/types";
 import { celebrateProgress } from "@/utils/utils";
 import { NodeLabel } from "@/components/NodeLabel";
-// import {
-//   getCompletedExercises,
-//   completeExercise,
-//   uncompleteExercise,
-// } from "@/services/userService";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface RoadmapProps {
@@ -28,7 +23,7 @@ interface RoadmapProps {
 
 const nodeClassName = (node: any) => node.type;
 
-const Roadmap: React.FC<RoadmapProps> = ({ roadmapId }) => {
+const Canvas: React.FC<RoadmapProps> = ({ roadmapId }) => {
   
   const [completedExercises, setCompletedExercises] = useState<string[] | null>([]);
   const [nodes, setNodes, onNodesChange] = useNodesState<any>([]);
@@ -83,7 +78,6 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapId }) => {
     try {
       setIsLoading(true);
       const nodePromises = roadmapData.nodes.map(async (node: any) => {
-        // const progress = await getUserProgressOnNode(user.id, node.id);
         const res = await fetch(`/api/user-progress/node/${node.id}`);
         
         if (!res.ok) {
@@ -91,8 +85,6 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapId }) => {
         }
 
         const { userProgressOnNode: progress } = await res.json();
-
-        // console.log(progress);
 
         const exercisesWithStatus = getExercisesWithStatus(node.exercises);
 
@@ -144,11 +136,9 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapId }) => {
 
       try {
         if (completed) {
-          // await completeExercise(userId, exerciseId, nodeId, roadmapData.id);
-          const res = await fetch(`/api/user/${userId}/complete-exercise`, {
+          const res = await fetch(`/api/user-progress/complete-exercise`, {
             method: "POST",
             body: JSON.stringify({
-              user_id: userId,
               exercise_id: exerciseId,
               node_id: nodeId,
               roadmap_id: roadmapData.id,
@@ -158,13 +148,12 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapId }) => {
             throw new Error("Failed to complete exercise");
           }
         } else {
-          // await uncompleteExercise(userId, exerciseId, nodeId, roadmapData.id);
-
-          const res = await fetch(`/api/user/${userId}/uncomplete-exercise`, {
-            method: "DELETE",
+          const res = await fetch(`/api/user-progress/uncomplete-exercise`, {
+            method: "POST",
             body: JSON.stringify({
-              user_id: userId,
               exercise_id: exerciseId,
+              node_id: nodeId,
+              roadmap_id: roadmapData.id,
             }),
           });
 
@@ -315,4 +304,4 @@ const Roadmap: React.FC<RoadmapProps> = ({ roadmapId }) => {
   );
 };
 
-export default Roadmap;
+export default Canvas;
