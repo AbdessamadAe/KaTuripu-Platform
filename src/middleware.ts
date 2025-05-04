@@ -8,6 +8,9 @@ const intlMiddleware = createIntlMiddleware({
   localeDetection: true,
 });
 
+// when trying to protect routes, I missed up the intl functionality
+// to be fixed in the future inshaAllah
+
 export async function middleware(request: NextRequest) {
 
   if (request.redirect) {
