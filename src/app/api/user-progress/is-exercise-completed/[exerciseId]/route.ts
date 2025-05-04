@@ -5,7 +5,7 @@ export async function GET(
     request: Request,
     { params }: { params: { exerciseId: string } }
 ) {
-    const { exerciseId } = params;
+    const { exerciseId } = await params;
     
     const result = await isExerciseCompleted(exerciseId);
     return NextResponse.json({ success: true, isCompleted: result ? true : false });

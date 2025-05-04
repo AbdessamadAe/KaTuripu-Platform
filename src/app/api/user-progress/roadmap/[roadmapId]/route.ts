@@ -5,7 +5,7 @@ export async function GET(
     request: Request,
     { params }: { params: { roadmapId: string } }
 ) {
-    const { roadmapId } = params;
+    const { roadmapId } = await params;
     
     const result = await getUserProgressOnRoadmap(roadmapId);
     

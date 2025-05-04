@@ -40,20 +40,25 @@ const Canvas: React.FC<RoadmapProps> = ({ roadmapId }) => {
       setCompletedExercises([]);
       return [];
     }
+    
     try {
-      // const completed = await getCompletedExercises(user.id);
-      const res = await fetch(`/api/user-progress/completed-exercises`);
+      // Using proper error handling with status check
+      const res = await fetch('/api/user-progress/completed-exercises');
 
       if (!res.ok) {
-        throw new Error("Failed to fetch completed exercises");
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `Failed to fetch completed exercises (${res.status})`);
       }
 
-      const { userCompletedExercises } = await res.json();
-
+      const data = await res.json();
+      const userCompletedExercises = data.userCompletedExercises || [];
+      
       setCompletedExercises(userCompletedExercises);
       return userCompletedExercises;
     } catch (error) {
       console.error("Error fetching completed exercises:", error);
+      // Set empty array on error to prevent undefined behavior
+      setCompletedExercises([]);
       return [];
     }
   }, [user]);
@@ -73,43 +78,78 @@ const Canvas: React.FC<RoadmapProps> = ({ roadmapId }) => {
   );
 
   const generateNodes = useCallback(async () => {
-    if (!roadmapData?.nodes || !user) return [];
+    if (!roadmapData?.nodes) return [];
     
     try {
       setIsLoading(true);
+      
+      // Use Promise.all for concurrent requests with error handling for each node
       const nodePromises = roadmapData.nodes.map(async (node: any) => {
-        const res = await fetch(`/api/user-progress/node/${node.id}`);
-        
-        if (!res.ok) {
-          throw new Error("Failed to fetch user progress");
+        try {
+          // Skip progress fetch if user is not authenticated
+          let progress = { progressPercent: 0, completedExercises: 0, totalExercises: 0 };
+          
+          if (user) {
+            const res = await fetch(`/api/user-progress/node/${node.id}`);
+            
+            if (!res.ok) {
+              const errorData = await res.json().catch(() => ({}));
+              throw new Error(errorData.error || `Failed to fetch node progress (${res.status})`);
+            }
+            
+            const data = await res.json();
+            progress = data.userProgressOnNode || progress;
+          }
+
+          // Process exercises data regardless of authentication
+          const exercisesWithStatus = getExercisesWithStatus(node.exercises);
+
+          return {
+            id: node.id,
+            position: node.position,
+            data: {
+              label: <NodeLabel label={node.label} progress={progress?.progressPercent} />,
+              rawLabel: node.label,
+              description: node.description,
+              exercises: exercisesWithStatus,
+            },
+            type: "default",
+            style: {
+              background: progress?.progressPercent === 100 ? "#22c55e" : "#192C88",
+              color: "white",
+              padding: "10px",
+              borderRadius: "5px",
+              width: 180,
+              cursor: "pointer",
+            },
+          };
+        } catch (error) {
+          console.error(`Error fetching progress for node ${node.id}:`, error);
+          
+          // Return node with default values on error
+          return {
+            id: node.id,
+            position: node.position,
+            data: {
+              label: <NodeLabel label={node.label} progress={0} />,
+              rawLabel: node.label,
+              description: node.description,
+              exercises: getExercisesWithStatus(node.exercises),
+            },
+            type: "default",
+            style: {
+              background: "#192C88",
+              color: "white",
+              padding: "10px",
+              borderRadius: "5px",
+              width: 180,
+              cursor: "pointer",
+            },
+          };
         }
-
-        const { userProgressOnNode: progress } = await res.json();
-
-        const exercisesWithStatus = getExercisesWithStatus(node.exercises);
-
-        return {
-          id: node.id,
-          position: node.position,
-          data: {
-            label: <NodeLabel label={node.label} progress={progress?.progressPercent} />,
-            rawLabel: node.label,
-            description: node.description,
-            exercises: exercisesWithStatus,
-          },
-          type: "default",
-          style: {
-            background: progress?.progressPercent === 100 ? "#22c55e" : "#192C88",
-            color: "white",
-            padding: "10px",
-            borderRadius: "5px",
-            width: 180,
-            cursor: "pointer",
-          },
-        };
       });
 
-      return Promise.all(nodePromises);
+      return await Promise.all(nodePromises);
     } catch (error) {
       console.error("Error generating nodes:", error);
       return [];

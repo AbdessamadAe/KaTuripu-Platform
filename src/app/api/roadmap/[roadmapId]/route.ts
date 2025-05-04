@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getRoadmapById, updateRoadmap, deleteRoadmap } from "@/services/roadmapService";
 
 export async function GET(request: Request, { params }: { params: { roadmapId: string } }) {
-  const roadmapId = params.roadmapId;
+  const {roadmapId} = await params;
   const result = await getRoadmapById(roadmapId);
   
   if (!result.success) {
@@ -13,7 +13,7 @@ export async function GET(request: Request, { params }: { params: { roadmapId: s
 }
 
 export async function PUT(request: NextRequest, { params }: { params: { roadmapId: string } }) {
-  const roadmapId = params.roadmapId;
+  const {roadmapId} = await params;
   
   try {
     const roadmapData = await request.json();

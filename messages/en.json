@@ -118,5 +118,10 @@
     "author": "Abderrahman",
     "role": "Mathematics Student"
   }
-}
+},
+    "Auth": {
+        "welcomeBack": "Welcome Back!",
+        "loginToContinue": "Sign in to continue to KaTuripu",
+        "continueWithGoogle": "Continue with Google"
+    }
 }

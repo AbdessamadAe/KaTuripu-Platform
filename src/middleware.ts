@@ -9,23 +9,15 @@ const intlMiddleware = createIntlMiddleware({
 });
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
 
-  // Skip auth session update on public/auth pages
-  if (
-    pathname.startsWith('/home') ||
-    pathname.startsWith('/auth') ||
-    pathname.startsWith('/error') ||
-    pathname.startsWith('/api')
-  ) {
+  if (request.redirect) {
     return intlMiddleware(request);
   }
 
   // Refresh Supabase session for protected routes
   const sessionResponse = await updateSession(request);
-
-  // Apply i18n logic on top of session handling
-  return intlMiddleware(request, sessionResponse);
+  
+  return sessionResponse;
 }
 
 export const config = {

@@ -42,15 +42,23 @@ export const isExerciseCompleted = async (exerciseId: string): Promise<boolean> 
 /**
  * Fetch user completed exercises
  */
-export const getCompletedExercises = async (userId: string): Promise<string[] | null> => {
+export const getCompletedExercises = async (): Promise<string[] | null> => {
   const supabase = await createClient();
-  if (!userId) return null;
   
   try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user?.id) {
+      return { success: false, error: "Unauthorized", status: 401 };
+    }
+    
     const { data, error } = await supabase
       .from('user_completed_exercises')
       .select('exercise_id')
-      .eq('user_id', userId);
+      .eq('user_id', user?.id);
 
     if (error) {
       console.error('Error fetching completed exercises:', error);
@@ -68,17 +76,27 @@ export const getCompletedExercises = async (userId: string): Promise<string[] | 
  * Mark an exercise as completed and update node/roadmap progress
  */
 export const completeExercise = async (
-  userId: string,
   exerciseId: string,
   nodeId: string,
   roadmapId: string | undefined
 ): Promise<{ success: boolean }> => {
+  if (!exerciseId || !nodeId || !roadmapId) return { success: false };
+
   const supabase = await createClient();
-  if (!userId || !exerciseId) return { success: false };
-  
+
   try {
+
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user?.id) {
+      return { success: false, error: "Unauthorized", status: 401 };
+    }
+
     const { error } = await supabase.from('user_completed_exercises').insert({
-      user_id: userId,
+      user_id: user?.id,
       exercise_id: exerciseId,
       node_id: nodeId,
       roadmap_id: roadmapId
@@ -94,21 +112,31 @@ export const completeExercise = async (
  * Unmark a completed exercise and update node/roadmap progress
  */
 export const uncompleteExercise = async (
-  userId: string,
   exerciseId: string,
   nodeId: string,
   roadmapId: string | undefined
 ): Promise<{ success: boolean }> => {
+  if (!exerciseId || !nodeId || !roadmapId) return { success: false };
   const supabase = await createClient();
-  if (!userId || !exerciseId) return { success: false };
   
   try {
+
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user?.id) {
+      return { success: false, error: "Unauthorized", status: 401 };
+    }
 
     const { error } = await supabase
       .from('user_completed_exercises')
       .delete()
-      .eq('user_id', userId)
-      .eq('exercise_id', exerciseId);
+      .eq('user_id', user?.id)
+      .eq('exercise_id', exerciseId)
+      .eq('node_id', nodeId)
+      .eq('roadmap_id', roadmapId);
 
     return { success: true };
   } catch (error) {
@@ -179,20 +207,18 @@ export const getUserProgressOnNode = async (nodeId: string) => {
     
     const { data, error } = await supabase
       .from('user_node_progress')
-      .select('total_exercises, completed_exercises, progress_percent')
+      .select('progress_percent')
       .eq('user_id', user.id)
       .eq('node_id', nodeId)
       .single();
 
-    if (error) {
-      console.log('Error fetching user progress on node:', error);
+    if (data === null) {
+      return { success: true, userProgressOnNode: { progressPercent: 0 } };
     }
 
     return {
       success: true, 
       userProgressOnNode: {
-        totalExercises: data?.total_exercises || null,
-        completedExercises: data?.completed_exercises || 0,
         progressPercent: data?.progress_percent || 0,
       }
     };
