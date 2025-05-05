@@ -26,6 +26,7 @@ CREATE TABLE roadmaps (
   title TEXT NOT NULL,
   description TEXT,
   category TEXT,
+  image_url TEXT,
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
@@ -89,7 +90,11 @@ SELECT
     100.0 * COUNT(DISTINCT uep.exercise_id) FILTER (WHERE uep.completed)::float
     / NULLIF(COUNT(DISTINCT ne.exercise_id), 0),
     2
-  ) AS progress_percent
+  ) AS progress_percent,
+  r.title AS roadmap_title,
+  r.description AS roadmap_description,
+  r.image_url AS roadmap_image_url,
+  r.category AS roadmap_category
 FROM users u
 JOIN roadmaps r ON TRUE
 JOIN roadmap_nodes rn ON rn.roadmap_id = r.id

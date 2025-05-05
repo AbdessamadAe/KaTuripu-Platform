@@ -27,19 +27,11 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+          <div className="bg-white dark:bg-gray-800 sm:rounded-lg">
             <div className="px-4 py-5 sm:p-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">Not Logged In</h3>
+              <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">Access Denied</h3>
               <div className="mt-2 max-w-xl text-sm text-gray-500 dark:text-gray-400">
-                <p>Please log in to view your profile.</p>
-              </div>
-              <div className="mt-5">
-                <a
-                  href="/login"
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-color hover:bg-custom-btn-bg-hover-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color dark:ring-offset-gray-900"
-                >
-                  Go to Login
-                </a>
+                <p>You must be logged in to view this page.</p>
               </div>
             </div>
           </div>

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAllRoadmaps, createRoadmap } from '@/services/roadmapService';
+import { getRoadmaps, createRoadmap } from '@/services/roadmapService';
 
 export async function GET() {
-  const result = await getAllRoadmaps();
+  const result = await getRoadmaps();
   
   if (!result.success) {
     return NextResponse.json({ error: result.error }, { status: result.status || 500 });

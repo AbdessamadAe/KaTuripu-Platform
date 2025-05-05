@@ -10,7 +10,10 @@ const intlMiddleware = createIntlMiddleware({
 
 export async function middleware(request: NextRequest) {
   const isRouteProtected = (
-    request.nextUrl.pathname.startsWith('/roadmap')
+    request.nextUrl.pathname.startsWith('/roadmap') ||
+    request.nextUrl.pathname.startsWith('/profile') ||
+    request.nextUrl.pathname.startsWith('/admin') ||
+    request.nextUrl.pathname.startsWith('/exercise')
   )
 
   if (!isRouteProtected) {

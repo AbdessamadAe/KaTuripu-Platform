@@ -16,21 +16,14 @@ const RoadmapsPage = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedRoadmap, setSelectedRoadmap] = useState<string | null>(null);
     const { user, isAuthenticated, isLoading } = useAuth();
-    
+    const categories = ["All"]
 
     // Fetch roadmap data once
     useEffect(() => {
         async function loadData() {
             try {
-                // const roadmapsData = await roadmapService.getAllRoadmaps();
                 const res = await fetch('/api/roadmap');
-
-                if (!res.ok) {
-                    return;
-                  }
-
                 const data = await res.json();
-
                 setRoadmaps(data?.roadmaps);
             } catch (error) {
                 console.error("Erreur lors du chargement des feuilles de route:", error);
@@ -56,7 +49,7 @@ const RoadmapsPage = () => {
 
     const handleRoadmapClick = (roadmap: any) => {
         if (!user) {
-            setSelectedRoadmap(roadmap.slug);
+            setSelectedRoadmap(roadmap?.id);
             setShowLoginModal(true);
         } else {
             router.push(`/roadmap/${roadmap.id}`);
@@ -109,7 +102,7 @@ const RoadmapsPage = () => {
                                 key={cat}
                                 onClick={() => setCategory(cat)}
                                 className={`px-6 py-3 text-sm font-medium rounded-xl transition-all ${
-                                    category === cat 
+                                    true 
                                     ? 'bg-gradient-to-r from-[#5a8aaf] to-[#7d9bbf] text-white shadow-md' 
                                     : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-md'
                                 }`}
@@ -126,7 +119,7 @@ const RoadmapsPage = () => {
                     <div className="absolute -z-10 top-1/3 left-1/4 w-64 h-64 bg-[#a7d1cf]/30 dark:bg-[#a7d1cf]/20 rounded-full blur-3xl opacity-40"></div>
                     <div className="absolute -z-10 bottom-1/4 right-1/5 w-72 h-72 bg-[#f0b9ae]/30 dark:bg-[#f0b9ae]/15 rounded-full blur-3xl opacity-40"></div>
                     
-                    {filteredRoadmaps.length === 0 ? (
+                    {roadmaps?.length === 0 ? (
                         <div className="text-center py-16 bg-white dark:bg-gray-800/90 rounded-2xl shadow-md border border-[#e9e3ff]/60 dark:border-gray-700/50">
                             <div className="w-24 h-24 mx-auto mb-6 bg-[#f5f3ff] dark:bg-gray-700 rounded-full flex items-center justify-center">
                                 <svg className="w-12 h-12 text-[#5a8aaf] dark:text-[#7d9bbf]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -148,13 +141,13 @@ const RoadmapsPage = () => {
                             initial="hidden"
                             animate="visible"
                         >
-                            {filteredRoadmaps.map((roadmap) => (
+                            {roadmaps?.map((roadmap) => (
                                 <motion.div key={roadmap.id} variants={itemVariants}>
                                     <div 
                                         onClick={() => handleRoadmapClick(roadmap)} 
                                         className="cursor-pointer"
                                     >
-                                        <RoadmapCard roadmap={roadmap} progress={progressMap[roadmap.slug] || 0} />
+                                        <RoadmapCard roadmap={roadmap} progress={roadmap?.progress_percent || 0} />
                                     </div>
                                 </motion.div>
                             ))}
