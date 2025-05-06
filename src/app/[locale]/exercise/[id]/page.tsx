@@ -12,6 +12,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import Loader from '@/components/Loader';
 import { formatYouTubeUrl } from '@/utils/utils';
 import { useExercise } from '@/hooks/useExercise';
+import Logger from '@/utils/logger';
 
 const ExercisePage = () => {
   const params = useParams();
@@ -19,7 +20,7 @@ const ExercisePage = () => {
   const router = useRouter();
   const t = useTranslations('exercise');
 
-  const exerciseId = params.id as string;
+  const {id: exerciseId} = params;
   const nodeId = searchParams.get('nodeId') || '';
   const roadmapId = searchParams.get('roadmapId') || '';
 

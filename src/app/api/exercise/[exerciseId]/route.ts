@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getExerciseById, updateExercise, deleteExercise } from "@/services/exerciseService";
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
-  const exerciseId = params.id;
+export async function GET(request: Request, { params }: { params: { exerciseId: string } }) {
+  const {exerciseId} = await params;
   const result = await getExerciseById(exerciseId);
 
   if (!result.success) {
@@ -12,8 +12,8 @@ export async function GET(request: Request, { params }: { params: { id: string }
   return NextResponse.json(result.exercise);
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
-  const exerciseId = params.id;
+export async function PUT(request: NextRequest, { params }: { params: { exerciseId: string } }) {
+  const {exerciseId} = await params;
   try {
     const exerciseData = await request.json();
     const result = await updateExercise(exerciseId, exerciseData);
@@ -28,7 +28,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: { exerciseId: string } }) {
   const exerciseId = params.id;
   const result = await deleteExercise(exerciseId);
   

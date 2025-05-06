@@ -3,6 +3,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Exercise } from "@/types/types";
 import { useAuth } from "@/contexts/AuthContext";
+import { getDifficultyStyle } from "@/utils/utils";
 
 interface SidebarProps {
   title: string;
@@ -20,22 +21,10 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
   prerequisites,
   exercises,
   onClose,
-  // onexerciseToggle,
 }) => {
 
   const { user } = useAuth();
   const userId = user?.id;
-
-  const getDifficultyStyle = (difficulty: string, isBackground = false): string => {
-    const colors: Record<any, string> = {
-      easy: isBackground ? "bg-green-500 hover:bg-green-600" : "border-green-400",
-      medium: isBackground ? "bg-yellow-500 hover:bg-yellow-600 text-gray-800" : "border-yellow-400",
-      hard: isBackground ? "bg-red-500 hover:bg-red-600" : "border-red-400",
-      default: isBackground ? "bg-blue-500 hover:bg-blue-600" : "border-blue-400"
-    };
-
-    return colors[difficulty?.toLowerCase()] || colors.default;
-  };
 
 
   return (
@@ -102,36 +91,6 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
                         exercise.difficulty === "medium" ? "Moyen" :
                         exercise.difficulty === "hard" ? "Difficile" : exercise.difficulty}
                     </span>
-                  </div>
-                </div>
-
-                {/* Checkbox */}
-                <div className="relative cursor-pointer">
-                  <input
-                    type="checkbox"
-                    id={`exercise-${exercise.id}`}
-                    checked={!!exercise.completed}
-                    onChange={(e) => onexerciseToggle && onexerciseToggle(userId, exercise.id, e.target.checked, nodeId)}
-                    className="absolute opacity-0 w-full h-full cursor-pointer z-10"
-                  />
-                  <div className={`w-6 h-6 flex items-center justify-center rounded border ${exercise.completed
-                      ? 'bg-green-500 border-green-500'
-                      : 'bg-transparent border-gray-500'
-                    } transition-colors`}>
-                    {exercise.completed && (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4 text-white"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    )}
                   </div>
                 </div>
               </div>

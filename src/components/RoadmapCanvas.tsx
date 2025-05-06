@@ -51,10 +51,6 @@ const RoadmapCanvas: React.FC<RoadmapProps> = ({ roadmapId }) => {
           </div>
 
           {selectedNode && (
-            console.log("Selected Node:", selectedNode)
-          )}
-
-          {selectedNode && (
             <div className="absolute top-0 right-0 h-full z-10">
               <ExerciseSidebar
                 title={selectedNode.data.label}

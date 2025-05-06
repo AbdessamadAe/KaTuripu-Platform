@@ -12,9 +12,8 @@ export function useExercise(exerciseId?: string) {
         try {
           const res = await fetch(`/api/exercise/${exerciseId}`);
           const data = await res.json();
-          Logger.log("Fetched exercise data:", data);
-          if (data.exercise) {
-            setExercise(data.exercise);
+          if (data) {
+            setExercise(data);
           }
         } finally {
           setLoading(false);
