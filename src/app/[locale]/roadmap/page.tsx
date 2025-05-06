@@ -48,12 +48,8 @@ const RoadmapsPage = () => {
     };
 
     const handleRoadmapClick = (roadmap: any) => {
-        if (!user) {
-            setSelectedRoadmap(roadmap?.id);
-            setShowLoginModal(true);
-        } else {
-            router.push(`/roadmap/${roadmap.id}`);
-        }
+        console.log("Clicked roadmap:", roadmap?.id);
+        router.push(`/roadmap/${roadmap?.roadmap_id}`);
     };
 
     if (loading) {
@@ -76,7 +72,7 @@ const RoadmapsPage = () => {
                         </span>
                     </h1>
                 </div>
-                
+
                 {/* Search and filter section */}
                 <div className="mb-10 max-w-4xl mx-auto flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                     {/* Search bar with styled wrapper */}
@@ -84,7 +80,7 @@ const RoadmapsPage = () => {
                         <div className="relative">
                             {/* Decorative element */}
                             <div className="absolute -z-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-24 bg-[#a7d1cf]/40 dark:bg-[#a7d1cf]/20 rounded-full blur-xl opacity-50"></div>
-                            
+
                             <input
                                 type="text"
                                 placeholder={t('searchPlaceholder')}
@@ -101,11 +97,10 @@ const RoadmapsPage = () => {
                             <button
                                 key={cat}
                                 onClick={() => setCategory(cat)}
-                                className={`px-6 py-3 text-sm font-medium rounded-xl transition-all ${
-                                    true 
-                                    ? 'bg-gradient-to-r from-[#5a8aaf] to-[#7d9bbf] text-white shadow-md' 
-                                    : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-md'
-                                }`}
+                                className={`px-6 py-3 text-sm font-medium rounded-xl transition-all ${true
+                                        ? 'bg-gradient-to-r from-[#5a8aaf] to-[#7d9bbf] text-white shadow-md'
+                                        : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-md'
+                                    }`}
                             >
                                 {cat === 'all' ? t('all') : cat}
                             </button>
@@ -118,7 +113,7 @@ const RoadmapsPage = () => {
                     {/* Decorative background elements */}
                     <div className="absolute -z-10 top-1/3 left-1/4 w-64 h-64 bg-[#a7d1cf]/30 dark:bg-[#a7d1cf]/20 rounded-full blur-3xl opacity-40"></div>
                     <div className="absolute -z-10 bottom-1/4 right-1/5 w-72 h-72 bg-[#f0b9ae]/30 dark:bg-[#f0b9ae]/15 rounded-full blur-3xl opacity-40"></div>
-                    
+
                     {roadmaps?.length === 0 ? (
                         <div className="text-center py-16 bg-white dark:bg-gray-800/90 rounded-2xl shadow-md border border-[#e9e3ff]/60 dark:border-gray-700/50">
                             <div className="w-24 h-24 mx-auto mb-6 bg-[#f5f3ff] dark:bg-gray-700 rounded-full flex items-center justify-center">
@@ -142,9 +137,9 @@ const RoadmapsPage = () => {
                             animate="visible"
                         >
                             {roadmaps?.map((roadmap) => (
-                                <motion.div key={roadmap.id} variants={itemVariants}>
-                                    <div 
-                                        onClick={() => handleRoadmapClick(roadmap)} 
+                                <motion.div key={roadmap?.roadmap_id} variants={itemVariants}>
+                                    <div
+                                        onClick={() => handleRoadmapClick(roadmap)}
                                         className="cursor-pointer"
                                     >
                                         <RoadmapCard roadmap={roadmap} progress={roadmap?.progress_percent || 0} />

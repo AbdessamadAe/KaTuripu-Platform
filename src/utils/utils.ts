@@ -2,6 +2,26 @@ import React from 'react';
 import toast from 'react-hot-toast';
 import confetti from 'canvas-confetti';
 
+
+export const formatYouTubeUrl = (url: string): string => {
+  if (!url) return '';
+
+  // Handle youtu.be short links
+  if (url.includes('youtu.be')) {
+    const videoId = url.split('/').pop();
+    return `https://www.youtube.com/embed/${videoId}`;
+  }
+
+  // Handle standard youtube.com links
+  if (url.includes('youtube.com/watch')) {
+    const videoId = new URL(url).searchParams.get('v');
+    return `https://www.youtube.com/embed/${videoId}`;
+  }
+
+  // If it's already an embed link or another format, return as is
+  return url;
+};
+
 export function generateSlug(title: string): string {
   return title
     .toLowerCase()

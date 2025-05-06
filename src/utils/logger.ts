@@ -1,0 +1,17 @@
+type LogData = any;
+
+class Logger {
+    static log(message: string, data?: LogData) {
+        if (process.env.NODE_ENV === 'development') {
+            console.log(message, data);
+        }
+    }
+
+    static error(message: string, error?: LogData) {
+        if (process.env.NODE_ENV === 'development') {
+            console.error(message, error);
+        }
+    }
+}
+
+export default Logger;

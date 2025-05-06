@@ -98,15 +98,15 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
       >
         {roadmap.thumbnailUrl ? (
           <Image
-            src={roadmap.thumbnailUrl}
-            alt={roadmap.title}
+            src={roadmap.roadmap_image_url}
+            alt={roadmap.roadmap_title}
             fill
             className="object-cover"
           />
         ) : (
           <img
             src={getCategoryImage()}
-            alt={roadmap.title}
+            alt={roadmap.roadmap_title}
             className="object-contain h-32 w-32 filter drop-shadow-md"
           />
         )}
@@ -123,8 +123,8 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
       </div>
 
       <div className="flex-1 w-full">
-        <h3 className="font-bold text-base md:text-lg line-clamp-1 text-gray-900 dark:text-white">{roadmap.title}</h3>
-        <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">{roadmap.description}</p>
+        <h3 className="font-bold text-base md:text-lg line-clamp-1 text-gray-900 dark:text-white">{roadmap.roadmap_title}</h3>
+        <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">{roadmap.roadmap_description}</p>
       </div>
 
       <div className="w-full mt-2">

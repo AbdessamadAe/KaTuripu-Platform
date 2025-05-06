@@ -9,28 +9,11 @@ import { motion } from 'framer-motion';
 import { showAchievement } from '@/utils/utils';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
+import Loader from '@/components/Loader';
+import { formatYouTubeUrl } from '@/utils/utils';
+import { useExercise } from '@/hooks/useExercise';
 
-// Utility function to format YouTube URLs for embedding
-const formatYouTubeUrl = (url: string): string => {
-  if (!url) return '';
-
-  // Handle youtu.be short links
-  if (url.includes('youtu.be')) {
-    const videoId = url.split('/').pop();
-    return `https://www.youtube.com/embed/${videoId}`;
-  }
-
-  // Handle standard youtube.com links
-  if (url.includes('youtube.com/watch')) {
-    const videoId = new URL(url).searchParams.get('v');
-    return `https://www.youtube.com/embed/${videoId}`;
-  }
-
-  // If it's already an embed link or another format, return as is
-  return url;
-};
-
-const ExerciseDetailPage = () => {
+const ExercisePage = () => {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -40,111 +23,14 @@ const ExerciseDetailPage = () => {
   const nodeId = searchParams.get('nodeId') || '';
   const roadmapId = searchParams.get('roadmapId') || '';
 
-  const [exercise, setExercise] = useState<Exercise | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { exercise, loading } = useExercise(exerciseId);
   const [showHint, setShowHint] = useState<number | null>(null);
   const [showSolution, setShowSolution] = useState(false);
-  const [completed, setCompleted] = useState(false);
   const [hintAnimation, setHintAnimation] = useState(false);
-  const [isFirstView, setIsFirstView] = useState(true);
-  const { user, isAuthenticated } = useAuth();
-
-
-
-  useEffect(() => {
-    const fetchProgressData = async () => {
-      if (user?.id) {
-        const res = await fetch(`/api/user-progress/is-exercise-completed/${exerciseId}`);
-
-        if (!res.ok) {
-          // handle not found or error
-          const errorData = await res.json();
-          console.error(errorData.error);
-          return;
-        }
-
-        setCompleted(res?.isCompleted)
-      }
-    };
-
-    fetchProgressData();
-  }, [exerciseId]);
-
-  useEffect(() => {
-    const markAsCompleted = async () => {
-      if (showSolution && user?.id && !completed && exercise) {
-        try {
-          const res = await fetch('/api/progress/complete', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              exerciseId,
-              nodeId,
-              roadmapId,
-            }),
-          });
-  
-          const data = await res.json();
-  
-          if (res.ok) {
-            setCompleted(true);
-            if (exercise?.difficulty.toLowerCase() === 'hard') {
-              setTimeout(() => {
-                showAchievement('Math Wizard', 'Solved a hard difficulty problem');
-              }, 1500);
-            }
-          }
-        } catch (error) {
-          console.error('Error marking exercise completed:', error);
-        }
-      }
-    };
-
-    markAsCompleted();
-  }, [showSolution, user?.id, completed, exerciseId, exercise, nodeId, roadmapId]);
-
-  useEffect(() => {
-    const fetchExercise = async () => {
-      try {
-        // const data = await getExerciseById(exerciseId);
-        const res = await fetch(`/api/exercise/${exerciseId}`);
-        if (!res.ok) {
-          // handle not found or error
-          const errorData = await res.json();
-          console.error(errorData.error);
-          return;
-        }
-
-        const data = await res.json();
-
-        setExercise(data as Exercise);
-      } catch (error) {
-        console.error('Error fetching exercise:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchExercise();
-  }, [exerciseId]);
-
-  const triggerHintAnimation = (hintIndex: number) => {
-    setHintAnimation(true);
-    setShowHint(hintIndex);
-    setTimeout(() => {
-      setHintAnimation(false);
-    }, 700);
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-white pb-12">
-      {loading ? (
-        <div className="flex justify-center items-center h-screen">
-          <div className="animate-spin rounded-full h-14 w-14 border-t-2 border-b-2 border-blue-500"></div>
-        </div>
-      ) : (
+      {loading ? <Loader/> : (
         <>
           {/* Header section with navigation and progress */}
           <div className="sticky top-0 z-10 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-700 shadow-sm">
@@ -354,4 +240,4 @@ const ExerciseDetailPage = () => {
   );
 };
 
-export default ExerciseDetailPage;
+export default ExercisePage;
