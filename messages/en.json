@@ -50,6 +50,7 @@
         "exercise": "Exercise",
         "question": "Question",
         "hints": "Hints",
+        "hint": "Hint",
         "showHint": "Show Hint {number}",
         "hideHint": "Hide Hint",
         "showSolution": "Show Solution",

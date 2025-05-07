@@ -2,9 +2,8 @@ import { Roadmap, Exercise, RoadmapNode } from '@/types/types';
 import { v4 as uuidv4 } from 'uuid';
 import { createClient } from '@/lib/supabase/server';
 import { cookies as nextCookies } from 'next/headers'
+import Logger from '@/utils/logger';
 
-
-// Get the singleton instance
 
 export async function getRoadmaps() {
     try {
@@ -51,11 +50,11 @@ export async function geFullRoadmapWithProgress(roadmapId: string) {
           p_user_id: user.id,
           p_roadmap_id: roadmapId
           });
-
+        
       return { success: true, roadmap: data?.roadmap };
 
   } catch (error) {
-      return { success: false, error: 'Failed to fetch full roadmap with user progress' };
+      return { success: false, error: error.message || 'Failed to fetch roadmap' };
   }
 }
 

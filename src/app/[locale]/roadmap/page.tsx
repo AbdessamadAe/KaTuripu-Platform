@@ -7,33 +7,32 @@ import { motion } from 'framer-motion';
 import { useRouter } from "next/navigation";
 import { useTranslations } from 'next-intl';
 import { useAuth } from "@/contexts/AuthContext";
+import { useQuery } from "@tanstack/react-query";
+
+
+async function fetchRoadmaps() {
+    const res = await fetch('/api/roadmap');
+    if (!res.ok) {
+        throw new Error('Failed to fetch roadmaps');
+    }
+    const data = await res.json();
+    return data.roadmaps;
+}
 
 const RoadmapsPage = () => {
     const router = useRouter();
     const t = useTranslations('roadmap');
-    const [roadmaps, setRoadmaps] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedRoadmap, setSelectedRoadmap] = useState<string | null>(null);
     const { user, isAuthenticated, isLoading } = useAuth();
     const categories = ["All"]
 
-    // Fetch roadmap data once
-    useEffect(() => {
-        async function loadData() {
-            try {
-                const res = await fetch('/api/roadmap');
-                const data = await res.json();
-                setRoadmaps(data?.roadmaps);
-            } catch (error) {
-                console.error("Erreur lors du chargement des feuilles de route:", error);
-            } finally {
-                setLoading(false);
-            }
-        }
-        loadData();
-    }, []);
-
+    const { data: roadmaps, loading } = useQuery({
+        queryKey: ['roadmaps'],
+        queryFn: fetchRoadmaps,
+        refetchOnWindowFocus: false,
+    });
+    
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {

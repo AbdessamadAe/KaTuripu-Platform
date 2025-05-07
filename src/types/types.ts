@@ -48,3 +48,17 @@ export interface Roadmap {
   nodes: ReactFlowNode[];
   edges: ReactFlowEdge[];
 }
+
+export interface ExerciseItem {
+  id: string;
+  name: string;
+  difficulty: string;
+  completed: boolean;
+  duration: string;
+  type: string;
+  question?: string;
+  solution?: string;
+  hints?: string[];
+  question_image_url?: string;
+  video_url?: string;
+}

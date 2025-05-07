@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { usePathname, useRouter } from 'next/navigation';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 interface AuthContextType {
   user: any | null;
@@ -13,6 +14,11 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+const fetchSession = async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  return session;
+};
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) throw new Error("useAuth must be used within an AuthProvider");
@@ -20,53 +26,42 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<any | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
+  const queryClient = useQueryClient();
 
-  const refreshAuth = async () => {
-    try {
-      setIsLoading(true);
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
-      setIsAuthenticated(!!session?.user);
-    } catch (error) {
-      console.error('Error refreshing auth state:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // React Query manages session state, loading, and errors
+  const { data: session, isLoading, refetch } = useQuery({
+    queryKey: ['auth'],
+    queryFn: fetchSession,
+    staleTime: 5 * 60 * 1000, // Revalidate every 5 minutes
+  });
 
+  // Listen for auth changes (e.g., login/logout)
   useEffect(() => {
-    // Initial fetch of user data
-    refreshAuth();
-
-    // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null);
-      setIsAuthenticated(!!session?.user);
-      setIsLoading(false);
+      queryClient.setQueryData(['auth'], session); // Update cache instantly
     });
-
     return () => subscription?.unsubscribe();
-  }, []);
+  }, [queryClient]);
 
-  // Refresh auth state on pathname changes to ensure auth state is up-to-date
-  // after redirects (like from OAuth callback)
+  // Refresh auth after OAuth callback
   useEffect(() => {
     if (pathname?.includes('/auth/callback')) {
-      // Add slight delay to ensure Supabase has time to process session
-      const timer = setTimeout(() => {
-        refreshAuth();
-      }, 500);
-      return () => clearTimeout(timer);
+      setTimeout(() => refetch(), 500);
     }
-  }, [pathname]);
+  }, [pathname, refetch]);
+
+  // Exposed auth state
+  const value = {
+    user: session?.user ?? null,
+    isAuthenticated: !!session?.user,
+    isLoading,
+    refreshAuth: refetch,
+  };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, isLoading, refreshAuth }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

@@ -11,7 +11,9 @@ import "@xyflow/react/dist/style.css";
 import ExerciseSidebar from "./Sidebar";
 import { celebrateProgress } from "@/utils/utils";
 import Loader from "./Loader";
-import { useRoadmap } from "@/hooks/useRoadmap";
+import RoadmapNode from "./RoadmapNode";
+import { Roadmap } from "@/types/types";
+import { useQuery } from "@tanstack/react-query";
 
 interface RoadmapProps {
   roadmapId: string | undefined;
@@ -19,9 +21,32 @@ interface RoadmapProps {
 
 const nodeClassName = (node: any) => node.type;
 
+const nodeTypes = {
+  progressNode: RoadmapNode,
+};
+
+async function fetchRoadmap(roadmapId: string): Promise<Roadmap> {
+  const res = await fetch(`/api/roadmap/${roadmapId}`);
+  if (!res.ok) {
+    throw new Error(`Error fetching roadmap: ${res.statusText}`);
+  }
+  const data = await res.json();
+  return data.roadmap;
+}
+
+
 const RoadmapCanvas: React.FC<RoadmapProps> = ({ roadmapId }) => {
   const [selectedNode, setSelectedNode] = useState<any>(null);
-  const { nodes, edges, loading: isLoading } = useRoadmap(roadmapId);
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["roadmap", roadmapId],
+    queryFn: () => fetchRoadmap(roadmapId as string),
+    refetchOnWindowFocus: false,
+  });
+
+  const nodes = data?.nodes || [];
+  const edges = data?.edges || [];
+  
 
   return (
     isLoading ? <Loader /> : (
@@ -29,6 +54,7 @@ const RoadmapCanvas: React.FC<RoadmapProps> = ({ roadmapId }) => {
           <div style={{ width: "100%", height: "100%" }}>
             <ReactFlow
               nodes={nodes}
+              nodeTypes={nodeTypes}
               onNodeClick={(event, node) => {
                 setSelectedNode(node);
               }}

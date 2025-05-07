@@ -9,6 +9,7 @@ import ToastProvider from "@/providers/ToastProvider";
 import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import QueryProvider from "@/providers/QueryProvider";
 
 export const metadata: Metadata = {
   title: "KaTuripu",
@@ -34,20 +35,21 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body className={`antialiased min-h-screen w-full overflow-x-hidden`}>
-        <NextIntlClientProvider messages={messages} locale={locale}>
-        <AuthProvider>
-          <ThemeProvider>
-            <MathJaxProvider>
-              <Nav />
-              <div dir={locale == "ar" ? "rtl" : "ltr"} className={`${locale == "ar" ? 'font-amiri' : ''}`}>
-                {children}
-              </div>
-              <Footer />
-              <ToastProvider /> 
-            </MathJaxProvider>
-          </ThemeProvider>
-        </AuthProvider>
-        </NextIntlClientProvider>
+        <QueryProvider>
+          <NextIntlClientProvider messages={messages} locale={locale}>
+            <AuthProvider>
+              <ThemeProvider>
+                <MathJaxProvider>
+                  <Nav />
+                  <div dir={locale == "ar" ? "rtl" : "ltr"} className={`${locale == "ar" ? 'font-amiri' : ''}`}>
+                    {children}
+                  </div>
+                  <ToastProvider />
+                </MathJaxProvider>
+              </ThemeProvider>
+            </AuthProvider>
+          </NextIntlClientProvider>
+        </QueryProvider>
       </body>
     </html>
   );

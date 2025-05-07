@@ -96,11 +96,10 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
       <div
         className={`w-full h-44 ${getCategoryColor()} rounded-xl flex items-center justify-center overflow-hidden relative shadow-inner`}
       >
-        {roadmap.thumbnailUrl ? (
-          <Image
+        {roadmap.roadmap_image_url ? (
+          <img
             src={roadmap.roadmap_image_url}
             alt={roadmap.roadmap_title}
-            fill
             className="object-cover"
           />
         ) : (
