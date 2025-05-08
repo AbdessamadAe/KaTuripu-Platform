@@ -9,6 +9,7 @@ import HintsSection from '@/components/exercise/HintsSection';
 import SolutionSection from '@/components/exercise/SolutionSection';
 import ExerciseNavigation from '@/components/exercise/ExerciseNavigation';
 import ExerciseSidebar from '@/components/Sidebar';
+import VideoSection from '@/components/exercise/videoSection';
 import Breadcrumb from '@/components/Breadcrumb';
 import { formatYouTubeUrl, showAchievement } from '@/utils/utils';
 import Logger from '@/utils/logger';
@@ -212,16 +213,7 @@ const ExercisePage = () => {
 
               {activeTab === 'video' && exercise?.video_url && (
                 <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
-                  <div className="p-3">
-                    <div className="relative pt-[56.25%] h-0 overflow-hidden rounded-lg">
-                      <iframe
-                        src={formatYouTubeUrl(exercise.video_url)}
-                        className="absolute top-0 left-0 w-full h-full"
-                        frameBorder="0"
-                        allowFullScreen
-                      />
-                    </div>
-                  </div>
+                  <VideoSection video_url={exercise.video_url}/>
                 </div>
               )}
 
