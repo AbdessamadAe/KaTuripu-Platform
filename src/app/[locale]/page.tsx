@@ -1,9 +1,9 @@
 "use client";
 
-import Hero from "@/components/Hero";
+import Hero from "@/components/home/Hero";
 import { useLocale } from "next-intl";
-import Features from "@/components/Features";
-import Testimonials from "@/components/Testimonials";
+import Features from "@/components/home/Features";
+import Testimonials from "@/components/home/Testimonials";
 
 export default function Home() {
     const locale = useLocale();
