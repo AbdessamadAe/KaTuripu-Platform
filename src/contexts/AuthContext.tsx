@@ -30,29 +30,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const queryClient = useQueryClient();
 
-  // React Query manages session state, loading, and errors
   const { data: session, isLoading, refetch } = useQuery({
     queryKey: ['auth'],
     queryFn: fetchSession,
-    staleTime: 5 * 60 * 1000, // Revalidate every 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
 
-  // Listen for auth changes (e.g., login/logout)
+  // Enhanced auth state change listener
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      queryClient.setQueryData(['auth'], session); // Update cache instantly
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      // Force refresh on SIGNED_IN event (like after OAuth callback)
+      if (event === 'SIGNED_IN') {
+        // Wait a brief moment to ensure cookies are set
+        await new Promise(resolve => setTimeout(resolve, 300));
+        // Force a full page reload to sync server and client states
+        window.location.href = pathname || '/';
+      }
+      queryClient.setQueryData(['auth'], session);
     });
+    
     return () => subscription?.unsubscribe();
-  }, [queryClient]);
+  }, [queryClient, pathname]);
 
-  // Refresh auth after OAuth callback
-  useEffect(() => {
-    if (pathname?.includes('/auth/callback')) {
-      setTimeout(() => refetch(), 500);
-    }
-  }, [pathname, refetch]);
+  // Remove the separate callback effect as it's now handled above
 
-  // Exposed auth state
   const value = {
     user: session?.user ?? null,
     isAuthenticated: !!session?.user,
