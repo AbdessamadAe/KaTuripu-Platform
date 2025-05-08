@@ -11,7 +11,6 @@ export async function getRoadmaps() {
         const { data: { user }, error: userError } = await supabase.auth.getUser();
 
         if (!user || userError) {
-            console.log('User not authenticated:', userError);
             return { success: false, error: 'Unauthorized' };
         }
 
@@ -23,8 +22,6 @@ export async function getRoadmaps() {
       
       if (error) {
         console.error('Error fetching roadmap with progress:', error);
-      } else {
-        console.log('Fetched roadmap data:', data);
       }
       
             

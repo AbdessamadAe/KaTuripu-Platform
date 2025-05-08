@@ -31,6 +31,7 @@ const RoadmapsPage = () => {
         queryKey: ['roadmaps'],
         queryFn: fetchRoadmaps,
         refetchOnWindowFocus: false,
+        staleTime: 24 * 60 * 60 * 1000 // 24 hours in milliseconds
     });
     
     const containerVariants = {
@@ -47,7 +48,6 @@ const RoadmapsPage = () => {
     };
 
     const handleRoadmapClick = (roadmap: any) => {
-        console.log("Clicked roadmap:", roadmap?.id);
         router.push(`/roadmap/${roadmap?.roadmap_id}`);
     };
 

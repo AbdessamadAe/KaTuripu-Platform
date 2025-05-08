@@ -1,7 +1,7 @@
 type LogData = any;
 
 class Logger {
-    static log(message: string, data?: LogData) {
+    static info(message: string, data?: LogData) {
         if (process.env.NODE_ENV === 'development') {
             console.log(message, data);
         }

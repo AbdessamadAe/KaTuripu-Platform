@@ -42,6 +42,7 @@ const RoadmapCanvas: React.FC<RoadmapProps> = ({ roadmapId }) => {
     queryKey: ["roadmap", roadmapId],
     queryFn: () => fetchRoadmap(roadmapId as string),
     refetchOnWindowFocus: false,
+    staleTime: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
   });
 
   const nodes = data?.nodes || [];
@@ -82,9 +83,9 @@ const RoadmapCanvas: React.FC<RoadmapProps> = ({ roadmapId }) => {
                 title={selectedNode.data.label}
                 nodeId={selectedNode.id}
                 roadmapId={roadmapId}
-                exercises={selectedNode.data.exercises}
                 onClose={() => setSelectedNode(null)}
                 prerequisites={[selectedNode.data.description || "No description available"]}
+                allowClose={true}
                 // onProblemToggle={handleProblemToggle}
               />
             </div>

@@ -4,13 +4,22 @@ import { motion } from "framer-motion";
 import { Exercise } from "@/types/types";
 import { useAuth } from "@/contexts/AuthContext";
 import { getDifficultyStyle } from "@/utils/utils";
+import { useQuery } from "@tanstack/react-query";
+
+
+async function fetchExerciseMetaList(nodeId: string) {
+  const res = await fetch(`/api/node/${nodeId}/exercise-list`);
+  return res.json();
+}
 
 interface SidebarProps {
   title: string;
   nodeId: string;
   roadmapId: string | undefined;
-  exercises: Exercise[];
+  prerequisites?: string[];
+  nodeProgressPercent?: number;
   onClose: () => void;
+  allowClose?: boolean;
   onexerciseToggle?: (userId: string, exerciseId: string, completed: boolean, nodeId: string) => void;
 }
 
@@ -19,26 +28,39 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
   nodeId,
   roadmapId,
   prerequisites,
-  exercises,
   onClose,
+  allowClose = false,
 }) => {
 
   const { user } = useAuth();
   const userId = user?.id;
 
+  const { data: exerciseList, isLoading: loadingExerciseList, error: errorExerciseList } = useQuery({
+    queryKey: ['exercises', nodeId],
+    queryFn: () => fetchExerciseMetaList(nodeId),
+    staleTime: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+    refetchOnWindowFocus: false
+  });
+
+  
+  const exercises = exerciseList || [];
+  
+  if (errorExerciseList || exercises === []) return <div>Error loading exercises</div>;
+
+  const completedExercises = exercises?.filter(ex => ex.completed).length;
+  const totalExercises = exercises.length;
 
   return (
     <motion.div
-      className="bg-white dark:bg-gray-900 h-full w-96 p-6 overflow-y-auto flex flex-col shadow-xl"
+      className="bg-white dark:bg-gray-900 h-full w-96 p-6 overflow-y-auto flex flex-col shadow-md"
       initial={{ x: 300 }}
       animate={{ x: 0 }}
       exit={{ x: 300 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
     >
-      {/* Header */}
-      <div className="flex justify-between items-center mb-6 border-b border-gray-200 dark:border-gray-800 pb-4">
+      <div className="flex justify-between items-center mb-4 border-b border-gray-200 dark:border-gray-800 pb-4">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{title}</h2>
-        <button
+        { allowClose && <button
           onClick={onClose}
           className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white transition-colors"
         >
@@ -56,15 +78,14 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
               d="M6 18L18 6M6 6l12 12"
             />
           </svg>
-        </button>
+        </button>}
       </div>
 
-      {/* Exercises */}
       <div className="flex-grow">
         <div className="flex justify-between items-center mb-2">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Exercises</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Course Completion</h3>
           <span className="text-gray-500 dark:text-gray-400 text-sm">
-            {exercises.filter(p => p.completed).length}/{exercises.length} terminés
+            {completedExercises}/{totalExercises}
           </span>
         </div>
 
@@ -72,20 +93,43 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
           {exercises.map((exercise) => (
             <div
               key={exercise.id}
-              className={`relative bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden border-l-4 ${exercise.completed ? getDifficultyStyle(exercise.difficulty) : ""
-                }`}
+              className={`relative bg-white dark:bg-gray-800 rounded-lg overflow-hidden border ${exercise.completed 
+                ? "border-l-4 border-green-500" 
+                : "border-gray-200 dark:border-gray-700"}`}
             >
-              {exercise.completed && <div className="absolute inset-0 bg-green-500 opacity-10" />}
-
               <div className="p-4 flex justify-between items-center relative z-10">
-                <div className="flex-grow pr-4">
-                  <Link href={{
-                    pathname: `/exercise`,
-                    query: { exerciseId: exercise.id, nodeId, roadmapId }
-                  }} passHref>
-                    <div className="text-gray-800 dark:text-white font-semibold hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">{exercise.name}</div>
-                  </Link>
-                  <div className="flex mt-2 items-center">
+                <div className="flex items-center w-full">
+                  <div className={`mr-3 flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full 
+                    ${exercise.completed 
+                      ? "bg-green-100 text-green-500" 
+                      : "bg-indigo-100 text-indigo-500"}`}>
+                    {exercise.completed ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    )}
+                  </div>
+                  
+                  <div className="flex-grow">
+                    <Link href={{
+                      pathname: `/exercise`,
+                      query: { exerciseId: exercise.id, nodeId, roadmapId }
+                    }} passHref>
+                      <div className="text-gray-800 dark:text-white font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors cursor-pointer">
+                        {exercise.name}
+                      </div>
+                    </Link>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      {exercise.estimatedTime || "20 min"}
+                    </div>
+                  </div>
+                  
+                  <div className="flex-shrink-0 ml-2">
                     <span className={`px-2 py-0.5 rounded-full text-xs ${getDifficultyStyle(exercise.difficulty, true)}`}>
                       {exercise.difficulty === "easy" ? "Facile" :
                         exercise.difficulty === "medium" ? "Moyen" :

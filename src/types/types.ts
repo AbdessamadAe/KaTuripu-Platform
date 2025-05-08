@@ -13,7 +13,7 @@ export interface ReactFlowNodeData {
   label: string;
   description?: string;
   progress: Progress;
-  exercises: Exercise[];
+  total_exercises: number;
 }
 
 export interface ReactFlowNode {
@@ -47,18 +47,4 @@ export interface Roadmap {
   image_url?: string;
   nodes: ReactFlowNode[];
   edges: ReactFlowEdge[];
-}
-
-export interface ExerciseItem {
-  id: string;
-  name: string;
-  difficulty: string;
-  completed: boolean;
-  duration: string;
-  type: string;
-  question?: string;
-  solution?: string;
-  hints?: string[];
-  question_image_url?: string;
-  video_url?: string;
 }

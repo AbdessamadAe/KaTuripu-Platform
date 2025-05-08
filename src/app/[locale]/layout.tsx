@@ -34,7 +34,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`antialiased min-h-screen w-full overflow-x-hidden`}>
+      <body className={`antialiased min-h-screen w-full overflow-hidden`}>
         <QueryProvider>
           <NextIntlClientProvider messages={messages} locale={locale}>
             <AuthProvider>

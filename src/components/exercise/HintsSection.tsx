@@ -21,7 +21,7 @@ const HintsSection = ({ hints }: HintsSectionProps) => {
   if (!hints || hints.length === 0) return null;
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm mb-6">
+    <div className="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 mb-6">
       <h2 className="text-lg font-medium mb-4 flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
           <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
@@ -36,7 +36,7 @@ const HintsSection = ({ hints }: HintsSectionProps) => {
               className="w-full flex items-center justify-between py-2 text-left font-medium"
             >
               <span className={showHint === i ? "text-yellow-600 dark:text-yellow-400" : ""}>
-                {t('hint', { number: i + 1 })}
+               Q { i + 1 }  
               </span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"

@@ -1,6 +1,8 @@
-import { MathJax } from 'better-react-mathjax';
-import ReactMarkdown from 'react-markdown';
-import { useTranslations } from 'next-intl';
+"use client";
+
+import Image from 'next/image';
+import { MathJaxContext } from 'better-react-mathjax';
+import { useCallback, useState } from 'react';
 
 interface QuestionSectionProps {
   question?: string;
@@ -8,31 +10,58 @@ interface QuestionSectionProps {
 }
 
 const QuestionSection = ({ question, imageUrl }: QuestionSectionProps) => {
-  const t = useTranslations('exercise');
+  const [imageError, setImageError] = useState(false);
   
+  const handleImageError = useCallback(() => {
+    setImageError(true);
+  }, []);
+
   return (
-    <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm mb-6">
-      <h2 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-5 flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        {t('question')}
-      </h2>
-      <div className="prose dark:prose-invert max-w-none">
-        <MathJax>
-          <ReactMarkdown>{question || ''}</ReactMarkdown>
-        </MathJax>
+    <div className="mb-8">
+      <div className="flex items-center mb-3">
+        <div className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mr-2">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-purple-600 dark:text-purple-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+          </svg>
+        </div>
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Question</h2>
       </div>
 
-      {imageUrl && (
-        <div className="mt-6">
-          <img
-            src={imageUrl}
-            alt="Exercise illustration"
-            className="max-w-full rounded-lg mx-auto max-h-[400px] object-contain"
-          />
-        </div>
-      )}
+      <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg overflow-hidden">
+        {/* Question text with MathJax support */}
+        {question && (
+          <div className="p-5">
+            <MathJaxContext>
+              <div className="prose dark:prose-invert prose-sm sm:prose-base max-w-none" dangerouslySetInnerHTML={{ __html: question }} />
+            </MathJaxContext>
+          </div>
+        )}
+
+        {/* Question image if available */}
+        {imageUrl && !imageError && (
+          <div className="mt-2 relative flex justify-center p-4 bg-gray-50 dark:bg-gray-750">
+            <div className="relative rounded-lg overflow-hidden max-h-[400px] flex items-center justify-center">
+              <img 
+                src={imageUrl}
+                alt="Question illustration"
+                width={800}
+                height={600}
+                className="object-contain max-h-[400px]"
+                onError={handleImageError}
+              />
+            </div>
+          </div>
+        )}
+
+        {imageUrl && imageError && (
+          <div className="mt-2 p-4 flex items-center justify-center bg-gray-50 dark:bg-gray-750 text-gray-400 dark:text-gray-500">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span>Image could not be loaded</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
