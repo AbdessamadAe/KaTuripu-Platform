@@ -5,12 +5,18 @@ import { cookies as nextCookies } from 'next/headers'
 
 export const getExerciseById = async (exerciseId: string) => {
     const supabase = await createClient();
-    const { data, error } = await supabase
-        .from("exercises")
-        .select("*")
-        .eq("id", exerciseId)
-        .single();
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (!user || userError) {
+        return { success: false, error: 'Unauthorized' };
+    }
 
+    const { data, error } = await supabase
+        .rpc('get_exercise_with_status', {
+            p_exercise_id: exerciseId,
+            p_user_id: user.id
+        })
+        .single()
+    
     if (error) {
         return { success: false, error: error.message };
     }

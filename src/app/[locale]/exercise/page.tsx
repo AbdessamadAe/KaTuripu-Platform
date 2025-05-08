@@ -22,7 +22,7 @@ async function fetchExercise(exerciseId: string) {
 
 
 async function completeExerciseMutation(exerciseId: string) {
-  const res = await fetch(`api/user-progress/complete-exercise`,
+  const res = await fetch(`/api/user-progress/complete-exercise`,
     {
       method: "POST",
       body: JSON.stringify({ exerciseId: exerciseId })
@@ -39,7 +39,6 @@ const ExercisePage = () => {
   const t = useTranslations('exercise');
   const queryClient = useQueryClient();
 
-  // Fetch exercise data with enhanced options
   const {
     data: exercise,
     isLoading,
@@ -55,7 +54,6 @@ const ExercisePage = () => {
   });
 
 
-  // Enhanced mutation with optimistic updates
   const { mutate: completeExerciseMutate } = useMutation({
     mutationFn: completeExerciseMutation,
     onMutate: async (exerciseId) => {
@@ -78,7 +76,6 @@ const ExercisePage = () => {
       showAchievement("Exercise Completed");
       // Invalidate related queries
       queryClient.invalidateQueries(['exercises', nodeId]);
-      queryClient.invalidateQueries(['user-progress']);
     },
     onError: (error, exerciseId, context) => {
       Logger.error('Error completing exercise:', error);

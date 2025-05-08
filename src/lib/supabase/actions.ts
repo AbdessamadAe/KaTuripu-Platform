@@ -4,10 +4,7 @@ const signInWith = (provider:any) => async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-            redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback`,
-            queryParams: {
-              prompt: 'select_account',
-            },
+            redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback`
         },
     })
     if (error) {
