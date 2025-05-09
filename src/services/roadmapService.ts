@@ -15,7 +15,7 @@ export async function getRoadmaps() {
 
         const { data, error } = await supabase
             .from('user_roadmap_progress')
-            .select('*')
+            .select('roadmap_id as id, roadmap_title as title, roadmap_description as description, roadmap_category as category , roadmap_image_url as image_url, roadmap_created_at as created_at')
             .eq('user_id', user?.id)
             .order('roadmap_created_at', { ascending: false });
       
