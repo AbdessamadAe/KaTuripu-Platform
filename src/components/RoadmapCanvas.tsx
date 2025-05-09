@@ -6,6 +6,7 @@ import {
   Background,
   Controls,
   MiniMap,
+  NodeTypes
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import ExerciseSidebar from "./Sidebar";
@@ -23,7 +24,7 @@ const nodeClassName = (node: any) => node.type;
 
 const nodeTypes = {
   progressNode: RoadmapNode,
-};
+} as NodeTypes;
 
 async function fetchRoadmap(roadmapId: string): Promise<Roadmap> {
   const res = await fetch(`/api/roadmap/${roadmapId}`);

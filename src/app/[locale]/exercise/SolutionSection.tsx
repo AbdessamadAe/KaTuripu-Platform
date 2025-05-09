@@ -113,12 +113,8 @@ const SolutionSection = ({
               <MathJax dynamic>
                 <ReactMarkdown
                   components={{
-                    code({ node, inline, className, children, ...props }) {
-                      return inline ? (
-                        <code className="bg-gray-200 dark:bg-gray-600 px-1 py-0.5 rounded">
-                          {children}
-                        </code>
-                      ) : (
+                    code({ node, className, children, ...props }) {
+                      return (
                         <pre className="bg-gray-200 dark:bg-gray-600 p-3 rounded overflow-x-auto">
                           <code className={className} {...props}>
                             {children}

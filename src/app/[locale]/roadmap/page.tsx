@@ -8,9 +8,10 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from 'next-intl';
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
+import { Roadmap } from "@/types/types";
 
 
-async function fetchRoadmaps() {
+async function fetchRoadmaps(): Promise<Roadmap[]> {
     const res = await fetch('/api/roadmap');
     if (!res.ok) {
         throw new Error('Failed to fetch roadmaps');
@@ -27,7 +28,7 @@ const RoadmapsPage = () => {
     const { user, isAuthenticated, isLoading } = useAuth();
     const categories = ["All"]
 
-    const { data: roadmaps, loading } = useQuery({
+    const { data: roadmaps, isLoading: loading } = useQuery({
         queryKey: ['roadmaps'],
         queryFn: fetchRoadmaps,
         refetchOnWindowFocus: false,
@@ -47,8 +48,8 @@ const RoadmapsPage = () => {
         visible: { y: 0, opacity: 1 }
     };
 
-    const handleRoadmapClick = (roadmap: any) => {
-        router.push(`/roadmap/${roadmap?.roadmap_id}`);
+    const handleRoadmapClick = (roadmap: Roadmap) => {
+        router.push(`/roadmap/${roadmap?.id}`);
     };
 
     if (loading) {
@@ -95,7 +96,6 @@ const RoadmapsPage = () => {
                         {categories.map((cat) => (
                             <button
                                 key={cat}
-                                onClick={() => setCategory(cat)}
                                 className={`px-6 py-3 text-sm font-medium rounded-xl transition-all ${true
                                         ? 'bg-gradient-to-r from-[#5a8aaf] to-[#7d9bbf] text-white shadow-md'
                                         : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-md'
@@ -122,7 +122,7 @@ const RoadmapsPage = () => {
                             </div>
                             <p className="text-gray-600 dark:text-gray-400 mb-4 text-lg">{t('noRoadmapsFound')}</p>
                             <button
-                                onClick={() => { setSearchTerm(''); setCategory('all'); }}
+                                onClick={() => { setSearchTerm(''); }}
                                 className="px-6 py-2.5 bg-[#f5f3ff] dark:bg-[#5a8aaf]/20 text-[#5a8aaf] dark:text-[#7d9bbf] rounded-lg hover:bg-[#e9e3ff] dark:hover:bg-[#5a8aaf]/30 transition-colors"
                             >
                                 {t('resetFilters')}
@@ -136,7 +136,7 @@ const RoadmapsPage = () => {
                             animate="visible"
                         >
                             {roadmaps?.map((roadmap) => (
-                                <motion.div key={roadmap?.roadmap_id} variants={itemVariants}>
+                                <motion.div key={roadmap?.id} variants={itemVariants}>
                                     <div
                                         onClick={() => handleRoadmapClick(roadmap)}
                                         className="cursor-pointer"

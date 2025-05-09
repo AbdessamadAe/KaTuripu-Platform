@@ -1,6 +1,5 @@
 'use client';
 
-import { Loader } from '@/components/Loader';
 import { formatYouTubeUrl } from '@/utils/utils';
 
 const VideoSection = ({ video_url }: { video_url: string }) => {

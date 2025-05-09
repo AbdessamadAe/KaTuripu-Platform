@@ -4,7 +4,7 @@ import confetti from 'canvas-confetti';
 import { redirect } from "next/navigation";
 
 
-export const getDifficultyStyle = (difficulty: string, isBackground = false): string => {
+export const getDifficultyStyle = (difficulty: string | undefined, isBackground = false): string => {
   const colors: Record<any, string> = {
     easy: isBackground ? "bg-green-500 hover:bg-green-600" : "border-green-400",
     medium: isBackground ? "bg-yellow-500 hover:bg-yellow-600 text-gray-800" : "border-yellow-400",
@@ -12,7 +12,7 @@ export const getDifficultyStyle = (difficulty: string, isBackground = false): st
     default: isBackground ? "bg-blue-500 hover:bg-blue-600" : "border-blue-400"
   };
 
-  return colors[difficulty?.toLowerCase()] || colors.default;
+  return colors[difficulty?.toLowerCase() || 'default'] || colors.default;
 };
 
 export const formatYouTubeUrl = (url: string): string => {

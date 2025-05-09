@@ -1,7 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { Exercise } from '@/types/types';
 import Logger from "@/utils/logger";
-import { cookies as nextCookies } from 'next/headers'
 
 export const getExerciseById = async (exerciseId: string) => {
     const supabase = await createClient();
@@ -18,7 +17,7 @@ export const getExerciseById = async (exerciseId: string) => {
         .single()
     
     if (error) {
-        return { success: false, error: error.message };
+        return { success: false, error: 'Failed to fetch exercise' };
     }
 
     return { success: true, exercise: data };
@@ -26,7 +25,7 @@ export const getExerciseById = async (exerciseId: string) => {
 
 
 export const completeExercise = async (exerciseId: string) => {
-    const supabase = await createClient(nextCookies());
+    const supabase = await createClient();
     const { data: { user }, error: userError } = await supabase.auth.getUser();
 
     if (!user || userError) {
@@ -44,7 +43,7 @@ export const completeExercise = async (exerciseId: string) => {
         );
 
     if (error) {
-        return { success: false, error: error.message };
+        return { success: false, error: 'Failed to complete exercise' };
     }
 
     return { success: true };

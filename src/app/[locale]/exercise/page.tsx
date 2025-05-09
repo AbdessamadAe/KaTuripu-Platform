@@ -7,13 +7,12 @@ import Loader from '@/components/Loader';
 import QuestionSection from '@/app/[locale]/exercise/QuestionSection';
 import HintsSection from '@/app/[locale]/exercise/HintsSection';
 import SolutionSection from '@/app/[locale]/exercise/SolutionSection';
-import ExerciseNavigation from '@/app/[locale]/exercise/ExerciseNavigation';
 import ExerciseSidebar from '@/components/Sidebar';
 import VideoSection from '@/app/[locale]/exercise/videoSection';
 import Breadcrumb from '@/components/Breadcrumb';
 import { formatYouTubeUrl, showAchievement } from '@/utils/utils';
 import Logger from '@/utils/logger';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { InvalidateQueryFilters, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 async function fetchExercise(exerciseId: string) {
   const res = await fetch(`/api/exercise/${exerciseId}`);
@@ -73,9 +72,9 @@ const ExercisePage = () => {
       return { previousExercise };
     },
     onSuccess: () => {
-      showAchievement("Exercise Completed");
+      showAchievement("Well Done!", "Exercise Completed");
       // Invalidate related queries
-      queryClient.invalidateQueries(['exercises', nodeId]);
+      queryClient.invalidateQueries(['exercises', nodeId] as InvalidateQueryFilters<readonly unknown[]>);
     },
     onError: (error, exerciseId, context) => {
       Logger.error('Error completing exercise:', error);
@@ -86,7 +85,7 @@ const ExercisePage = () => {
     },
     onSettled: () => {
       // Always refetch after error or success
-      queryClient.invalidateQueries(['exercise', exerciseId]);
+      queryClient.invalidateQueries(['exercise', exerciseId] as InvalidateQueryFilters<readonly unknown[]>);
     },
   });
 
@@ -105,7 +104,7 @@ const ExercisePage = () => {
     }
   ];
 
-  if (isLoading) return <Loader fullScreen />;
+  if (isLoading) return <Loader />;
   if (isError) return <div className="text-center p-8">Error: {error.message}</div>;
 
   return (
@@ -223,15 +222,6 @@ const ExercisePage = () => {
                 />
               )}
             </div>
-
-            {false &&
-              <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
-                <ExerciseNavigation
-                  nodeId={nodeId}
-                  roadmapId={roadmapId}
-                  exerciseId={exerciseId}
-                />
-              </div>}
           </div>
         </main>
 
@@ -245,7 +235,6 @@ const ExercisePage = () => {
             nodeId={nodeId}
             roadmapId={roadmapId}
             prerequisites={["No description available"]}
-            exerciseId={exerciseId}
           />
         </div>
       </div>

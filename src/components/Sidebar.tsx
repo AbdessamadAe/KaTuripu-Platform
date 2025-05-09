@@ -1,13 +1,13 @@
 import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Exercise } from "@/types/types";
+import { ExerciseMeta } from "@/types/types";
 import { useAuth } from "@/contexts/AuthContext";
 import { getDifficultyStyle } from "@/utils/utils";
 import { useQuery } from "@tanstack/react-query";
 
 
-async function fetchExerciseMetaList(nodeId: string) {
+async function fetchExerciseMetaList(nodeId: string): Promise<ExerciseMeta[]> {
   const res = await fetch(`/api/node/${nodeId}/exercise-list`);
   return res.json();
 }
@@ -18,7 +18,7 @@ interface SidebarProps {
   roadmapId: string | undefined;
   prerequisites?: string[];
   nodeProgressPercent?: number;
-  onClose: () => void;
+  onClose?: () => void;
   allowClose?: boolean;
   onexerciseToggle?: (userId: string, exerciseId: string, completed: boolean, nodeId: string) => void;
 }
@@ -27,7 +27,6 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
   title,
   nodeId,
   roadmapId,
-  prerequisites,
   onClose,
   allowClose = false,
 }) => {
@@ -45,7 +44,7 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
   
   const exercises = exerciseList || [];
   
-  if (errorExerciseList || exercises === []) return <div>Error loading exercises</div>;
+  if (errorExerciseList) return <div>Error loading exercises</div>;
 
   const completedExercises = exercises?.filter(ex => ex.completed).length;
   const totalExercises = exercises.length;
@@ -61,7 +60,7 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
       <div className="flex justify-between items-center mb-4 border-b border-gray-200 dark:border-gray-800 pb-4">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{title}</h2>
         { allowClose && <button
-          onClick={onClose}
+          onClick={() => onClose && onClose()}
           className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white transition-colors"
         >
           <svg
@@ -125,12 +124,12 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
                       </div>
                     </Link>
                     <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      {exercise.estimatedTime || "20 min"}
+                      {"20 min"}
                     </div>
                   </div>
                   
                   <div className="flex-shrink-0 ml-2">
-                    <span className={`px-2 py-0.5 rounded-full text-xs ${getDifficultyStyle(exercise.difficulty, true)}`}>
+                    <span className={`px-2 py-0.5 rounded-full text-xs ${getDifficultyStyle(exercise?.difficulty, true)}`}>
                       {exercise.difficulty === "easy" ? "Facile" :
                         exercise.difficulty === "medium" ? "Moyen" :
                         exercise.difficulty === "hard" ? "Difficile" : exercise.difficulty}

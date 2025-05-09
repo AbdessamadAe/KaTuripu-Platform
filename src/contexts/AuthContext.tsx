@@ -15,6 +15,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 const fetchSession = async () => {
+  const supabase = createClient();
   const { data: { session } } = await supabase.auth.getSession();
   return session;
 };
@@ -53,7 +54,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => subscription?.unsubscribe();
   }, [queryClient, pathname]);
 
-  // Remove the separate callback effect as it's now handled above
 
   const value = {
     user: session?.user ?? null,
@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={value as any}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,10 +1,9 @@
 import { createClient } from '@/utils/supabase/server';
 import Logger from '@/utils/logger';
-import { cookies as nextCookies } from 'next/headers'
 
 export async function getNodeExerciseList(nodeId: string) {
     try {
-        const supabase = await createClient(nextCookies());
+        const supabase = await createClient();
         const { data: { user }, error: userError } = await supabase.auth.getUser();
 
         if (!user || userError) {

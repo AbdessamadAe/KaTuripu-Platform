@@ -1,3 +1,5 @@
+import { Node, Edge } from "@xyflow/react";
+
 export interface Exercise {
   id: string;
   name: string;
@@ -5,18 +7,33 @@ export interface Exercise {
   type?: string;
   completed: boolean;
   order_index: number;
+  solution?: string;
+  description?: string;
+  video_url?: string;
+}
+
+
+export interface ExerciseMeta {
+  id: string;
+  name: string;
+  difficulty?: string;
+  type?: string;
+  completed: boolean;
+  order_index: number;
+  node_id: string;
 }
 
 export type Progress = number; // 0-100
 
 export interface ReactFlowNodeData {
+  [key: string]: unknown; // added this for type safety because of the error in the GET route request type
   label: string;
   description?: string;
   progress: Progress;
   total_exercises: number;
 }
 
-export interface ReactFlowNode {
+export interface ReactFlowNode extends Node {
   id: string; // Must be string
   type: string; // 'default' | 'input' | 'output' | 'custom'
   data: ReactFlowNodeData;
@@ -47,4 +64,5 @@ export interface Roadmap {
   image_url?: string;
   nodes: ReactFlowNode[];
   edges: ReactFlowEdge[];
+  progress_percent: number;
 }

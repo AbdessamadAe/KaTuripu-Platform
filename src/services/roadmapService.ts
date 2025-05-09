@@ -1,13 +1,12 @@
-import { Roadmap, Exercise, RoadmapNode } from '@/types/types';
+import { Roadmap, Exercise } from '@/types/types';
 import { v4 as uuidv4 } from 'uuid';
 import { createClient } from '@/utils/supabase/server';
-import { cookies as nextCookies } from 'next/headers'
 import Logger from '@/utils/logger';
 
 
 export async function getRoadmaps() {
     try {
-        const supabase = await createClient(nextCookies());
+        const supabase = await createClient();
         const { data: { user }, error: userError } = await supabase.auth.getUser();
 
         if (!user || userError) {
@@ -35,7 +34,7 @@ export async function getRoadmaps() {
 
 export async function geFullRoadmapWithProgress(roadmapId: string) {
   try {
-      const supabase = await createClient(nextCookies());
+      const supabase = await createClient();
       const { data: { user }, error: userError } = await supabase.auth.getUser();
 
       if (!user || userError) {
@@ -51,9 +50,6 @@ export async function geFullRoadmapWithProgress(roadmapId: string) {
       return { success: true, roadmap: data?.roadmap };
 
   } catch (error) {
-      return { success: false, error: error.message || 'Failed to fetch roadmap' };
+      return { success: false, error: 'Failed to fetch roadmap' };
   }
-}
-
-export async function createRoadmap() {
 }

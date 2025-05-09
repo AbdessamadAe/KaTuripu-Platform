@@ -8,7 +8,7 @@ interface CustomNodeData {
   progress: number;
 }
 
-const RoadmapNode = ({ id, data }: NodeProps<CustomNodeData>) => {
+const RoadmapNode = ({ id, data }: NodeProps<any>) => {
   return (
     <div 
       className={`px-4 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 w-[180px] cursor-pointer bg-[#192C88] text-white border border-white/10 flex flex-col items-center`}
