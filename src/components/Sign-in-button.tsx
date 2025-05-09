@@ -1,8 +1,7 @@
 "use client";
 
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
-import { signInWithGoogle } from "@/lib/supabase/actions";
-
+import { signInWithGoogle } from "@/app/actions";
 export function SignInButton() {
   const handleGoogleSignIn = async () => {
     await signInWithGoogle();

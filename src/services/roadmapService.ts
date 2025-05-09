@@ -1,6 +1,6 @@
 import { Roadmap, Exercise, RoadmapNode } from '@/types/types';
 import { v4 as uuidv4 } from 'uuid';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/utils/supabase/server';
 import { cookies as nextCookies } from 'next/headers'
 import Logger from '@/utils/logger';
 

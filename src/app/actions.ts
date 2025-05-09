@@ -1,0 +1,28 @@
+"use server";
+
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
+import { headers } from "next/headers";
+
+const signInWith = (provider: "google" | "github" | "azure" | etc) => async () => {
+  const supabase = await createClient();
+  const origin = headers().get("origin");
+  
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: `${origin}/api/auth/callback`
+    },
+  });
+
+  if (error) throw error;
+  if (data.url) redirect(data.url);
+};
+
+export const signInWithGoogle = signInWith("google");
+
+export const handleSignOut = async () => {
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  redirect("/");
+};

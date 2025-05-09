@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/utils/supabase/server";
 import { Exercise } from '@/types/types';
 import Logger from "@/utils/logger";
 import { cookies as nextCookies } from 'next/headers'

@@ -1,6 +1,7 @@
 import React from 'react';
 import toast from 'react-hot-toast';
 import confetti from 'canvas-confetti';
+import { redirect } from "next/navigation";
 
 
 export const getDifficultyStyle = (difficulty: string, isBackground = false): string => {
@@ -33,14 +34,6 @@ export const formatYouTubeUrl = (url: string): string => {
   return url;
 };
 
-export function generateSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, '') // Remove special characters
-    .replace(/\s+/g, '-')     // Replace spaces with hyphens
-    .replace(/-+/g, '-')      // Replace multiple hyphens with a single hyphen
-    .trim();
-}
 
 
 // Progress celebration
@@ -214,3 +207,18 @@ export const fireConfetti = (options = {}) => {
     console.error("Confetti animation failed:", e);
   }
 };
+
+/**
+ * Redirects to a specified path with an encoded message as a query parameter.
+ * @param {('error' | 'success')} type - The type of message, either 'error' or 'success'.
+ * @param {string} path - The path to redirect to.
+ * @param {string} message - The message to be encoded and added as a query parameter.
+ * @returns {never} This function doesn't return as it triggers a redirect.
+ */
+export function encodedRedirect(
+  type: "error" | "success",
+  path: string,
+  message: string,
+) {
+  return redirect(`${path}?${type}=${encodeURIComponent(message)}`);
+}

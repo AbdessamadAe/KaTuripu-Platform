@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useState } from 'react';
-import { signInWithGoogle } from '@/lib/supabase/actions';
+import { signInWithGoogle } from '@/app/actions';
 
 export default function LoginPage() {
   const t = useTranslations('Auth');
@@ -14,11 +14,7 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     setIsLoading(true);
     try {
-      const { error } = await signInWithGoogle();
-      
-      if (error) {
-        throw error;
-      }
+      await signInWithGoogle();
     } catch (error) {
       console.error('Login error:', error);
     } finally {
