@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useState } from 'react';
 import { signInWithGoogle } from '@/app/actions';
+import Logger from '@/utils/logger';
 
 export default function LoginPage() {
   const t = useTranslations('Auth');
@@ -16,7 +17,12 @@ export default function LoginPage() {
     try {
       await signInWithGoogle();
     } catch (error) {
-      console.error('Login error:', error);
+      Logger.error('Google login failed',
+        error.message,
+        code: 'GOOGLE_LOGIN_ERROR',
+        component: 'LoginPage',
+        userId: null
+      );
     } finally {
       setIsLoading(false);
     }

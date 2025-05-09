@@ -20,7 +20,12 @@ export async function getRoadmaps() {
             .order('roadmap_created_at', { ascending: false });
       
       if (error) {
-        console.error('Error fetching roadmap with progress:', error);
+        Logger.error('Error fetching roadmaps',
+            error.message,
+            code: 'FETCH_ROADMAPS_ERROR',
+            component: 'getRoadmaps',
+            userId: user.id
+        );
       }
       
             

@@ -204,7 +204,7 @@ export const fireConfetti = (options = {}) => {
   try {
     confetti(config);
   } catch (e) {
-    console.error("Confetti animation failed:", e);
+    Logger.error("Confetti animation failed:", e.message);
   }
 };
 

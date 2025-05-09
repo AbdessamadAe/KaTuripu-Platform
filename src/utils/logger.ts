@@ -7,11 +7,21 @@ class Logger {
         }
     }
 
-    static error(message: string, error?: LogData) {
-        if (process.env.NODE_ENV === 'development') {
-            console.error(message, error);
-        }
+    static error(message: string,
+        error?: any,
+        code?: string,
+        component?: string,
+        userId?: string
+    ) {
+    if (process.env.NODE_ENV === 'development') {
+        console.error(message, {
+            error,
+            code,
+            component,
+            userId
+        });
     }
+}
 }
 
 export default Logger;
