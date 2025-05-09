@@ -2,12 +2,8 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { RoadmapMeta } from '@/types/types';
 
-interface RoadmapCard extends RoadmapMeta {
-  level?: 'beginner' | 'intermediate' | 'advanced';
-}
-
 interface RoadmapCardProps {
-  roadmap: RoadmapCard;
+  roadmap: RoadmapMeta;
   progress: number;
 }
 

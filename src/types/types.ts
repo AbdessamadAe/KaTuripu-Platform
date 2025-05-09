@@ -75,4 +75,5 @@ export interface RoadmapMeta {
   roadmap_category: string;
   progress_percent: number;
   roadmap_created_at: string;
+  level?: 'beginner' | 'intermediate' | 'advanced';
 }

@@ -48,8 +48,8 @@ const RoadmapsPage = () => {
         visible: { y: 0, opacity: 1 }
     };
 
-    const handleRoadmapClick = (roadmap: Roadmap) => {
-        router.push(`/roadmap/${roadmap?.id}`);
+    const handleRoadmapClick = (roadmap: RoadmapMeta) => {
+        router.push(`/roadmap/${roadmap?.roadmap_id}`);
     };
 
     if (loading) {
@@ -136,7 +136,7 @@ const RoadmapsPage = () => {
                             animate="visible"
                         >
                             {roadmaps?.map((roadmap) => (
-                                <motion.div key={roadmap?.id} variants={itemVariants}>
+                                <motion.div key={roadmap?.roadmap_id} variants={itemVariants}>
                                     <div
                                         onClick={() => handleRoadmapClick(roadmap)}
                                         className="cursor-pointer"
