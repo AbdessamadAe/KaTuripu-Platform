@@ -8,10 +8,10 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from 'next-intl';
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
-import { Roadmap } from "@/types/types";
+import { RoadmapMeta } from "@/types/types";
 
 
-async function fetchRoadmaps(): Promise<Roadmap[]> {
+async function fetchRoadmaps(): Promise<RoadmapMeta[]> {
     const res = await fetch('/api/roadmap');
     if (!res.ok) {
         throw new Error('Failed to fetch roadmaps');

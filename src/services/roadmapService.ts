@@ -15,20 +15,20 @@ export async function getRoadmaps() {
 
         const { data, error } = await supabase
             .from('user_roadmap_progress')
-            .select('roadmap_id as id, roadmap_title as title, roadmap_description as description, roadmap_category as category , roadmap_image_url as image_url, roadmap_created_at as created_at')
-            .eq('user_id', user?.id)
+            .select(`*`)
+            .eq('user_id', user.id)
             .order('roadmap_created_at', { ascending: false });
-      
-      if (error) {
-        Logger.error('Error fetching roadmaps',
-            error,
-            'FETCH_ROADMAPS_ERROR',
-            'getRoadmaps',
-            user.id
-        );
-      }
-      
-            
+        console.log('Roadmaps:', data);
+        if (error) {
+            Logger.error('Error fetching roadmaps',
+                error,
+                'FETCH_ROADMAPS_ERROR',
+                'getRoadmaps',
+                user.id
+            );
+        }
+
+
         return { success: true, roadmaps: data };
 
     } catch (error) {
@@ -38,23 +38,23 @@ export async function getRoadmaps() {
 
 
 export async function geFullRoadmapWithProgress(roadmapId: string) {
-  try {
-      const supabase = await createClient();
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
+    try {
+        const supabase = await createClient();
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-      if (!user || userError) {
-          return { success: false, error: 'Unauthorized' };
-      }
+        if (!user || userError) {
+            return { success: false, error: 'Unauthorized' };
+        }
 
-      const { data, error} = await supabase
-          .rpc('get_full_roadmap_with_progress', {
-          p_user_id: user.id,
-          p_roadmap_id: roadmapId
-          });
-        
-      return { success: true, roadmap: data?.roadmap };
+        const { data, error } = await supabase
+            .rpc('get_full_roadmap_with_progress', {
+                p_user_id: user.id,
+                p_roadmap_id: roadmapId
+            });
 
-  } catch (error) {
-      return { success: false, error: 'Failed to fetch roadmap' };
-  }
+        return { success: true, roadmap: data?.roadmap };
+
+    } catch (error) {
+        return { success: false, error: 'Failed to fetch roadmap' };
+    }
 }

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Roadmap } from '@/types/types';
+import { RoadmapMeta } from '@/types/types';
 
-interface RoadmapCard extends Roadmap {
+interface RoadmapCard extends RoadmapMeta {
   level?: 'beginner' | 'intermediate' | 'advanced';
 }
 
@@ -16,15 +16,15 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
   const t = useTranslations('roadmap');
 
   const getPrimaryCategory = (): string => {
-    if (Array.isArray(roadmap.category)) return roadmap.category[0]?.toLowerCase() || '';
-    return roadmap.category?.toLowerCase() || '';
+    if (Array.isArray(roadmap?.roadmap_category)) return roadmap?.roadmap_category[0]?.toLowerCase() || '';
+    return roadmap?.roadmap_category?.toLowerCase() || '';
   };
 
   const getCategories = (): string[] =>
-    Array.isArray(roadmap.category)
-      ? roadmap.category
-      : roadmap.category
-        ? [roadmap.category]
+    Array.isArray(roadmap?.roadmap_category)
+      ? roadmap?.roadmap_category
+      : roadmap?.roadmap_category
+        ? [roadmap?.roadmap_category]
         : [];
 
 
@@ -43,8 +43,8 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
         className={`w-full h-44 rounded-xl flex items-center justify-center overflow-hidden relative shadow-inner`}
       >
         <img
-          src={roadmap.image_url}
-          alt={roadmap.title}
+          src={roadmap?.roadmap_image_url}
+          alt={roadmap?.roadmap_title}
           className="object-cover"
         />
         <div className="absolute bottom-2 left-2 flex gap-1 flex-wrap">
@@ -60,8 +60,8 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
       </div>
 
       <div className="flex-1 w-full">
-        <h3 className="font-bold text-base md:text-lg line-clamp-1 text-gray-900 dark:text-white">{roadmap.title}</h3>
-        <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">{roadmap.description}</p>
+        <h3 className="font-bold text-base md:text-lg line-clamp-1 text-gray-900 dark:text-white">{roadmap?.roadmap_title}</h3>
+        <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">{roadmap?.roadmap_description}</p>
       </div>
 
       <div className="w-full mt-2">

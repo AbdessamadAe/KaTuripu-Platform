@@ -66,3 +66,13 @@ export interface Roadmap {
   edges: ReactFlowEdge[];
   progress_percent: number;
 }
+
+export interface RoadmapMeta {
+  roadmap_id: string;
+  roadmap_title: string;
+  roadmap_description: string;
+  roadmap_image_url: string;
+  roadmap_category: string;
+  progress_percent: number;
+  roadmap_created_at: string;
+}
