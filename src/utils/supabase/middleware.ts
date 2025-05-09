@@ -41,7 +41,6 @@
       // https://supabase.com/docs/guides/auth/server-side/nextjs
       const user = await supabase.auth.getUser();
 
-      
       // protected routes
       if ((request.nextUrl.pathname.startsWith("/roadmap") ||
         request.nextUrl.pathname.startsWith("/exercise"))

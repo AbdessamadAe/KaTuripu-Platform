@@ -18,10 +18,9 @@ export default function LoginPage() {
       await signInWithGoogle();
     } catch (error) {
       Logger.error('Google login failed',
-        error.message,
-        code: 'GOOGLE_LOGIN_ERROR',
-        component: 'LoginPage',
-        userId: null
+        error,
+        'GOOGLE_LOGIN_ERROR',
+        'LoginPage'
       );
     } finally {
       setIsLoading(false);
@@ -36,7 +35,7 @@ export default function LoginPage() {
             src="/images/logo.png"
             alt="KaTuripu Logo"
             width={100}
-            height={100}
+            height={30}
             className="mb-4"
           />
           <h1 className="text-2xl font-bold text-center text-gray-800">

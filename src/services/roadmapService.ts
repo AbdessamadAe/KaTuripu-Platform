@@ -21,10 +21,10 @@ export async function getRoadmaps() {
       
       if (error) {
         Logger.error('Error fetching roadmaps',
-            error.message,
-            code: 'FETCH_ROADMAPS_ERROR',
-            component: 'getRoadmaps',
-            userId: user.id
+            error,
+            'FETCH_ROADMAPS_ERROR',
+            'getRoadmaps',
+            user.id
         );
       }
       

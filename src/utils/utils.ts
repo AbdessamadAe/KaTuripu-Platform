@@ -2,6 +2,7 @@ import React from 'react';
 import toast from 'react-hot-toast';
 import confetti from 'canvas-confetti';
 import { redirect } from "next/navigation";
+import Logger from './logger';
 
 
 export const getDifficultyStyle = (difficulty: string | undefined, isBackground = false): string => {
@@ -204,7 +205,7 @@ export const fireConfetti = (options = {}) => {
   try {
     confetti(config);
   } catch (e) {
-    Logger.error("Confetti animation failed:", e.message);
+    Logger.error("Confetti animation failed:", e);
   }
 };
 
