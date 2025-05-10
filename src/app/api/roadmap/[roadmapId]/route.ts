@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { geFullRoadmapWithProgress } from "@/services/roadmapService";
+import { getFullRoadmapWithProgress } from "@/services/roadmapService";
 
 
 export async function GET(
@@ -8,7 +8,7 @@ export async function GET(
 ) {
   
   const {roadmapId} = await params;
-  const result = await geFullRoadmapWithProgress(roadmapId);
+  const result = await getFullRoadmapWithProgress(roadmapId);
   
   if (!result.success) {
     return NextResponse.json({ error: result.error });

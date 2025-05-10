@@ -6,7 +6,6 @@ import RoadmapCard from "@/components/RoadmapCard";
 import { motion } from 'framer-motion';
 import { useRouter } from "next/navigation";
 import { useTranslations } from 'next-intl';
-import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { RoadmapMeta } from "@/types/types";
 
@@ -25,7 +24,6 @@ const RoadmapsPage = () => {
     const t = useTranslations('roadmap');
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedRoadmap, setSelectedRoadmap] = useState<string | null>(null);
-    const { user, isAuthenticated, isLoading } = useAuth();
     const categories = ["All"]
 
     const { data: roadmaps, isLoading: loading } = useQuery({

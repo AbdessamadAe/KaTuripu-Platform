@@ -8,8 +8,8 @@ import Nav from "@/components/Navigation";
 import ToastProvider from "@/providers/ToastProvider";
 import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import { AuthProvider } from "@/contexts/AuthContext";
 import QueryProvider from "@/providers/QueryProvider";
+import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata: Metadata = {
   title: "KaTuripu",
@@ -34,10 +34,10 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`antialiased min-h-screen w-full overflow-hidden`}>
+      <body className={`antialiased min-h-screen w-full overflow-x-hidden`}>
         <QueryProvider>
+        <ClerkProvider>
           <NextIntlClientProvider messages={messages} locale={locale}>
-            <AuthProvider>
               <ThemeProvider>
                 <MathJaxProvider>
                   <Nav />
@@ -47,8 +47,8 @@ export default async function RootLayout({
                   <ToastProvider />
                 </MathJaxProvider>
               </ThemeProvider>
-            </AuthProvider>
           </NextIntlClientProvider>
+          </ClerkProvider>
         </QueryProvider>
       </body>
     </html>

@@ -1,6 +1,5 @@
 import createIntlMiddleware from 'next-intl/middleware';
-import { type NextRequest } from 'next/server';
-import { updateSession } from '@/utils/supabase/middleware';
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
 const intlMiddleware = createIntlMiddleware({
   locales: ['en', 'fr', 'ar'],
@@ -8,15 +7,27 @@ const intlMiddleware = createIntlMiddleware({
   localeDetection: true,
 });
 
-export async function middleware(request: NextRequest) {
-  // Create the intl response first
-  const intlResponse = intlMiddleware(request);
-  // Pass it to Supabase middleware to add session handling
-  return await updateSession(request, intlResponse);
-}
+const isProtectedRoute = createRouteMatcher([
+  '/roadmap(.*)',
+  '/exercise(.*)',
+]);
+
+export default clerkMiddleware(async (auth, req) => {
+  const pathname = req.nextUrl.pathname;
+
+  // Skip intlMiddleware for API routes
+  if (pathname.startsWith('/api')) {
+    if (isProtectedRoute(req)) await auth.protect();
+    return;
+  }
+
+  if (isProtectedRoute(req)) await auth.protect();
+  return intlMiddleware(req);
+});
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|images|favicon.ico|.*\\..*).*)'
-  ]
+    '/((?!_next/static|_next/image|images|favicon.ico|.*\\..*).*)',
+    '/(api|trpc)(.*)',
+  ],
 };

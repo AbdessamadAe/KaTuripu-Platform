@@ -2,9 +2,9 @@ import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ExerciseMeta } from "@/types/types";
-import { useAuth } from "@/contexts/AuthContext";
 import { getDifficultyStyle } from "@/utils/utils";
 import { useQuery } from "@tanstack/react-query";
+import { useUser } from "@clerk/nextjs";
 
 
 async function fetchExerciseMetaList(nodeId: string): Promise<ExerciseMeta[]> {
@@ -31,7 +31,7 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
   allowClose = false,
 }) => {
 
-  const { user } = useAuth();
+  const { user } = useUser();
   const userId = user?.id;
 
   const { data: exerciseList, isLoading: loadingExerciseList, error: errorExerciseList } = useQuery({

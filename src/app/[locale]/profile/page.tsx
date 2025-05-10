@@ -3,7 +3,7 @@
 import { Disclosure } from '@headlessui/react';
 import { ArrowLeftIcon, PencilIcon } from '@heroicons/react/24/outline';
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useUser } from '@clerk/nextjs';
 
 interface UserMetadata {
   avatar_url?: string;
@@ -22,39 +22,9 @@ interface UserData {
 }
 
 export default function ProfilePage() {
-  const { user, isAuthenticated, isLoading } = useAuth();
-  if (isAuthenticated != true) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white dark:bg-gray-800 sm:rounded-lg">
-            <div className="px-4 py-5 sm:p-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">Access Denied</h3>
-              <div className="mt-2 max-w-xl text-sm text-gray-500 dark:text-gray-400">
-                <p>You must be logged in to view this page.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const { isSignedIn, user, isLoaded } = useUser();
 
-  return (
-    isLoading ? (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-            <div className="px-4 py-5 sm:p-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">Loading...</h3>
-              <div className="mt-2 max-w-xl text-sm text-gray-500 dark:text-gray-400">
-                <p>Please wait while we load your profile.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    ) : (
+  return ((
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-6">
@@ -80,7 +50,7 @@ export default function ProfilePage() {
                 <div className="sm:w-1/3 flex justify-center mb-6 sm:mb-0">
                   <div className="relative">
                     <img
-                      src={user?.user_metadata?.avatar_url || '/default-avatar.png'}
+                      src={user?.imageUrl || '/default-avatar.png'}
                       alt="Profile"
                       className="h-48 w-48 rounded-full object-cover border-4 border-white dark:border-gray-700 shadow-lg"
                     />
@@ -95,29 +65,22 @@ export default function ProfilePage() {
 
                     <div className="sm:col-span-1">
                       <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Email address</dt>
-                      <dd className="mt-1 text-sm text-gray-900 dark:text-gray-200">{user?.email || user?.user_metadata?.email || 'Not provided'}</dd>
+                      <dd className="mt-1 text-sm text-gray-900 dark:text-gray-200">{'Not provided'}</dd>
                     </div>
 
-                    {user?.user_metadata?.user_name && (
+                    {user?.firstName && (
                       <div className="sm:col-span-1">
                         <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Username</dt>
-                        <dd className="mt-1 text-sm text-gray-900 dark:text-gray-200">{user.user_metadata.user_name}</dd>
+                        <dd className="mt-1 text-sm text-gray-900 dark:text-gray-200">{user.fullName}</dd>
                       </div>
                     )}
 
                     <div className="sm:col-span-1">
                       <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Account created</dt>
                       <dd className="mt-1 text-sm text-gray-900 dark:text-gray-200">
-                        {user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'Not available'}
+                        {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Not available'}
                       </dd>
                     </div>
-
-                    {user?.user_metadata?.provider && (
-                      <div className="sm:col-span-1">
-                        <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Login provider</dt>
-                        <dd className="mt-1 text-sm text-gray-900 dark:text-gray-200 capitalize">{user.user_metadata.provider}</dd>
-                      </div>
-                    )}
                   </dl>
                 </div>
               </div>

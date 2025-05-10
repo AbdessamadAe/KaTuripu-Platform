@@ -1,50 +1,80 @@
-import { createClient } from "@/utils/supabase/server";
-import { Exercise } from '@/types/types';
+import prisma from '@/lib/prisma';
+import { auth } from '@clerk/nextjs/server'
+import type { Exercise } from '@/types/types';
 import Logger from "@/utils/logger";
 
 export const getExerciseById = async (exerciseId: string) => {
-    const supabase = await createClient();
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (!user || userError) {
-        return { success: false, error: 'Unauthorized' };
+  // Get user ID from Clerk
+  const { userId } = await auth()
+
+  try {
+
+    if (!userId) {
+      return { success: false, error: 'Unauthorized' };
     }
 
-    const { data, error } = await supabase
-        .rpc('get_exercise_with_status', {
-            p_exercise_id: exerciseId,
-            p_user_id: user.id
-        })
-        .single()
-    
-    if (error) {
-        return { success: false, error: 'Failed to fetch exercise' };
+    // Get exercise and user progress in a single query
+    const exerciseWithProgress = await prisma.exercise.findUnique({
+      where: { id: exerciseId },
+      include: {
+        userProgress: {
+          where: { userId },
+          select: { completed: true, completedAt: true }
+        }
+      }
+    });
+
+    if (!exerciseWithProgress) {
+      return { success: false, error: 'Exercise not found' };
     }
 
-    return { success: true, exercise: data };
+    // Format the response
+    const response = {
+      ...exerciseWithProgress,
+      completed: exerciseWithProgress.userProgress[0]?.completed || false,
+      completed_at: exerciseWithProgress.userProgress[0]?.completedAt || null
+    };
+
+    return { success: true, exercise: response };
+  } catch (error) {
+    Logger.error('Failed to fetch exercise', error);
+    return { success: false, error: 'Failed to fetch exercise' };
+  }
 }
 
-
 export const completeExercise = async (exerciseId: string) => {
-    const supabase = await createClient();
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-    if (!user || userError) {
-        return { success: false, error: 'Unauthorized' };
-    }
-    const { error } = await supabase
-        .from("user_exercise_progress")
-        .upsert({
-            user_id: user.id,
-            exercise_id: exerciseId,
-            completed: true,
-            completed_at: new Date(),
-        },
-            { onConflict: 'user_id,exercise_id' } // Update if already exists
-        );
+  // Get user ID from Clerk
+  const { userId } = await auth()
 
-    if (error) {
-        return { success: false, error: 'Failed to complete exercise' };
+  try {
+
+    if (!userId) {
+      return { success: false, error: 'Unauthorized' };
     }
+
+    await prisma.userExerciseProgress.upsert({
+      where: {
+        userId_exerciseId: {
+          userId,
+          exerciseId
+        }
+      },
+      update: {
+        completed: true,
+        completedAt: new Date()
+      },
+      create: {
+        userId,
+        exerciseId,
+        completed: true,
+        completedAt: new Date()
+      }
+    });
 
     return { success: true };
+  } catch (error) {
+    Logger.error('Failed to complete exercise', error);
+    return { success: false, error: 'Failed to complete exercise' };
+  }
 }
