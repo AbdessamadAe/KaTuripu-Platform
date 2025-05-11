@@ -37,7 +37,7 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
   const { data: exerciseList, isLoading: loadingExerciseList, error: errorExerciseList } = useQuery({
     queryKey: ['exercises', nodeId],
     queryFn: () => fetchExerciseMetaList(nodeId),
-    staleTime: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+    staleTime: 60 * 60 * 1000, // 1 hour in milliseconds
     refetchOnWindowFocus: false
   });
 

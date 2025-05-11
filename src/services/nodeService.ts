@@ -3,16 +3,15 @@ import { auth } from '@clerk/nextjs/server'
 import Logger from '@/utils/logger';
 
 export async function getNodeExerciseList(nodeId: string) {
-  // Get user ID from Clerk
-  const { userId } = await auth()
   try {
+    const { userId } = await auth();
     
     if (!userId) {
       return { success: false, error: 'Unauthorized' };
     }
 
-    // Get exercises with progress status in a single query
-    const exercises = await prisma.nodeExercise.findMany({
+    // First get all node exercises with their exercises
+    const nodeExercises = await prisma.nodeExercise.findMany({
       where: {
         nodeId: nodeId,
         exercise: {
@@ -27,15 +26,6 @@ export async function getNodeExerciseList(nodeId: string) {
             type: true,
             difficulty: true
           }
-        },
-        userProgress: {
-          where: {
-            userId: userId
-          },
-          select: {
-            completed: true,
-            completedAt: true
-          }
         }
       },
       orderBy: {
@@ -43,15 +33,35 @@ export async function getNodeExerciseList(nodeId: string) {
       }
     });
 
-    // Format the response to match your expected structure
-    const formattedExercises = exercises.map(ex => ({
-      id: ex.exercise.id,
-      order_index: ex.orderIndex,
-      name: ex.exercise.name,
-      type: ex.exercise.type,
-      difficulty: ex.exercise.difficulty,
-      completed: ex.userProgress[0]?.completed || false,
-      completed_at: ex.userProgress[0]?.completedAt || null
+    // Get all user progress for these exercises in one query
+    const userProgress = await prisma.userExerciseProgress.findMany({
+      where: {
+        userId: userId,
+        exerciseId: {
+          in: nodeExercises.map(ne => ne.exercise.id)
+        }
+      },
+      select: {
+        exerciseId: true,
+        completed: true,
+        completedAt: true
+      }
+    });
+
+    // Create a map for quick lookup
+    const progressMap = new Map(
+      userProgress.map(up => [up.exerciseId, up])
+    );
+
+    // Format the response
+    const formattedExercises = nodeExercises.map(ne => ({
+      id: ne.exercise.id,
+      order_index: ne.orderIndex,
+      name: ne.exercise.name,
+      type: ne.exercise.type,
+      difficulty: ne.exercise.difficulty,
+      completed: progressMap.get(ne.exercise.id)?.completed || false,
+      completed_at: progressMap.get(ne.exercise.id)?.completedAt || null
     }));
 
     return { 

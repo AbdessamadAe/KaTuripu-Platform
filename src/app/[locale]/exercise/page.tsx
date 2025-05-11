@@ -13,8 +13,9 @@ import Breadcrumb from '@/components/Breadcrumb';
 import { formatYouTubeUrl, showAchievement } from '@/utils/utils';
 import Logger from '@/utils/logger';
 import { InvalidateQueryFilters, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Exercise } from '@prisma/client';
 
-async function fetchExercise(exerciseId: string) {
+async function fetchExercise(exerciseId: string): Promise<Exercise> {
   const res = await fetch(`/api/exercise/${exerciseId}`);
   return res.json();
 }
@@ -47,7 +48,6 @@ const ExercisePage = () => {
     queryKey: ['exercise', exerciseId],
     queryFn: () => fetchExercise(exerciseId),
     staleTime: 60 * 60 * 1000, // 1 hour
-    gcTime: 24 * 60 * 60 * 1000, // 24 hours
     retry: 2,
     retryDelay: 1000,
   });
@@ -160,7 +160,7 @@ const ExercisePage = () => {
                   </button>
                 )}
 
-                {exercise?.video_url && (
+                {exercise?.videoUrl && (
                   <button
                     onClick={() => setActiveTab('video')}
                     className={`py-4 px-1 relative font-medium ${activeTab === 'video'
@@ -207,9 +207,9 @@ const ExercisePage = () => {
                 <HintsSection hints={exercise?.hints} />
               )}
 
-              {activeTab === 'video' && exercise?.video_url && (
+              {activeTab === 'video' && exercise?.videoUrl && (
                 <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
-                  <VideoSection video_url={exercise.video_url}/>
+                  <VideoSection video_url={exercise.videoUrl}/>
                 </div>
               )}
 
