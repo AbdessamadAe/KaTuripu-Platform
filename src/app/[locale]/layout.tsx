@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import QueryProvider from "@/providers/QueryProvider";
 import { ClerkProvider } from "@clerk/nextjs";
+import { neobrutalism, shadesOfPurple } from '@clerk/themes';
 
 export const metadata: Metadata = {
   title: "KaTuripu",
@@ -36,8 +37,11 @@ export default async function RootLayout({
     <html lang={locale}>
       <body className={`antialiased min-h-screen w-full overflow-x-hidden`}>
         <QueryProvider>
-        <ClerkProvider>
-          <NextIntlClientProvider messages={messages} locale={locale}>
+          <ClerkProvider
+            appearance={{
+              signIn: { baseTheme: neobrutalism }
+            }}>
+            <NextIntlClientProvider messages={messages} locale={locale}>
               <ThemeProvider>
                 <MathJaxProvider>
                   <Nav />
@@ -47,7 +51,7 @@ export default async function RootLayout({
                   <ToastProvider />
                 </MathJaxProvider>
               </ThemeProvider>
-          </NextIntlClientProvider>
+            </NextIntlClientProvider>
           </ClerkProvider>
         </QueryProvider>
       </body>

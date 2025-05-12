@@ -1,7 +1,6 @@
 "use client";
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon, UserIcon, ArrowRightOnRectangleIcon, LanguageIcon } from '@heroicons/react/24/outline'
-import { SignInButton } from '@/components/Sign-in-button'
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl';
@@ -10,6 +9,8 @@ import { handleSignOut } from '@/app/actions';
 import { useRouter } from 'next/navigation';
 import { Switch } from './Switch';
 import { useUser } from '@clerk/nextjs';
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
+
 
 const navigation = [
   { name: 'Concours', href: '/roadmap' },
@@ -54,7 +55,7 @@ export default function Nav() {
     <Disclosure as="nav" className="border-b border-gray-200 dark:border-gray-700 shadow-sm sticky top-0 z-50 bg-white dark:bg-gray-900">
       <div className="mx-auto px-4">
         <div className="relative flex h-16 items-center justify-between">
-          
+
           {/* Mobile menu button and logo */}
           <div className="flex w-full items-center justify-between lg:hidden">
             <Link href="/" className="flex items-center" onMouseEnter={() => router.prefetch('/')}>
@@ -64,7 +65,7 @@ export default function Nav() {
                 className="h-6 w-auto dark:filter dark:brightness-90"
               />
             </Link>
-            
+
             <div className="flex items-center gap-2">
               {/* Language Switcher */}
               <Menu as="div" className="relative">
@@ -72,22 +73,21 @@ export default function Nav() {
                   <LanguageIcon className="h-5 w-5" />
                   <span className="sr-only md:not-sr-only">{currentLang.toUpperCase()}</span>
                 </Menu.Button>
-                <LanguageDropdown 
-                  languages={languages} 
-                  currentLang={currentLang} 
-                  switchLanguage={switchLanguage} 
+                <LanguageDropdown
+                  languages={languages}
+                  currentLang={currentLang}
+                  switchLanguage={switchLanguage}
                 />
               </Menu>
-              
+
               <Switch />
-              
-              {user ? (
-                <UserDropdown user={user} />
-              ) : (
-                <div className="mr-2">
-                  <SignInButton />
-                </div>
-              )}
+
+              <SignedIn>
+                <UserButton />
+              </SignedIn>
+              <SignedOut>
+                <SignInButton />
+              </SignedOut>
 
               <DisclosureButton className="inline-flex items-center justify-center rounded-md p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-black dark:hover:text-white focus:outline-none">
                 <span className="sr-only">Open main menu</span>
@@ -108,7 +108,7 @@ export default function Nav() {
                 />
               </Link>
             </div>
-            
+
             <div className="lg:ml-14">
               <div className="flex space-x-4">
                 {activeNavigation.map((item) => (
@@ -118,8 +118,8 @@ export default function Nav() {
                     onMouseEnter={() => router.prefetch(item.href)}
                     className={classNames(
                       'rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200',
-                      item.current 
-                        ? 'bg-gray-100 dark:bg-gray-800 text-black dark:text-white' 
+                      item.current
+                        ? 'bg-gray-100 dark:bg-gray-800 text-black dark:text-white'
                         : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-black dark:hover:text-white'
                     )}
                   >
@@ -137,20 +137,21 @@ export default function Nav() {
                 <LanguageIcon className="h-5 w-5" />
                 <span>{currentLang.toUpperCase()}</span>
               </Menu.Button>
-              <LanguageDropdown 
-                languages={languages} 
-                currentLang={currentLang} 
-                switchLanguage={switchLanguage} 
+              <LanguageDropdown
+                languages={languages}
+                currentLang={currentLang}
+                switchLanguage={switchLanguage}
               />
             </Menu>
-            
+
             <Switch />
-            
-            { user ? (
-              <UserDropdown user={user} />
-            ) : (
+
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+            <SignedOut>
               <SignInButton />
-            )}
+            </SignedOut>
           </div>
         </div>
       </div>
@@ -164,11 +165,6 @@ export default function Nav() {
               as={Link}
               href={item.href}
               className="block rounded-md px-3 py-3 text-base font-medium transition-colors duration-200"
-              classNames={{
-                base: item.current 
-                  ? 'bg-gray-200 dark:bg-gray-700 text-black dark:text-white' 
-                  : 'text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-black dark:hover:text-white'
-              }}
             >
               {item.name}
             </DisclosureButton>

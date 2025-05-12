@@ -21,26 +21,32 @@ const HintsSection = ({ hints }: HintsSectionProps) => {
   if (!hints || hints.length === 0) return null;
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 mb-6">
-      <h2 className="text-lg font-medium mb-4 flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
-          <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
-        </svg>
-        {t('hints')}
-      </h2>
-      <div className="divide-y divide-gray-200 dark:divide-gray-700">
-        {hints.map((hint, i) => (
-          <div key={i} className="py-3">
+    <div className="mb-8">
+      <div className="flex items-center mb-3">
+        <div className="w-6 h-6 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center mr-2">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-yellow-600 dark:text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+          </svg>
+        </div>
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Hints</h2>
+      </div>
+
+      <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm">
+        {!hints?.length && (
+          <div className="p-5 text-gray-500 dark:text-gray-400 text-center">No hints available for this exercise.</div>
+        )}
+        {hints?.map((hint, i) => (
+          <div key={i} className="border-b last:border-b-0 border-gray-100 dark:border-gray-700">
             <button
-              onClick={() => triggerShowHint(i)}
-              className="w-full flex items-center justify-between py-2 text-left font-medium"
+              onClick={() => setShowHint(showHint === i ? null : i)}
+              className="w-full flex items-center justify-between p-4 sm:p-5 text-left font-medium"
             >
-              <span className={showHint === i ? "text-yellow-600 dark:text-yellow-400" : ""}>
-               Q { i + 1 }  
+              <span className={`text-base ${showHint === i ? "text-yellow-600 dark:text-yellow-400" : "text-gray-700 dark:text-gray-300"}`}>
+                Hint {i + 1}  
               </span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className={`h-5 w-5 transition-transform ${showHint === i ? 'rotate-180 text-yellow-600 dark:text-yellow-400' : ''}`}
+                className={`h-5 w-5 transition-transform ${showHint === i ? 'rotate-180 text-yellow-600 dark:text-yellow-400' : 'text-gray-500 dark:text-gray-400'}`}
                 fill="none" viewBox="0 0 24 24" stroke="currentColor"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -48,18 +54,17 @@ const HintsSection = ({ hints }: HintsSectionProps) => {
             </button>
 
             {showHint === i && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                transition={{ duration: 0.3 }}
-                className="mt-2 pl-4 border-l-2 border-yellow-200 dark:border-yellow-800"
+              <div
+                className="px-4 pb-5 sm:px-5"
               >
-                <MathJax>
-                  <div className="prose dark:prose-invert max-w-none">
-                    <ReactMarkdown>{hint}</ReactMarkdown>
-                  </div>
-                </MathJax>
-              </motion.div>
+                <div className="pl-4 border-l-2 border-yellow-200 dark:border-yellow-800 pt-1">
+                  <MathJax>
+                    <div className="prose dark:prose-invert prose-sm sm:prose-base max-w-none">
+                      <ReactMarkdown>{hint}</ReactMarkdown>
+                    </div>
+                  </MathJax>
+                </div>
+              </div>
             )}
           </div>
         ))}

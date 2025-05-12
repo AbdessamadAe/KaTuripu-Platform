@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import RoadmapCard from "@/components/RoadmapCard";
 import { motion } from 'framer-motion';
@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from 'next-intl';
 import { useQuery } from "@tanstack/react-query";
 import { RoadmapMeta } from "@/types/types";
+import ErrorMessage from "@/components/Error";
 
 
 async function fetchRoadmaps(): Promise<RoadmapMeta[]> {
@@ -23,16 +24,37 @@ const RoadmapsPage = () => {
     const router = useRouter();
     const t = useTranslations('roadmap');
     const [searchTerm, setSearchTerm] = useState("");
-    const [selectedRoadmap, setSelectedRoadmap] = useState<string | null>(null);
-    const categories = ["All"]
+    const [selectedCategory, setSelectedCategory] = useState("All");
 
-    const { data: roadmaps, isLoading: loading } = useQuery({
+    const { data: roadmaps, isLoading: loading, isError } = useQuery({
         queryKey: ['roadmaps'],
         queryFn: fetchRoadmaps,
         refetchOnWindowFocus: false,
-        staleTime: 24 * 60 * 60 * 1000 // 24 hours in milliseconds
+        staleTime: 1 * 60 * 60 * 1000 // 1 hour in milliseconds
     });
+
+    const categories = ["All", "SM", "PC"];
     
+    const filteredRoadmaps = useMemo(() => {
+        if (!roadmaps || !Array.isArray(roadmaps)) return [];
+        
+        return roadmaps.filter(roadmap => {
+            // Make sure we have the properties before trying to filter
+            const roadmapTitle = roadmap?.roadmap_title || "";
+            const roadmapDesc = roadmap?.roadmap_description || "";
+            const roadmapCategory = roadmap?.roadmap_category || "";
+            
+            const matchesSearch = searchTerm === "" || 
+                               roadmapTitle.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                               roadmapDesc.toLowerCase().includes(searchTerm.toLowerCase());
+            
+            const matchesCategory = selectedCategory === "All" || 
+                                roadmapCategory === selectedCategory;
+            
+            return matchesSearch && matchesCategory;
+        });
+    }, [roadmaps, searchTerm, selectedCategory]);
+
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {
@@ -58,6 +80,8 @@ const RoadmapsPage = () => {
         );
     }
 
+    if (isError && !loading) return <ErrorMessage/>;
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-white to-[#f5f3ff] dark:from-gray-900 dark:to-indigo-950/30 text-gray-800 dark:text-gray-200 py-12">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -69,6 +93,10 @@ const RoadmapsPage = () => {
                             <span className="relative">{t('Concours')}</span>
                         </span>
                     </h1>
+                    {/* Debug info */}
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                        {roadmaps ? `Found ${filteredRoadmaps.length} roadmaps` : 'No roadmaps data'}
+                    </div>
                 </div>
 
                 {/* Search and filter section */}
@@ -94,12 +122,14 @@ const RoadmapsPage = () => {
                         {categories.map((cat) => (
                             <button
                                 key={cat}
-                                className={`px-6 py-3 text-sm font-medium rounded-xl transition-all ${true
+                                onClick={() => setSelectedCategory(cat)}
+                                className={`px-6 py-3 text-sm font-medium rounded-xl transition-all ${
+                                    selectedCategory === cat
                                         ? 'bg-gradient-to-r from-[#5a8aaf] to-[#7d9bbf] text-white shadow-md'
                                         : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-md'
-                                    }`}
+                                }`}
                             >
-                                {cat === 'all' ? t('all') : cat}
+                                {cat === 'All' ? t('all') : cat}
                             </button>
                         ))}
                     </div>
@@ -111,16 +141,18 @@ const RoadmapsPage = () => {
                     <div className="absolute -z-10 top-1/3 left-1/4 w-64 h-64 bg-[#a7d1cf]/30 dark:bg-[#a7d1cf]/20 rounded-full blur-3xl opacity-40"></div>
                     <div className="absolute -z-10 bottom-1/4 right-1/5 w-72 h-72 bg-[#f0b9ae]/30 dark:bg-[#f0b9ae]/15 rounded-full blur-3xl opacity-40"></div>
 
-                    {roadmaps?.length === 0 ? (
+                    {!roadmaps || filteredRoadmaps.length === 0 ? (
                         <div className="text-center py-16 bg-white dark:bg-gray-800/90 rounded-2xl shadow-md border border-[#e9e3ff]/60 dark:border-gray-700/50">
                             <div className="w-24 h-24 mx-auto mb-6 bg-[#f5f3ff] dark:bg-gray-700 rounded-full flex items-center justify-center">
                                 <svg className="w-12 h-12 text-[#5a8aaf] dark:text-[#7d9bbf]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 14h.01M12 21a9 9 0 110-18 9 9 0 010 18z" />
                                 </svg>
                             </div>
-                            <p className="text-gray-600 dark:text-gray-400 mb-4 text-lg">{t('noRoadmapsFound')}</p>
+                            <p className="text-gray-600 dark:text-gray-400 mb-4 text-lg">
+                                {!roadmaps ? 'No roadmaps available.' : t('noRoadmapsFound')}
+                            </p>
                             <button
-                                onClick={() => { setSearchTerm(''); }}
+                                onClick={() => { setSearchTerm(''); setSelectedCategory('All'); }}
                                 className="px-6 py-2.5 bg-[#f5f3ff] dark:bg-[#5a8aaf]/20 text-[#5a8aaf] dark:text-[#7d9bbf] rounded-lg hover:bg-[#e9e3ff] dark:hover:bg-[#5a8aaf]/30 transition-colors"
                             >
                                 {t('resetFilters')}
@@ -132,8 +164,9 @@ const RoadmapsPage = () => {
                             variants={containerVariants}
                             initial="hidden"
                             animate="visible"
+                            key={selectedCategory} // Re-animate when category changes
                         >
-                            {roadmaps?.map((roadmap) => (
+                            {filteredRoadmaps.map((roadmap) => (
                                 <motion.div key={roadmap?.roadmap_id} variants={itemVariants}>
                                     <div
                                         onClick={() => handleRoadmapClick(roadmap)}

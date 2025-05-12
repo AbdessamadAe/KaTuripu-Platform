@@ -15,6 +15,7 @@ import Loader from "./Loader";
 import RoadmapNode from "./RoadmapNode";
 import { Roadmap } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
+import ErrorMessage from "./Error";
 
 interface RoadmapProps {
   roadmapId: string | undefined;
@@ -39,16 +40,17 @@ async function fetchRoadmap(roadmapId: string): Promise<Roadmap> {
 const RoadmapCanvas: React.FC<RoadmapProps> = ({ roadmapId }) => {
   const [selectedNode, setSelectedNode] = useState<any>(null);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["roadmap", roadmapId],
     queryFn: () => fetchRoadmap(roadmapId as string),
     refetchOnWindowFocus: false,
-    staleTime: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+    staleTime: 1 * 60 * 60 * 1000, // 1 hour in milliseconds
   });
 
   const nodes = data?.nodes || [];
   const edges = data?.edges || [];
-  
+
+  if (isError) return <ErrorMessage />;
 
   return (
     isLoading ? <Loader /> : (
@@ -78,19 +80,22 @@ const RoadmapCanvas: React.FC<RoadmapProps> = ({ roadmapId }) => {
             </ReactFlow>
           </div>
 
-          {selectedNode && (
-            <div className="absolute top-0 right-0 h-full z-10">
+          <div 
+            className={`absolute top-0 right-0 h-full z-10 transform transition-transform duration-300 ease-in-out ${selectedNode ? 'translate-x-0' : 'translate-x-full'}`}
+          >
+            {selectedNode && (
               <ExerciseSidebar
                 title={selectedNode.data.label}
                 nodeId={selectedNode.id}
                 roadmapId={roadmapId}
+                roadmapTitle={data?.title}
                 onClose={() => setSelectedNode(null)}
                 prerequisites={[selectedNode.data.description || "No description available"]}
                 allowClose={true}
                 // onProblemToggle={handleProblemToggle}
               />
-            </div>
-          )}
+            )}
+          </div>
         </div>
     )
   );
