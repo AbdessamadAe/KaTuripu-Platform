@@ -20,10 +20,8 @@ const QuestionSection = ({ question, imageUrl }: QuestionSectionProps) => {
   return (
     <div className="mb-8">
       <div className="flex items-center mb-3">
-        <div className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mr-2">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-purple-600 dark:text-purple-400" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-          </svg>
+        <div className="w-6 h-6 rounded-full bg-[#69c0cf] dark:bg-[#69c0cf]/30 flex items-center justify-center mr-2 text-white">
+          ?
         </div>
         <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Question</h2>
       </div>

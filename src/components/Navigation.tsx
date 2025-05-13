@@ -5,7 +5,6 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl';
 import Link from 'next/link'
-import { handleSignOut } from '@/app/actions';
 import { useRouter } from 'next/navigation';
 import { Switch } from './Switch';
 import { useUser } from '@clerk/nextjs';

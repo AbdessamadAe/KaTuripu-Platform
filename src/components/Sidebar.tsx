@@ -43,13 +43,14 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
     refetchOnWindowFocus: false
   });
 
-  
+
   const exercises = exerciseList || [];
-  
+
   if (errorExerciseList) return <div>Error loading exercises</div>;
 
   const completedExercises = exercises?.filter(ex => ex.completed).length;
   const totalExercises = exercises.length;
+  const progress = Math.round((completedExercises / totalExercises) * 100);
 
   return (
     <div className="bg-white dark:bg-gray-900 h-full w-94 md:w-100 overflow-y-auto flex flex-col shadow-sm">
@@ -88,11 +89,14 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
         </div>
 
         {/* Progress bar */}
-        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-4">
-          <div 
-            className="bg-purple-600 h-2 rounded-full" 
-            style={{ width: `${totalExercises ? (completedExercises / totalExercises * 100) : 0}%` }}
-          ></div>
+        <div className="w-full bg-gray-200 overflow-hidden dark:bg-gray-700 rounded-full h-2 mb-4">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.8, ease: "easeInOut" }}
+              className={`h-full ${progress === 100 ? "bg-green-300" : "bg-blue-300"
+                }`}
+            />
         </div>
 
         {loadingExerciseList ? (
@@ -104,15 +108,15 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
             {exercises.map((exercise) => (
               <div
                 key={exercise.id}
-                className={`relative bg-white dark:bg-gray-800 rounded-lg overflow-hidden border ${exercise.completed 
-                  ? "border-l-4 border-green-500 dark:border-green-600 shadow-sm" 
+                className={`relative bg-white dark:bg-gray-800 rounded-lg overflow-hidden border ${exercise.completed
+                  ? "border-l-4 border-green-500 dark:border-green-600 shadow-sm"
                   : "border-gray-200 dark:border-gray-700"}`}
               >
                 <div className="p-3 flex justify-between items-center relative z-10">
                   <div className="flex items-center w-full">
                     <div className={`mr-2.5 flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full 
-                      ${exercise.completed 
-                        ? "bg-green-100 dark:bg-green-900/30 text-green-500 dark:text-green-400" 
+                      ${exercise.completed
+                        ? "bg-green-100 dark:bg-green-900/30 text-green-500 dark:text-green-400"
                         : "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-500 dark:text-indigo-400"}`}>
                       {exercise.completed ? (
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -129,7 +133,7 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
                         </svg>
                       )}
                     </div>
-                    
+
                     <div className="flex-grow min-w-0">
                       <Link href={{
                         pathname: `/exercise`,
@@ -146,12 +150,12 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
                         {"20 min"}
                       </div>
                     </div>
-                    
+
                     <div className="flex-shrink-0 ml-2">
                       <span className={`px-2 py-0.5 rounded-full text-xs ${getDifficultyStyle(exercise?.difficulty, true)}`}>
                         {exercise.difficulty === "easy" ? "Facile" :
                           exercise.difficulty === "medium" ? "Moyen" :
-                          exercise.difficulty === "hard" ? "Difficile" : exercise.difficulty}
+                            exercise.difficulty === "hard" ? "Difficile" : exercise.difficulty}
                       </span>
                     </div>
                   </div>

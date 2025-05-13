@@ -11,6 +11,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import QueryProvider from "@/providers/QueryProvider";
 import { ClerkProvider } from "@clerk/nextjs";
 import { neobrutalism, shadesOfPurple } from '@clerk/themes';
+import GoogleOneTapWrapper from "@/components/GoogleOneTap";
 
 export const metadata: Metadata = {
   title: "KaTuripu",
@@ -47,6 +48,7 @@ export default async function RootLayout({
                   <Nav />
                   <div dir={locale == "ar" ? "rtl" : "ltr"} className={`${locale == "ar" ? 'font-amiri' : ''}`}>
                     {children}
+                    <GoogleOneTapWrapper />
                   </div>
                   <ToastProvider />
                 </MathJaxProvider>

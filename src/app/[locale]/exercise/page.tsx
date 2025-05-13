@@ -159,7 +159,7 @@ const ExercisePage = () => {
                 <button
                   onClick={() => setActiveTab('question')}
                   className={`py-3 px-4 relative font-medium flex items-center mr-4 mb-2 sm:mb-0 ${activeTab === 'question'
-                    ? 'text-purple-600 dark:text-purple-400 border-b-2 border-purple-600'
+                    ? 'text-[#69c0cf] dark:text-purple-200 border-b-2 border-[#69c0cf]'
                     : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                     }`}
                 >
