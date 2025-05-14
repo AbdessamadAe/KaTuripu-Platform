@@ -1,24 +1,13 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import Link from "next/link";
+import { useState, useMemo } from "react";
 import RoadmapCard from "@/components/RoadmapCard";
 import { motion } from 'framer-motion';
 import { useRouter } from "next/navigation";
 import { useTranslations } from 'next-intl';
-import { useQuery } from "@tanstack/react-query";
 import { RoadmapMeta } from "@/types/types";
 import ErrorMessage from "@/components/Error";
-
-
-async function fetchRoadmaps(): Promise<RoadmapMeta[]> {
-    const res = await fetch('/api/roadmap');
-    if (!res.ok) {
-        throw new Error('Failed to fetch roadmaps');
-    }
-    const data = await res.json();
-    return data.roadmaps;
-}
+import { useRoadmaps } from "@/hooks/useRoadmap";
 
 const RoadmapsPage = () => {
     const router = useRouter();
@@ -26,12 +15,7 @@ const RoadmapsPage = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("All");
 
-    const { data: roadmaps, isLoading: loading, isError } = useQuery({
-        queryKey: ['roadmaps'],
-        queryFn: fetchRoadmaps,
-        refetchOnWindowFocus: false,
-        staleTime: 1 * 60 * 60 * 1000 // 1 hour in milliseconds
-    });
+    const { data: roadmaps, isLoading: loading, isError } = useRoadmaps();
 
     const categories = ["All", "SM", "PC"];
     

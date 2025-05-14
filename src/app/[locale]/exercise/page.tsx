@@ -10,87 +10,20 @@ import SolutionSection from '@/app/[locale]/exercise/SolutionSection';
 import ExerciseSidebar from '@/components/Sidebar';
 import VideoSection from '@/app/[locale]/exercise/videoSection';
 import Breadcrumb from '@/components/Breadcrumb';
-import { formatYouTubeUrl, showAchievement } from '@/utils/utils';
-import Logger from '@/utils/logger';
-import { InvalidateQueryFilters, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Exercise } from '@prisma/client';
 import ErrorMessage from '@/components/Error';
-
-async function fetchExercise(exerciseId: string): Promise<Exercise> {
-  const res = await fetch(`/api/exercise/${exerciseId}`);
-  return res.json();
-}
-
-
-async function completeExerciseMutation(exerciseId: string) {
-  const res = await fetch(`/api/user-progress/complete-exercise`,
-    {
-      method: "POST",
-      body: JSON.stringify({ exerciseId: exerciseId })
-    }
-  );
-};
-
+import { useExercise, useCompleteExercise } from '@/hooks/useExercise';
 
 const ExercisePage = () => {
   const searchParams = useSearchParams();
-  const exerciseId = searchParams.get('exerciseId') || '1';
+  const exerciseId = searchParams.get('exerciseId');
   const nodeId = searchParams.get('nodeId') || '';
   const nodeTitle = searchParams.get('nodeTitle') || '';
   const roadmapId = searchParams.get('roadmapId') || '';
   const roadmapTitle = searchParams.get('roadmapTitle') || '';
   const t = useTranslations('exercise');
-  const queryClient = useQueryClient();
 
-  const {
-    data: exercise,
-    isLoading,
-    isError,
-    error
-  } = useQuery({
-    queryKey: ['exercise', exerciseId],
-    queryFn: () => fetchExercise(exerciseId),
-    staleTime: 60 * 60 * 1000, // 1 hour
-    retry: 2,
-    retryDelay: 1000,
-  });
-
-
-  const { mutate: completeExerciseMutate } = useMutation({
-    mutationFn: completeExerciseMutation,
-    onMutate: async (exerciseId) => {
-      // Cancel any outgoing refetches to avoid overwriting optimistic update
-      await queryClient.cancelQueries({ queryKey: ['exercise', exerciseId] });
-
-      // Snapshot the previous value
-      const previousExercise = queryClient.getQueryData(['exercise', exerciseId]);
-
-      // Optimistically update to the new value
-      queryClient.setQueryData(['exercise', exerciseId], (old: any) => ({
-        ...old,
-        completed: true
-      }));
-
-      // Return a context object with the snapshotted value
-      return { previousExercise };
-    },
-    onSuccess: () => {
-      showAchievement("Well Done!", "Exercise Completed");
-      // Invalidate related queries
-      queryClient.invalidateQueries(['exercises', nodeId] as InvalidateQueryFilters<readonly unknown[]>);
-    },
-    onError: (error, exerciseId, context) => {
-      Logger.error('Error completing exercise:', error);
-      // Rollback to previous state on error
-      if (context?.previousExercise) {
-        queryClient.setQueryData(['exercise', exerciseId], context.previousExercise);
-      }
-    },
-    onSettled: () => {
-      // Always refetch after error or success
-      queryClient.invalidateQueries(['exercise', exerciseId] as InvalidateQueryFilters<readonly unknown[]>);
-    },
-  });
+  const { data: exercise, isLoading, isError } = useExercise(exerciseId);
+  const { mutate: completeExerciseMutate } = useCompleteExercise();
 
   // State management
   const [sidebarVisible, setSidebarVisible] = useState(false);
@@ -164,7 +97,7 @@ const ExercisePage = () => {
                     }`}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1.5 sm:mr-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
                   </svg>
                   <span className="whitespace-nowrap">Problem</span>
                 </button>
@@ -236,7 +169,7 @@ const ExercisePage = () => {
               {activeTab === 'solution' && (
                 <SolutionSection
                   solution={exercise?.solution}
-                  exerciseId={exerciseId}
+                  exerciseId={exerciseId as string}
                   completed={exercise?.completed}
                   completeExerciseMutate={completeExerciseMutate}
                 />

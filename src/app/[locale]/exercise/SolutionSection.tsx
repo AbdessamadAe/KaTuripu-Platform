@@ -12,20 +12,19 @@ interface SolutionSectionProps {
   solution?: string;
   exerciseId: string;
   completed?: boolean;
-  completeExerciseMutate?: UseMutateFunction<void, Error, string, unknown>;
-  isCompleting?: boolean; // Add loading state from parent
+  completeExerciseMutate: UseMutateFunction<any, Error, string, unknown>;
 }
 
 const SolutionSection = ({ 
   solution, 
   exerciseId, 
   completed, 
-  completeExerciseMutate,
-  isCompleting = false 
+  completeExerciseMutate
 }: SolutionSectionProps) => {
   const t = useTranslations('exercise');
   const [showSolution, setShowSolution] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
 
   const triggerSolution = async () => {
     if (isAnimating) return;
@@ -35,12 +34,14 @@ const SolutionSection = ({
     
     try {
       // Only trigger completion if showing solution for the first time
-      if (!showSolution && !completed && completeExerciseMutate) {
+      if (!showSolution && !completed) {
+        setIsCompleting(true);
         await completeExerciseMutate(exerciseId);
       }
     } catch (error) {
       Logger.error('Error completing exercise:', error);
     } finally {
+      setIsCompleting(false);
       // Small delay to prevent rapid toggling during animation
       setTimeout(() => setIsAnimating(false), 300);
     }
@@ -78,7 +79,7 @@ const SolutionSection = ({
           </svg>
           {showSolution ? t('hideSolution') : t('showSolution')}
           {isCompleting && (
-            <span className="ml-2 text-sm">{t('saving')}...</span>
+            <span className="ml-2 text-sm">saving...</span>
           )}
         </span>
         <div className="flex items-center">

@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "prisma generate",
     "seed": "node prisma/seed.js",
-    "dev": "npx prisma generate && next dev",
+    "dev": "docker start katuripu_db && npx prisma generate && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

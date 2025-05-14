@@ -14,7 +14,7 @@ import { celebrateProgress } from "@/utils/utils";
 import Loader from "./Loader";
 import RoadmapNode from "./RoadmapNode";
 import { Roadmap } from "@/types/types";
-import { useQuery } from "@tanstack/react-query";
+import { useRoadmap } from "@/hooks/useRoadmap";
 import ErrorMessage from "./Error";
 
 interface RoadmapProps {
@@ -27,25 +27,10 @@ const nodeTypes = {
   progressNode: RoadmapNode,
 } as NodeTypes;
 
-async function fetchRoadmap(roadmapId: string): Promise<Roadmap> {
-  const res = await fetch(`/api/roadmap/${roadmapId}`);
-  if (!res.ok) {
-    throw new Error(`Error fetching roadmap: ${res.statusText}`);
-  }
-  const data = await res.json();
-  return data.roadmap;
-}
-
-
 const RoadmapCanvas: React.FC<RoadmapProps> = ({ roadmapId }) => {
   const [selectedNode, setSelectedNode] = useState<any>(null);
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["roadmap", roadmapId],
-    queryFn: () => fetchRoadmap(roadmapId as string),
-    refetchOnWindowFocus: false,
-    staleTime: 1 * 60 * 60 * 1000, // 1 hour in milliseconds
-  });
+  const { data, isLoading, isError } = useRoadmap(roadmapId);
 
   const nodes = data?.nodes || [];
   const edges = data?.edges || [];
@@ -58,12 +43,11 @@ const RoadmapCanvas: React.FC<RoadmapProps> = ({ roadmapId }) => {
           <div style={{ width: "100%", height: "100%" }}>
             <ReactFlow
               nodes={nodes}
-              nodeTypes={nodeTypes}
               onNodeClick={(event, node) => {
                 setSelectedNode(node);
               }}
               edges={edges}
-              nodesDraggable={false}
+              nodeTypes={nodeTypes}
               fitView
               attributionPosition="top-right"
               className="dark:bg-gray-900"
@@ -92,7 +76,6 @@ const RoadmapCanvas: React.FC<RoadmapProps> = ({ roadmapId }) => {
                 onClose={() => setSelectedNode(null)}
                 prerequisites={[selectedNode.data.description || "No description available"]}
                 allowClose={true}
-                // onProblemToggle={handleProblemToggle}
               />
             )}
           </div>
