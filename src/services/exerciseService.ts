@@ -1,7 +1,9 @@
 import prisma from '@/lib/prisma';
 import { auth } from '@clerk/nextjs/server'
+import { Prisma } from '@prisma/client';
 import type { Exercise } from '@/types/types';
 import Logger from "@/utils/logger";
+import crypto from 'crypto';
 
 export const getExerciseById = async (exerciseId: string) => {
   try {
@@ -112,5 +114,74 @@ export const completeExercise = async (exerciseId: string) => {
       success: false, 
       error: 'Failed to complete exercise' 
     };
+  }
+}
+
+export const createExercise = async (exerciseData: {
+  id?: string;
+  name: string;
+  difficulty: string;
+  hints: string[];
+  solution?: string;
+  videoUrl?: string;
+  description?: string;
+  questionImageUrl?: string;
+  type?: string;
+  isActive?: boolean;
+  nodeId?: string;
+  orderIndex?: number;
+}) => {
+  try {
+    const { userId } = await auth();
+    
+    if (!userId) {
+      return { success: false, error: 'Unauthorized' };
+    }
+    
+    // Start a transaction to ensure both operations complete together
+    const result = await prisma.$transaction(async (tx) => {
+      // Generate a UUID if not provided
+      const id = exerciseData.id || crypto.randomUUID();
+      
+      // Extract node-related data
+      const { nodeId, orderIndex, ...exerciseFields } = exerciseData;
+      
+      // Create the exercise
+      const exercise = await tx.exercise.create({
+        data: {
+          id,
+          ...exerciseFields,
+          isActive: exerciseData.isActive ?? true
+        }
+      });
+      
+      // If nodeId is provided, create the relationship with the node
+      if (nodeId) {
+        await tx.nodeExercise.create({
+          data: {
+            nodeId,
+            exerciseId: exercise.id,
+            orderIndex: orderIndex || 0
+          }
+        });
+      }
+      
+      return exercise;
+    });
+    
+    return { success: true, exercise: result };
+  } catch (error) {
+    Logger.error('Failed to create exercise', error);
+    
+    // Handle specific Prisma errors
+    if (error.code === 'P2002') {
+      return { success: false, error: 'Exercise with this ID already exists' };
+    }
+    
+    if (error.code === 'P2003') {
+      return { success: false, error: 'Referenced node does not exist' };
+    }
+    
+    return { success: false, error: 'Failed to create exercise' };
   }
 }

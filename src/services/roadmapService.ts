@@ -2,6 +2,52 @@ import prisma from '@/lib/prisma';
 import { auth } from '@clerk/nextjs/server'
 import Logger from '@/utils/logger';
 
+export async function createRoadmap(roadmapData: {
+  title: string;
+  description?: string;
+  category?: string;
+  imageUrl?: string;
+}) {
+  try {
+    const { userId } = await auth();
+    
+    if (!userId) {
+      return { success: false, error: 'Unauthorized' };
+    }
+    
+    // // Check if user has admin role
+    // const user = await prisma.user.findUnique({
+    //   where: { id: userId },
+    //   select: { role: true }
+    // });
+    
+    // if (!user || user.role !== 'admin') {
+    //   return { success: false, error: 'Unauthorized: Admin role required' };
+    // }
+
+    // Create the roadmap
+    const roadmap = await prisma.roadmap.create({
+      data: {
+        title: roadmapData.title,
+        description: roadmapData.description,
+        category: roadmapData.category,
+        imageUrl: roadmapData.imageUrl
+      }
+    });
+
+    return { success: true, roadmap };
+  } catch (error) {
+    Logger.error('Failed to create roadmap', error);
+    
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        return { success: false, error: 'A roadmap with these details already exists' };
+      }
+    }
+    
+    return { success: false, error: 'Failed to create roadmap' };
+  }
+}
 
 export async function getRoadmaps() {
   try {
@@ -78,6 +124,60 @@ export async function getRoadmaps() {
   } catch (error) {
     Logger.error('Error fetching roadmaps', error, 'FETCH_ROADMAPS_ERROR', 'getRoadmaps', userId);
     return { success: false, error: 'Failed to fetch roadmaps' };
+  }
+}
+
+export async function updateRoadmap(
+  roadmapId: string,
+  roadmapData: {
+    title?: string;
+    description?: string;
+    category?: string;
+    imageUrl?: string;
+  }
+) {
+  try {
+    const { userId } = await auth();
+    
+    if (!userId) {
+      return { success: false, error: 'Unauthorized' };
+    }
+    
+    // Check if user has admin role
+    // const user = await prisma.user.findUnique({
+    //   where: { id: userId },
+    //   select: { role: true }
+    // });
+    
+    // if (!user || user.role !== 'admin') {
+    //   return { success: false, error: 'Unauthorized: Admin role required' };
+    // }
+    
+    // Check if roadmap exists
+    const existingRoadmap = await prisma.roadmap.findUnique({
+      where: { id: roadmapId },
+      select: { id: true }
+    });
+    
+    if (!existingRoadmap) {
+      return { success: false, error: 'Roadmap not found' };
+    }
+
+    // Update the roadmap
+    const roadmap = await prisma.roadmap.update({
+      where: { id: roadmapId },
+      data: {
+        title: roadmapData.title,
+        description: roadmapData.description,
+        category: roadmapData.category,
+        imageUrl: roadmapData.imageUrl
+      }
+    });
+
+    return { success: true, roadmap };
+  } catch (error) {
+    Logger.error('Failed to update roadmap', error);
+    return { success: false, error: 'Failed to update roadmap' };
   }
 }
 
@@ -180,5 +280,56 @@ export async function getFullRoadmapWithProgress(roadmapId: string) {
   } catch (error) {
     Logger.error('Failed to fetch roadmap', error);
     return { success: false, error: 'Failed to fetch roadmap' };
+  }
+}
+
+export async function deleteRoadmap(roadmapId: string) {
+  try {
+    const { userId } = await auth();
+    
+    if (!userId) {
+      return { success: false, error: 'Unauthorized' };
+    }
+    
+    // Check if user has admin role
+    // const user = await prisma.user.findUnique({
+    //   where: { id: userId },
+    //   select: { role: true }
+    // });
+    
+    // if (!user || user.role !== 'admin') {
+    //   return { success: false, error: 'Unauthorized: Admin role required' };
+    // }
+    
+    // Check if roadmap exists
+    const existingRoadmap = await prisma.roadmap.findUnique({
+      where: { id: roadmapId },
+      select: { id: true }
+    });
+    
+    if (!existingRoadmap) {
+      return { success: false, error: 'Roadmap not found' };
+    }
+
+    // Delete the roadmap (will cascade delete nodes and edges)
+    await prisma.roadmap.delete({
+      where: { id: roadmapId }
+    });
+
+    return { success: true };
+  } catch (error) {
+    Logger.error('Failed to delete roadmap', error);
+    
+    // Handle case where there might be referenced data
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2003') {
+        return { 
+          success: false, 
+          error: 'Cannot delete roadmap: It has associated data that cannot be removed' 
+        };
+      }
+    }
+    
+    return { success: false, error: 'Failed to delete roadmap' };
   }
 }
