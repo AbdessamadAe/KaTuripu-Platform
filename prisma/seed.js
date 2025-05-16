@@ -20,10 +20,10 @@ async function main() {
 
     // Seed Users
     const users = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 1; i++) {
       const user = await prisma.user.create({
         data: {
-          id: `user_${faker.string.uuid()}`,
+          id: `user_2wtpRa9c3zkxE2q2CBeLhwUVkz2`,
           email: faker.internet.email(),
           name: faker.person.fullName(),
           image: faker.image.avatar(),
@@ -49,9 +49,9 @@ async function main() {
           difficulty: faker.helpers.arrayElement(difficulties),
           hints: [faker.lorem.paragraph(), faker.lorem.paragraph()], // Array of strings
           solution: faker.lorem.paragraph(),
-          videoUrl: faker.internet.url(),
+          videoUrl: "https://www.youtube.com/watch?v=9XzosPEdnWA&t=1s",
           description: faker.lorem.paragraphs(3),
-          questionImageUrl: faker.image.urlLoremFlickr({ category: 'abstract' }),
+          questionImageUrl: "https://wmyedjqjxixlmdlgnjzy.supabase.co/storage/v1/object/public/exercises/question_images/medicine-e1-2023.png",
           type: faker.helpers.arrayElement(exerciseTypes),
           isActive: faker.datatype.boolean(0.9) // 90% chance of being active
         }
@@ -61,10 +61,10 @@ async function main() {
     console.log(`🏋️ Created ${exercises.length} exercises`);
 
     // Seed Roadmaps
-    const roadmapCategories = ['DEVELOPMENT', 'DESIGN', 'BUSINESS', 'LANGUAGES'];
+    const roadmapCategories = ['PC', 'SM'];
 
     const roadmaps = [];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 2; i++) {
       const roadmap = await prisma.roadmap.create({
         data: {
           id: faker.string.uuid(),
@@ -79,45 +79,65 @@ async function main() {
     }
     console.log(`🗺️ Created ${roadmaps.length} roadmaps`);
 
-    // Seed Nodes for each Roadmap
+    // Seed Nodes for each Roadmap in a binary tree structure
     const nodes = [];
+    const edges = [];
+    
     for (const roadmap of roadmaps) {
-      const nodeCount = faker.number.int({ min: 5, max: 10 });
-
-      for (let i = 0; i < nodeCount; i++) {
-        const node = await prisma.roadmapNode.create({
-          data: {
-            id: faker.string.uuid(),
-            roadmapId: roadmap.id,
-            label: faker.lorem.words(2),
-            description: faker.lorem.sentence(),
-            type: "progressNode ",
-            positionX: faker.number.int({ min: 0, max: 1000 }),
-            positionY: faker.number.int({ min: 0, max: 500 })
+      const nodeCount = faker.number.int({ min: 3, max: 7 }); // Need enough nodes for binary tree
+      const roadmapNodes = [];
+      
+      // Create nodes in a way that forms a binary tree
+      const levels = Math.ceil(Math.log2(nodeCount + 1));
+      const horizontalSpacing = 110;
+      const verticalSpacing = 150;
+      
+      let nodeIndex = 0;
+      
+      for (let level = 0; level < levels; level++) {
+        const nodesInLevel = Math.min(Math.pow(2, level), nodeCount - nodeIndex);
+        const startX = (Math.pow(2, levels - level - 1) - 0.5) * horizontalSpacing;
+        
+        for (let i = 0; i < nodesInLevel; i++) {
+          const x = startX + i * Math.pow(2, levels - level) * horizontalSpacing;
+          const y = level * verticalSpacing;
+          
+          const node = await prisma.roadmapNode.create({
+            data: {
+              id: faker.string.uuid(),
+              roadmapId: roadmap.id,
+              label: faker.lorem.words(2),
+              description: faker.lorem.sentence(),
+              type: "progressNode",
+              positionX: x,
+              positionY: y
+            }
+          });
+          
+          roadmapNodes.push(node);
+          nodeIndex++;
+          
+          // If this isn't the first level, create edges to parent
+          if (level > 0) {
+            const parentIndex = Math.floor((i) / 2);
+            const parentNode = roadmapNodes[Math.pow(2, level - 1) - 1 + parentIndex];
+            
+            const edge = await prisma.roadmapEdge.create({
+              data: {
+                id: faker.string.uuid(),
+                roadmapId: roadmap.id,
+                sourceNodeId: parentNode.id,
+                targetNodeId: node.id
+              }
+            });
+            edges.push(edge);
           }
-        });
-        nodes.push(node);
+        }
       }
+      
+      nodes.push(...roadmapNodes);
     }
     console.log(`🧠 Created ${nodes.length} nodes`);
-
-    // Create Edges between Nodes (simplified linear progression)
-    const edges = [];
-    for (const roadmap of roadmaps) {
-      const roadmapNodes = nodes.filter(n => n.roadmapId === roadmap.id);
-
-      for (let i = 0; i < roadmapNodes.length - 1; i++) {
-        const edge = await prisma.roadmapEdge.create({
-          data: {
-            id: faker.string.uuid(),
-            roadmapId: roadmap.id,
-            sourceNodeId: roadmapNodes[i].id,
-            targetNodeId: roadmapNodes[i + 1].id
-          }
-        });
-        edges.push(edge);
-      }
-    }
     console.log(`🔗 Created ${edges.length} edges`);
 
     // Assign Exercises to Nodes

@@ -60,7 +60,6 @@ const RoadmapTable: React.FC<RoadmapTableProps> = ({
                   </div>
                   <div className="ml-4">
                     <div className="text-sm font-medium text-gray-900 dark:text-white">{roadmap.title}</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">{roadmap.description}</div>
                   </div>
                 </div>
               </td>

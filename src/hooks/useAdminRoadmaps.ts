@@ -26,49 +26,36 @@ export interface AdminRoadmapDetails {
   edges: ReactFlowEdge[];
 }
 
-// Mock fetch functions - these would be replaced with actual API calls in production
+// Fetch roadmaps from API
 async function fetchAdminRoadmaps(): Promise<AdminRoadmapMeta[]> {
-  // In a real app, this would be an API call to /api/admin/roadmaps
-  // For now, return mock data
-  return [
-    {
-      id: "1",
-      title: "Mathematics Fundamentals",
-      description: "Core mathematics concepts for beginners",
-      category: "Mathematics",
-      imageUrl: "/images/Math.svg",
-      createdAt: "2025-04-15T10:30:00Z",
-      nodesCount: 8,
-      exercisesCount: 24
-    },
-    {
-      id: "2",
-      title: "Physics Essentials",
-      description: "Basic physics principles and applications",
-      category: "Physics",
-      imageUrl: "/images/problem-solving.svg",
-      createdAt: "2025-04-10T14:20:00Z",
-      nodesCount: 6,
-      exercisesCount: 18
-    },
-    {
-      id: "3",
-      title: "Chemistry Basics",
-      description: "Introduction to chemistry concepts",
-      category: "Chemistry",
-      imageUrl: "/images/Meteor.svg",
-      createdAt: "2025-04-05T09:15:00Z",
-      nodesCount: 5,
-      exercisesCount: 15
-    }
-  ];
+  const response = await fetch('/api/roadmap');
+  
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Failed to fetch roadmaps');
+  }
+  
+  const data = await response.json();
+  
+  if (!data.success) {
+    throw new Error(data.error || 'Failed to fetch roadmaps');
+  }
+  
+  // Transform the response to match AdminRoadmapMeta structure
+  return data.roadmaps.map((item: any) => ({
+    id: item.roadmap_id,
+    title: item.roadmap_title,
+    description: item.roadmap_description || '',
+    category: item.roadmap_category || '',
+    imageUrl: item.roadmap_image_url || '',
+    createdAt: item.roadmap_created_at,
+    nodesCount: item.nodes?.length || 0,
+    exercisesCount: item.total_exercises || 0
+  }));
 }
 
 async function fetchAdminRoadmap(roadmapId: string): Promise<AdminRoadmapDetails> {
-  // In a real app, this would be an API call to /api/admin/roadmaps/{roadmapId}
-  // For now, return mock data based on ID
-  
-  // New roadmap template
+  // Handle new roadmap template
   if (roadmapId === "new") {
     return {
       id: nanoid(),
@@ -88,142 +75,294 @@ async function fetchAdminRoadmap(roadmapId: string): Promise<AdminRoadmapDetails
     };
   }
 
-  if (roadmapId === "1") {
-    return {
-      id: "1",
-      title: "Mathematics Fundamentals",
-      description: "Core mathematics concepts for beginners",
-      category: "Mathematics",
-      imageUrl: "/images/Math.svg",
-      slug: "mathematics-fundamentals",
-      nodes: [
-        {
-          id: "1-1",
-          type: "progressNode",
-          data: { label: "Basic Arithmetic", description: "Addition, subtraction, multiplication, division", progress: 0, total_exercises: 4 },
-          position: { x: 250, y: 100 }
-        },
-        {
-          id: "1-2",
-          type: "progressNode",
-          data: { label: "Pre-Algebra", description: "Variables, expressions, and equations", progress: 0, total_exercises: 6 },
-          position: { x: 100, y: 250 }
-        },
-        {
-          id: "1-3",
-          type: "progressNode",
-          data: { label: "Geometry", description: "Shapes, angles, and spatial relationships", progress: 0, total_exercises: 5 },
-          position: { x: 400, y: 250 }
-        },
-        {
-          id: "1-4",
-          type: "progressNode",
-          data: { label: "Algebra", description: "Solving equations and systems", progress: 0, total_exercises: 8 },
-          position: { x: 250, y: 400 }
-        }
-      ],
-      edges: [
-        { id: "e1-1-2", source: "1-1", target: "1-2" },
-        { id: "e1-1-3", source: "1-1", target: "1-3" },
-        { id: "e1-2-4", source: "1-2", target: "1-4" },
-        { id: "e1-3-4", source: "1-3", target: "1-4" }
-      ]
-    };
-  } else if (roadmapId === "2") {
-    return {
-      id: "2",
-      title: "Physics Essentials",
-      description: "Basic physics principles and applications",
-      category: "Physics",
-      imageUrl: "/images/problem-solving.svg",
-      slug: "physics-essentials",
-      nodes: [
-        {
-          id: "2-1",
-          type: "progressNode",
-          data: { label: "Mechanics", description: "Newton's laws, forces, and motion", progress: 0, total_exercises: 6 },
-          position: { x: 250, y: 100 }
-        },
-        {
-          id: "2-2",
-          type: "progressNode",
-          data: { label: "Thermodynamics", description: "Heat, energy, and laws of thermodynamics", progress: 0, total_exercises: 4 },
-          position: { x: 100, y: 300 }
-        },
-        {
-          id: "2-3",
-          type: "progressNode",
-          data: { label: "Waves & Optics", description: "Sound, light, and wave behavior", progress: 0, total_exercises: 5 },
-          position: { x: 400, y: 300 }
-        }
-      ],
-      edges: [
-        { id: "e2-1-2", source: "2-1", target: "2-2" },
-        { id: "e2-1-3", source: "2-1", target: "2-3" }
-      ]
-    };
-  } else if (roadmapId === "3") {
-    return {
-      id: "3",
-      title: "Chemistry Basics",
-      description: "Introduction to chemistry concepts",
-      category: "Chemistry",
-      imageUrl: "/images/Meteor.svg",
-      slug: "chemistry-basics",
-      nodes: [
-        {
-          id: "3-1",
-          type: "progressNode",
-          data: { label: "Atoms and Elements", description: "Atomic structure and periodic table", progress: 0, total_exercises: 5 },
-          position: { x: 250, y: 100 }
-        },
-        {
-          id: "3-2",
-          type: "progressNode", 
-          data: { label: "Chemical Bonding", description: "How atoms form molecules", progress: 0, total_exercises: 4 },
-          position: { x: 250, y: 250 }
-        },
-        {
-          id: "3-3",
-          type: "progressNode",
-          data: { label: "Chemical Reactions", description: "Balancing equations and reaction types", progress: 0, total_exercises: 6 },
-          position: { x: 250, y: 400 }
-        }
-      ],
-      edges: [
-        { id: "e3-1-2", source: "3-1", target: "3-2" },
-        { id: "e3-2-3", source: "3-2", target: "3-3" }
-      ]
-    };
-  } else {
-    throw new Error(`Roadmap with ID ${roadmapId} not found`);
+  // Fetch roadmap data from API
+  const response = await fetch(`/api/roadmap/${roadmapId}`);
+  
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || `Failed to fetch roadmap with ID ${roadmapId}`);
   }
+  
+  const data = await response.json();
+  
+  if (!data.success) {
+    throw new Error(data.error || `Failed to fetch roadmap with ID ${roadmapId}`);
+  }
+  
+  // Transform the response to match AdminRoadmapDetails structure
+  return {
+    id: data.roadmap.id,
+    title: data.roadmap.title,
+    description: data.roadmap.description || '',
+    category: data.roadmap.category || '',
+    imageUrl: data.roadmap.image_url || '',
+    slug: data.roadmap.slug,
+    nodes: data.roadmap.nodes || [],
+    edges: data.roadmap.edges || []
+  };
 }
 
-// Mock API functions for creating/updating roadmaps
+// API functions for creating/updating roadmaps
 async function createRoadmap(data: AdminRoadmapDetails): Promise<AdminRoadmapDetails> {
-  // In a real app, this would be a POST request to /api/admin/roadmaps
-  console.log('Creating roadmap:', data);
+  const response = await fetch('/api/roadmap', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      title: data.title,
+      description: data.description,
+      category: data.category,
+      imageUrl: data.imageUrl
+    }),
+  });
   
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Failed to create roadmap');
+  }
   
-  // Return the data with a new ID
+  const result = await response.json();
+  
+  if (!result.success) {
+    throw new Error(result.error || 'Failed to create roadmap');
+  }
+  
+  // Once the roadmap is created, create nodes and edges in separate calls
+  const roadmapId = result.roadmap.id;
+  
+  // Create each node for the roadmap
+  const nodePromises = data.nodes.map(async (node) => {
+    const nodeResponse = await fetch('/api/node', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        roadmapId: roadmapId,
+        label: node.data.label,
+        description: node.data.description,
+        type: node.type,
+        positionX: node.position.x,
+        positionY: node.position.y
+      }),
+    });
+    
+    if (!nodeResponse.ok) {
+      throw new Error('Failed to create node');
+    }
+    
+    return (await nodeResponse.json()).node;
+  });
+  
+  const createdNodes = await Promise.all(nodePromises);
+  
+  // Return the roadmap with newly created nodes
   return {
-    ...data,
-    id: nanoid()
+    ...result.roadmap,
+    nodes: createdNodes,
+    edges: [] // Edges would need to be created in a separate step
   };
 }
 
 async function updateRoadmap(data: AdminRoadmapDetails): Promise<AdminRoadmapDetails> {
-  // In a real app, this would be a PUT request to /api/admin/roadmaps/{id}
-  console.log('Updating roadmap:', data);
+  const response = await fetch(`/api/roadmap/${data.id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      title: data.title,
+      description: data.description,
+      category: data.category,
+      imageUrl: data.imageUrl
+    }),
+  });
   
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Failed to update roadmap');
+  }
   
-  // Return the updated data
-  return data;
+  const result = await response.json();
+  
+  if (!result.success) {
+    throw new Error(result.error || 'Failed to update roadmap');
+  }
+  
+  // For a full implementation, you would need to handle updating nodes and edges as well
+  // This would require separate API calls to update/create/delete nodes and edges
+  
+  return {
+    ...data,
+    ...result.roadmap
+  };
+}
+
+// Node API functions
+async function createNode(roadmapId: string, node: Partial<ReactFlowNode>): Promise<ReactFlowNode> {
+  const response = await fetch('/api/node', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      roadmapId,
+      label: node.data?.label,
+      description: node.data?.description,
+      type: node.type || 'progressNode',
+      positionX: node.position?.x,
+      positionY: node.position?.y
+    }),
+  });
+  
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Failed to create node');
+  }
+  
+  const result = await response.json();
+  
+  if (!result.success) {
+    throw new Error(result.error || 'Failed to create node');
+  }
+  
+  // Transform the response to match ReactFlowNode structure
+  return {
+    id: result.node.id,
+    type: result.node.type,
+    data: {
+      label: result.node.label,
+      description: result.node.description || '',
+      progress: 0,
+      total_exercises: 0
+    },
+    position: {
+      x: result.node.positionX || 0,
+      y: result.node.positionY || 0
+    }
+  };
+}
+
+async function updateNode(node: ReactFlowNode): Promise<ReactFlowNode> {
+  const nodeId = node.id;
+  const response = await fetch(`/api/node/${nodeId}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      label: node.data.label,
+      description: node.data.description,
+      type: node.type,
+      positionX: node.position.x,
+      positionY: node.position.y
+    }),
+  });
+  
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Failed to update node');
+  }
+  
+  const result = await response.json();
+  
+  if (!result.success) {
+    throw new Error(result.error || 'Failed to update node');
+  }
+  
+  return node; // Return the original node as we've already structured it correctly
+}
+
+async function deleteNode(nodeId: string): Promise<void> {
+  const response = await fetch(`/api/node/${nodeId}`, {
+    method: 'DELETE',
+  });
+  
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Failed to delete node');
+  }
+  
+  const result = await response.json();
+  
+  if (!result.success) {
+    throw new Error(result.error || 'Failed to delete node');
+  }
+}
+
+// Edge API functions
+async function createEdge(roadmapId: string, edge: { source: string; target: string }): Promise<ReactFlowEdge> {
+  const response = await fetch('/api/edge', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      roadmapId,
+      sourceNodeId: edge.source,
+      targetNodeId: edge.target
+    }),
+  });
+  
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Failed to create edge');
+  }
+  
+  const result = await response.json();
+  
+  if (!result.success) {
+    throw new Error(result.error || 'Failed to create edge');
+  }
+  
+  // Transform the response to match ReactFlowEdge structure
+  return {
+    id: result.edge.id,
+    source: result.edge.sourceNodeId,
+    target: result.edge.targetNodeId
+  };
+}
+
+async function deleteEdge(edgeId: string): Promise<void> {
+  const response = await fetch(`/api/edge?id=${edgeId}`, {
+    method: 'DELETE',
+  });
+  
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Failed to delete edge');
+  }
+  
+  const result = await response.json();
+  
+  if (!result.success) {
+    throw new Error(result.error || 'Failed to delete edge');
+  }
+}
+
+// Exercise API functions
+async function createExercise(exerciseData: any): Promise<any> {
+  const response = await fetch('/api/exercise', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(exerciseData),
+  });
+  
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Failed to create exercise');
+  }
+  
+  const result = await response.json();
+  
+  if (!result.success) {
+    throw new Error(result.error || 'Failed to create exercise');
+  }
+  
+  return result.exercise;
 }
 
 // Hooks
@@ -267,6 +406,85 @@ export function useUpdateRoadmap() {
       // Update both the list and the specific roadmap in cache
       queryClient.invalidateQueries({ queryKey: ['admin', 'roadmaps'] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'roadmap', data.id] });
+    }
+  });
+}
+
+// Node mutation hooks
+export function useCreateNode() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ roadmapId, node }: { roadmapId: string; node: Partial<ReactFlowNode> }) => 
+      createNode(roadmapId, node),
+    onSuccess: (_, variables) => {
+      // Invalidate the specific roadmap query
+      queryClient.invalidateQueries({ queryKey: ['admin', 'roadmap', variables.roadmapId] });
+    }
+  });
+}
+
+export function useUpdateNode() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: updateNode,
+    onSuccess: (_, variables) => {
+      // Find the roadmap ID this node belongs to
+      // This would require looking up in the cache or maintaining roadmapId in the node
+      // For now, we'll invalidate all roadmap detail queries
+      queryClient.invalidateQueries({ queryKey: ['admin', 'roadmap'] });
+    }
+  });
+}
+
+export function useDeleteNode() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: deleteNode,
+    onSuccess: () => {
+      // Invalidate all roadmap queries as we don't know which roadmap was affected
+      queryClient.invalidateQueries({ queryKey: ['admin', 'roadmap'] });
+    }
+  });
+}
+
+// Edge mutation hooks
+export function useCreateEdge() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ roadmapId, edge }: { roadmapId: string; edge: { source: string; target: string } }) => 
+      createEdge(roadmapId, edge),
+    onSuccess: (_, variables) => {
+      // Invalidate the specific roadmap query
+      queryClient.invalidateQueries({ queryKey: ['admin', 'roadmap', variables.roadmapId] });
+    }
+  });
+}
+
+export function useDeleteEdge() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: deleteEdge,
+    onSuccess: () => {
+      // Invalidate all roadmap queries as we don't know which roadmap was affected
+      queryClient.invalidateQueries({ queryKey: ['admin', 'roadmap'] });
+    }
+  });
+}
+
+// Exercise mutation hook
+export function useCreateExercise() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: createExercise,
+    onSuccess: () => {
+      // Invalidate relevant queries after creating an exercise
+      queryClient.invalidateQueries({ queryKey: ['admin', 'roadmap'] });
     }
   });
 }
