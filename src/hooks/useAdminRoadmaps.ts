@@ -245,7 +245,7 @@ async function createNode(roadmapId: string, node: Partial<ReactFlowNode>): Prom
 }
 
 async function updateNode(node: ReactFlowNode): Promise<ReactFlowNode> {
-  const nodeId = node.id;
+  const nodeId = node?.id;
   const response = await fetch(`/api/node/${nodeId}`, {
     method: 'PATCH',
     headers: {

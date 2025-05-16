@@ -14,16 +14,6 @@ export async function createEdge(edgeData: {
     if (!userId) {
       return { success: false, error: 'Unauthorized' };
     }
-    
-    // Check if user has admin role
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { role: true }
-    });
-    
-    if (!user || user.role !== 'admin') {
-      return { success: false, error: 'Unauthorized: Admin role required' };
-    }
 
     // Verify roadmap exists
     const roadmap = await prisma.roadmap.findUnique({
@@ -105,16 +95,6 @@ export async function deleteEdge(edgeId: string) {
       return { success: false, error: 'Unauthorized' };
     }
     
-    // Check if user has admin role
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { role: true }
-    });
-    
-    if (!user || user.role !== 'admin') {
-      return { success: false, error: 'Unauthorized: Admin role required' };
-    }
-
     // Check if edge exists
     const edge = await prisma.roadmapEdge.findUnique({
       where: { id: edgeId },

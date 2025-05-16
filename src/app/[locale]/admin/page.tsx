@@ -10,7 +10,6 @@ import StatsCard from '@/components/admin/StatsCard';
 export default function AdminDashboard() {
   const t = useTranslations('admin');
 
-  // Mock admin sections
   const adminSections: AdminSection[] = [
     {
       id: 'roadmaps',
@@ -18,28 +17,7 @@ export default function AdminDashboard() {
       description: 'Manage learning roadmaps and paths',
       icon: '🗺️',
       path: '/admin/roadmaps'
-    },
-    {
-      id: 'exercises',
-      title: 'Exercises',
-      description: 'Create and edit learning exercises',
-      icon: '📝',
-      path: '/admin/exercises'
-    },
-    {
-      id: 'users',
-      title: 'Users',
-      description: 'Manage user accounts and permissions',
-      icon: '👥',
-      path: '/admin/users'
     }
-  ];
-
-  // Mock stats data
-  const quickStats = [
-    { label: "Total Roadmaps", value: 8 },
-    { label: "Total Exercises", value: 124 },
-    { label: "Active Users", value: 1250 }
   ];
 
   const containerVariants = {
@@ -77,10 +55,6 @@ export default function AdminDashboard() {
             />
           ))}
         </motion.div>
-        
-        <div className="mt-16">
-          <StatsCard title="Quick Stats" stats={quickStats} />
-        </div>
       </div>
     </div>
   );

@@ -70,6 +70,10 @@ export async function updateNode(
     if (!userId) {
       return { success: false, error: 'Unauthorized' };
     }
+
+    if (!nodeId) {
+      return { success: false, error: 'Node ID is required' };
+    }
     
     // Check if user has admin role (optional, but recommended for security)
     // const user = await prisma.user.findUnique({
@@ -97,7 +101,6 @@ export async function updateNode(
       data: {
         label: nodeData.label,
         description: nodeData.description,
-        type: nodeData.type,
         positionX: nodeData.positionX,
         positionY: nodeData.positionY
       }

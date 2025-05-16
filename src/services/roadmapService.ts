@@ -138,6 +138,7 @@ export async function updateRoadmap(
 ) {
   try {
     const { userId } = await auth();
+    Logger.info('user', userId)
     
     if (!userId) {
       return { success: false, error: 'Unauthorized' };

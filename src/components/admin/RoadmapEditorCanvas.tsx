@@ -21,7 +21,7 @@ import RoadmapNode from "../RoadmapNode";
 import ErrorMessage from "../Error";
 import { nanoid } from 'nanoid';
 import NodeEditor from "./NodeEditor";
-import { useAdminRoadmap } from "@/hooks/useAdminRoadmaps";
+import { useAdminRoadmap, useCreateNode, useDeleteNode, useUpdateNode, useCreateEdge } from "@/hooks/useAdminRoadmaps";
 import { Exercise } from "@/types/types";
 
 interface RoadmapEditorProps {
@@ -38,6 +38,12 @@ const RoadmapEditorCanvas: React.FC<RoadmapEditorProps> = ({ roadmapId }) => {
 
   // Use custom hook to fetch roadmap data
   const { data: roadmapData, isLoading, isError } = useAdminRoadmap(roadmapId);
+
+  //mutations
+  const createNodeMutation = useCreateNode();
+  const updateNodeMutation = useUpdateNode();
+  const deleteNodeMutation = useDeleteNode();
+  const createEdgeMutation = useCreateEdge();
   
   // Initialize nodes and edges from fetched data
   const [nodes, setNodes, onNodesChange] = useNodesState(
@@ -49,12 +55,27 @@ const RoadmapEditorCanvas: React.FC<RoadmapEditorProps> = ({ roadmapId }) => {
   );
 
   const onConnect = useCallback(
-    (params: Connection | Edge) => setEdges((eds) => addEdge({ ...params, id: `e-${nanoid()}` }, eds)),
-    [setEdges]
+    async (params: Connection | Edge) => {
+      const edgeId = `e-${nanoid()}`;
+      const newEdge = { ...params, id: edgeId };
+      
+      if (roadmapId) {
+        await createEdgeMutation.mutateAsync({
+          roadmapId: roadmapId,
+          edge: {
+            source: params.source,
+            target: params.target
+          }
+        });
+      }
+      
+      setEdges((eds) => addEdge(newEdge, eds));
+    },
+    [setEdges, roadmapId, createEdgeMutation]
   );
 
-  const handleAddNode = () => {
-    if (!reactFlowInstance) return;
+  const handleAddNode = async () => {
+    if (!reactFlowInstance || !roadmapId) return;
     
     const newNode = {
       id: nanoid(),
@@ -69,6 +90,12 @@ const RoadmapEditorCanvas: React.FC<RoadmapEditorProps> = ({ roadmapId }) => {
       }
     };
     
+    // Create the node in the backend
+    await createNodeMutation.mutateAsync({
+      roadmapId,
+      node: newNode
+    });
+    
     setNodes((nds) => nds.concat(newNode));
   };
 
@@ -77,8 +104,21 @@ const RoadmapEditorCanvas: React.FC<RoadmapEditorProps> = ({ roadmapId }) => {
     setIsNodeEditorOpen(true);
   };
 
-  const onNodeUpdate = (updatedData: { label: string; description: string; exercises: Exercise[] }) => {
+  const onNodeUpdate = async (updatedData: { label: string; description: string; exercises: Exercise[] }) => {
     if (!selectedNode) return;
+    
+    const updatedNode = {
+      ...selectedNode,
+      data: {
+        ...selectedNode.data,
+        label: updatedData.label,
+        description: updatedData.description,
+        exercises: updatedData.exercises,
+        total_exercises: updatedData.exercises.length
+      }
+    };
+    
+    await updateNodeMutation.mutateAsync(updatedNode);
     
     setNodes(nodes.map(node => {
       if (node.id === selectedNode.id) {
@@ -100,8 +140,11 @@ const RoadmapEditorCanvas: React.FC<RoadmapEditorProps> = ({ roadmapId }) => {
     setSelectedNode(null);
   };
 
-  const onDeleteNode = () => {
+  const onDeleteNode = async () => {
     if (!selectedNode) return;
+    
+    // Delete the node in the backend
+    await deleteNodeMutation.mutateAsync(selectedNode.id);
     
     // Remove any connected edges first
     setEdges(edges.filter(edge => 
@@ -162,7 +205,7 @@ const RoadmapEditorCanvas: React.FC<RoadmapEditorProps> = ({ roadmapId }) => {
         </Panel>
       </ReactFlow>
 
-      {/* Node Editor Sidebar */}
+      {/* Node Editor */}
       {selectedNode && (
         <NodeEditor
           node={selectedNode}
