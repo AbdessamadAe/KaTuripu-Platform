@@ -33,7 +33,6 @@ export async function createNode(nodeData: {
         roadmapId: nodeData.roadmapId,
         label: nodeData.label,
         description: nodeData.description,
-        type: nodeData.type || 'progressNode',
         positionX: nodeData.positionX,
         positionY: nodeData.positionY
       }
@@ -41,8 +40,6 @@ export async function createNode(nodeData: {
 
     return { success: true, node };
   } catch (error) {
-    Logger.error('Failed to create node', error);
-    
     // Handle specific Prisma errors
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === 'P2003') {
@@ -75,15 +72,7 @@ export async function updateNode(
       return { success: false, error: 'Node ID is required' };
     }
     
-    // Check if user has admin role (optional, but recommended for security)
-    // const user = await prisma.user.findUnique({
-    //   where: { id: userId },
-    //   select: { role: true }
-    // });
-    
-    // if (!user || user.role !== 'admin') {
-    //   return { success: false, error: 'Unauthorized: Admin role required' };
-    // }
+    console.log('Service: Updating node position:', nodeId, 'to', nodeData.positionX, nodeData.positionY);
 
     // Check if node exists
     const existingNode = await prisma.roadmapNode.findUnique({
@@ -105,6 +94,8 @@ export async function updateNode(
         positionY: nodeData.positionY
       }
     });
+    
+    console.log('Service: Node updated successfully with new position:', node.positionX, node.positionY);
 
     return { success: true, node };
   } catch (error) {

@@ -9,9 +9,13 @@ export function useUpdateNode() {
   
   return useMutation({
     mutationFn: updateNode,
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('Node updated successfully:', data);
       // Since we don't know which roadmap the node belongs to, invalidate all roadmap detail queries
       queryClient.invalidateQueries({ queryKey: ['admin', 'roadmap'] });
+    },
+    onError: (error) => {
+      console.error('Error updating node:', error);
     }
   });
 }

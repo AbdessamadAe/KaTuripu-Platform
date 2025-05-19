@@ -1,4 +1,5 @@
 import { ReactFlowNode } from "@/types/types";
+import Logger from "@/utils/logger";
 
 /**
  * Create a new node for a roadmap
@@ -13,7 +14,7 @@ export async function createNode(roadmapId: string, node: Partial<ReactFlowNode>
       roadmapId,
       label: node.data?.label,
       description: node.data?.description,
-      type: node.type || 'progressNode',
+      type: 'progressNode',
       positionX: node.position?.x,
       positionY: node.position?.y
     }),
@@ -52,6 +53,8 @@ export async function createNode(roadmapId: string, node: Partial<ReactFlowNode>
  */
 export async function updateNode(node: ReactFlowNode): Promise<ReactFlowNode> {
   const nodeId = node?.id;
+  console.log('API: Updating node:', nodeId, 'position:', node.position);
+  
   const response = await fetch(`/api/node/${nodeId}`, {
     method: 'PATCH',
     headers: {
@@ -68,6 +71,7 @@ export async function updateNode(node: ReactFlowNode): Promise<ReactFlowNode> {
   
   if (!response.ok) {
     const errorData = await response.json();
+    console.error('API: Failed to update node:', errorData);
     throw new Error(errorData.error || 'Failed to update node');
   }
   
