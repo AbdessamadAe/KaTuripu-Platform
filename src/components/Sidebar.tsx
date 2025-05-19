@@ -5,6 +5,7 @@ import { ExerciseMeta } from "@/types/types";
 import { getDifficultyStyle } from "@/utils/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@clerk/nextjs";
+import { Button } from '@/components/ui';
 
 
 async function fetchExerciseMetaList(nodeId: string): Promise<ExerciseMeta[]> {

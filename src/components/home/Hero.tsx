@@ -1,5 +1,6 @@
 import { useTranslations } from 'next-intl';
 import React from 'react';
+import { Button } from '@/components/ui';
 
 interface HeroProps {
   locale?: string;
@@ -53,20 +54,21 @@ const Hero = ({ locale = 'en' }: HeroProps) => {
             <div
               className="flex flex-wrap gap-4 justify-center lg:justify-start"
             >
-              <a
+              <Button
                 href="/roadmap"
-                className="px-8 py-4 text-lg font-bold text-white bg-gradient-to-r from-[#4a7ab0] to-[#6b9bd1] hover:from-[#3d699d] hover:to-[#588ac0] dark:from-[#4a7ab0] dark:to-[#6b9bd1] dark:hover:from-[#3d699d] dark:hover:to-[#588ac0] rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 focus:ring-4 focus:ring-[#6b9bd1]/50"
-                role="button"
+                size="lg"
+                variant="primary"
               >
                 {t('getStarted')}
-              </a>
+              </Button>
 
-              <a
+              <Button
                 href="#features"
-                className="px-8 py-4 text-lg font-bold text-gray-700 dark:text-white bg-white dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700/70 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
+                size="lg"
+                variant="outline"
               >
                 {t('learnMore')}
-              </a>
+              </Button>
             </div>
 
             <div

@@ -24,6 +24,7 @@ import { nanoid } from 'nanoid';
 import { useAdminRoadmap, useCreateNode, useDeleteNode, useUpdateNode, useCreateEdge } from '@/hooks/index';
 import { Exercise } from "@/types/types";
 import NodeEditor from "./NodeEditor";
+import { useRouter } from "next/navigation";
 
 interface RoadmapEditorProps {
   roadmapId: string | undefined;
@@ -32,8 +33,8 @@ interface RoadmapEditorProps {
 const nodeClassName = (node: any) => node.type;
 
 const RoadmapEditorCanvas: React.FC<RoadmapEditorProps> = ({ roadmapId }) => {
+  const router = useRouter();
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
-  const [isNodeEditorOpen, setIsNodeEditorOpen] = useState(false);
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
 
@@ -184,7 +185,6 @@ const RoadmapEditorCanvas: React.FC<RoadmapEditorProps> = ({ roadmapId }) => {
     // Remove the node
     setNodes(nodes.filter(node => node.id !== selectedNode.id));
 
-    setIsNodeEditorOpen(false);
     setSelectedNode(null);
   };
 
@@ -199,7 +199,6 @@ const RoadmapEditorCanvas: React.FC<RoadmapEditorProps> = ({ roadmapId }) => {
   const onPaneClick = useCallback(() => {
     // Clear selected node when clicking on empty canvas
     setSelectedNode(null);
-    setIsNodeEditorOpen(false);
   }, []);
 
   return (
@@ -245,7 +244,7 @@ const RoadmapEditorCanvas: React.FC<RoadmapEditorProps> = ({ roadmapId }) => {
           <Panel position="top-right" className="bg-white dark:bg-gray-800 p-2 rounded shadow">
             <div className="flex space-x-2">
               <button
-                onClick={() => setIsNodeEditorOpen(true)}
+                onClick={() => router.push(`/node/${selectedNode.id}/edit`)}
                 className="px-3 py-1 bg-[#5a8aaf] hover:bg-[#4a7ab0] text-white rounded text-sm flex items-center"
               >
                 <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
