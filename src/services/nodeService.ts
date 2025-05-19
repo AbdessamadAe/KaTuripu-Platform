@@ -167,7 +167,6 @@ export async function getNodeExerciseList(nodeId: string) {
     // Format the response
     const formattedExercises = nodeExercises.map(ne => ({
       id: ne.exercise.id,
-      order_index: ne.orderIndex,
       name: ne.exercise.name,
       type: ne.exercise.type,
       difficulty: ne.exercise.difficulty,

@@ -5,8 +5,6 @@ export interface Exercise {
   name: string;
   difficulty?: string;
   type?: string;
-  completed: boolean;
-  order_index: number;
   solution?: string;
   description?: string;
   video_url?: string;
@@ -19,7 +17,6 @@ export interface ExerciseMeta {
   difficulty?: string;
   type?: string;
   completed: boolean;
-  order_index: number;
   node_id: string;
 }
 

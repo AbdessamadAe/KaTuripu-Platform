@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import Breadcrumb from '@/components/Breadcrumb';
 import Loader from '@/components/Loader';
 import ErrorMessage from '@/components/Error';
-import { useAdminRoadmaps } from '@/hooks/useAdminRoadmaps';
+import { useAdminRoadmaps } from '@/hooks/index';
 import PageHeader from '@/components/admin/PageHeader';
 import SearchBar from '@/components/admin/SearchBar';
 import RoadmapTable from '@/components/admin/RoadmapTable';

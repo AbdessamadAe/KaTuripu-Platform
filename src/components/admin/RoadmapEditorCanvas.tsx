@@ -20,8 +20,7 @@ import Loader from "../Loader";
 import RoadmapNode from "../RoadmapNode";
 import ErrorMessage from "../Error";
 import { nanoid } from 'nanoid';
-import NodeEditor from "./NodeEditor";
-import { useAdminRoadmap, useCreateNode, useDeleteNode, useUpdateNode, useCreateEdge } from "@/hooks/useAdminRoadmaps";
+import { useAdminRoadmap, useCreateNode, useDeleteNode, useUpdateNode, useCreateEdge } from '@/hooks/index';
 import { Exercise } from "@/types/types";
 
 interface RoadmapEditorProps {
@@ -34,7 +33,6 @@ const RoadmapEditorCanvas: React.FC<RoadmapEditorProps> = ({ roadmapId }) => {
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [isNodeEditorOpen, setIsNodeEditorOpen] = useState(false);
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
-  const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
 
   // Use custom hook to fetch roadmap data
   const { data: roadmapData, isLoading, isError } = useAdminRoadmap(roadmapId);
@@ -44,12 +42,12 @@ const RoadmapEditorCanvas: React.FC<RoadmapEditorProps> = ({ roadmapId }) => {
   const updateNodeMutation = useUpdateNode();
   const deleteNodeMutation = useDeleteNode();
   const createEdgeMutation = useCreateEdge();
-  
+
   // Initialize nodes and edges from fetched data
   const [nodes, setNodes, onNodesChange] = useNodesState(
     roadmapData?.nodes as Node[] || []
   );
-  
+
   const [edges, setEdges, onEdgesChange] = useEdgesState(
     roadmapData?.edges as Edge[] || []
   );
@@ -58,7 +56,7 @@ const RoadmapEditorCanvas: React.FC<RoadmapEditorProps> = ({ roadmapId }) => {
     async (params: Connection | Edge) => {
       const edgeId = `e-${nanoid()}`;
       const newEdge = { ...params, id: edgeId };
-      
+
       if (roadmapId) {
         await createEdgeMutation.mutateAsync({
           roadmapId: roadmapId,
@@ -68,19 +66,19 @@ const RoadmapEditorCanvas: React.FC<RoadmapEditorProps> = ({ roadmapId }) => {
           }
         });
       }
-      
+
       setEdges((eds) => addEdge(newEdge, eds));
     },
     [setEdges, roadmapId, createEdgeMutation]
   );
 
   const handleAddNode = async () => {
-    if (!reactFlowInstance || !roadmapId) return;
-    
+    if (!roadmapId) return;
+
     const newNode = {
       id: nanoid(),
       type: "progressNode",
-      position: reactFlowInstance.project({ x: 250, y: 250 }),
+      position: { x: 50, y: 250 },
       data: {
         label: "New Node",
         description: "Description for the new node",
@@ -89,13 +87,13 @@ const RoadmapEditorCanvas: React.FC<RoadmapEditorProps> = ({ roadmapId }) => {
         exercises: []
       }
     };
-    
+
     // Create the node in the backend
     await createNodeMutation.mutateAsync({
       roadmapId,
       node: newNode
     });
-    
+
     setNodes((nds) => nds.concat(newNode));
   };
 
@@ -106,7 +104,7 @@ const RoadmapEditorCanvas: React.FC<RoadmapEditorProps> = ({ roadmapId }) => {
 
   const onNodeUpdate = async (updatedData: { label: string; description: string; exercises: Exercise[] }) => {
     if (!selectedNode) return;
-    
+
     const updatedNode = {
       ...selectedNode,
       data: {
@@ -117,9 +115,9 @@ const RoadmapEditorCanvas: React.FC<RoadmapEditorProps> = ({ roadmapId }) => {
         total_exercises: updatedData.exercises.length
       }
     };
-    
+
     await updateNodeMutation.mutateAsync(updatedNode);
-    
+
     setNodes(nodes.map(node => {
       if (node.id === selectedNode.id) {
         return {
@@ -135,25 +133,25 @@ const RoadmapEditorCanvas: React.FC<RoadmapEditorProps> = ({ roadmapId }) => {
       }
       return node;
     }));
-    
+
     setIsNodeEditorOpen(false);
     setSelectedNode(null);
   };
 
   const onDeleteNode = async () => {
     if (!selectedNode) return;
-    
+
     // Delete the node in the backend
     await deleteNodeMutation.mutateAsync(selectedNode.id);
-    
+
     // Remove any connected edges first
-    setEdges(edges.filter(edge => 
+    setEdges(edges.filter(edge =>
       edge.source !== selectedNode.id && edge.target !== selectedNode.id
     ));
-    
+
     // Remove the node
     setNodes(nodes.filter(node => node.id !== selectedNode.id));
-    
+
     setIsNodeEditorOpen(false);
     setSelectedNode(null);
   };
@@ -174,7 +172,6 @@ const RoadmapEditorCanvas: React.FC<RoadmapEditorProps> = ({ roadmapId }) => {
         edges={edges}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        onInit={setReactFlowInstance}
         onNodeClick={handleNodeClick}
         fitView
         proOptions={{ hideAttribution: true }}
@@ -189,7 +186,7 @@ const RoadmapEditorCanvas: React.FC<RoadmapEditorProps> = ({ roadmapId }) => {
         />
         <Controls className="dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700" />
         <Background gap={12} size={1} className="dark:bg-gray-900 dark:text-gray-700" />
-        
+
         <Panel position="top-left" className="bg-white dark:bg-gray-800 p-2 rounded shadow">
           <div className="flex space-x-2">
             <button
@@ -204,20 +201,6 @@ const RoadmapEditorCanvas: React.FC<RoadmapEditorProps> = ({ roadmapId }) => {
           </div>
         </Panel>
       </ReactFlow>
-
-      {/* Node Editor */}
-      {selectedNode && (
-        <NodeEditor
-          node={selectedNode}
-          isOpen={isNodeEditorOpen}
-          onClose={() => {
-            setIsNodeEditorOpen(false);
-            setSelectedNode(null);
-          }}
-          onUpdate={onNodeUpdate}
-          onDelete={onDeleteNode}
-        />
-      )}
     </div>
   );
 };

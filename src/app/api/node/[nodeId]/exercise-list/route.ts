@@ -1,4 +1,4 @@
-import { getNodeExerciseList  updateNode, deleteNode } from '@/services/nodeService';
+import { getNodeExerciseList } from '@/services/nodeService';
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(

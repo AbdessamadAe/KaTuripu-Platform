@@ -137,14 +137,14 @@ export const createExercise = async (exerciseData: {
     if (!userId) {
       return { success: false, error: 'Unauthorized' };
     }
-    
+    Logger.info('Creating exercise:', exerciseData);
     // Start a transaction to ensure both operations complete together
     const result = await prisma.$transaction(async (tx) => {
       // Generate a UUID if not provided
       const id = exerciseData.id || crypto.randomUUID();
       
       // Extract node-related data
-      const { nodeId, orderIndex, ...exerciseFields } = exerciseData;
+      const { nodeId, ...exerciseFields } = exerciseData;
       
       // Create the exercise
       const exercise = await tx.exercise.create({
@@ -157,11 +157,11 @@ export const createExercise = async (exerciseData: {
       
       // If nodeId is provided, create the relationship with the node
       if (nodeId) {
+        Logger.info('Creating node-exercise relationship:', { nodeId, exerciseId: exercise.id });
         await tx.nodeExercise.create({
           data: {
             nodeId,
             exerciseId: exercise.id,
-            orderIndex: orderIndex || 0
           }
         });
       }
