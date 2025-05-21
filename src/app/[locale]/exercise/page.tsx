@@ -12,6 +12,7 @@ import VideoSection from '@/app/[locale]/exercise/videoSection';
 import Breadcrumb from '@/components/Breadcrumb';
 import ErrorMessage from '@/components/Error';
 import { useExercise, useCompleteExercise } from '@/hooks/useExercise';
+import { Button, Card, Alert, Tabs } from '@/components/ui';
 
 const ExercisePage = () => {
   const searchParams = useSearchParams();
@@ -67,87 +68,77 @@ const ExercisePage = () => {
 
   if (isError) return <ErrorMessage />;
 
+  // Define tabs for the exercise page
+  const tabs = [
+    {
+      id: 'question',
+      label: 'Problem',
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+        </svg>
+      ),
+      color: '[#69c0cf]'
+    },
+    ...(exercise?.hints && exercise.hints.length > 0 ? [{
+      id: 'hints',
+      label: t('hints'),
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+        </svg>
+      ),
+      color: 'yellow-600'
+    }] : []),
+    ...(exercise?.videoUrl ? [{
+      id: 'video',
+      label: t('videoExplanation'),
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+        </svg>
+      ),
+      color: 'blue-600'
+    }] : []),
+    {
+      id: 'solution',
+      label: t('solution'),
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+        </svg>
+      ),
+      color: 'green-600'
+    }
+  ];
+
   return (
     <div className="bg-gray-50 dark:bg-gray-900">
       <div className="flex h-screen relative">
         {isMobile && (
-          <button
-          onClick={() => setSidebarVisible(!sidebarVisible)}
-          className="lg:hidden fixed z-20 bottom-6 right-6 bg-purple-600 text-white p-3 rounded-full shadow-lg hover:bg-purple-700 transition-colors"
-          aria-label="Toggle progress sidebar"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
+          <Button
+            variant="primary"
+            onClick={() => setSidebarVisible(!sidebarVisible)}
+            className="lg:hidden fixed z-20 bottom-6 right-6 p-3 rounded-full shadow-lg !w-auto !h-auto"
+            aria-label="Toggle progress sidebar"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Button>
         )}
 
         {/* Main content area */}
         <main className="flex-1 pb-24 overflow-y-auto bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
           <Breadcrumb items={breadcrumbItems} />
           <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
-            {/* Navigation Tabs - improved for mobile */}
-            <div className="mb-6 border-b border-gray-100 dark:border-gray-700">
-              <div className="flex flex-wrap gap-y-2 -mb-px">
-                <button
-                  onClick={() => setActiveTab('question')}
-                  className={`py-3 px-4 relative font-medium flex items-center mr-4 mb-2 sm:mb-0 ${activeTab === 'question'
-                    ? 'text-[#69c0cf] dark:text-purple-200 border-b-2 border-[#69c0cf]'
-                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                    }`}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1.5 sm:mr-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                  </svg>
-                  <span className="whitespace-nowrap">Problem</span>
-                </button>
+            <Tabs
+              tabs={tabs}
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+              className="mb-6"
+            />
 
-                {exercise?.hints && exercise.hints.length > 0 && (
-                  <button
-                    onClick={() => setActiveTab('hints')}
-                    className={`py-3 px-4 relative font-medium flex items-center mr-4 mb-2 sm:mb-0 ${activeTab === 'hints'
-                      ? 'text-yellow-600 dark:text-yellow-400 border-b-2 border-yellow-600'
-                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                      }`}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1.5 sm:mr-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
-                    </svg>
-                    <span className="whitespace-nowrap">{t('hints')}</span>
-                  </button>
-                )}
-
-                {exercise?.videoUrl && (
-                  <button
-                    onClick={() => setActiveTab('video')}
-                    className={`py-3 px-4 relative font-medium flex items-center mr-4 mb-2 sm:mb-0 ${activeTab === 'video'
-                      ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600'
-                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                      }`}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1.5 sm:mr-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                    </svg>
-                    <span className="whitespace-nowrap">{t('videoExplanation')}</span>
-                  </button>
-                )}
-
-                <button
-                  onClick={() => setActiveTab('solution')}
-                  className={`py-3 px-4 relative font-medium flex items-center mb-2 sm:mb-0 ${activeTab === 'solution'
-                    ? 'text-green-600 dark:text-green-400 border-b-2 border-green-600'
-                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                    }`}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1.5 sm:mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
-                  <span className="whitespace-nowrap">{t('solution')}</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Tab Content */}
             <div className="py-4">
               {activeTab === 'question' && (
                 <QuestionSection
@@ -161,9 +152,7 @@ const ExercisePage = () => {
               )}
 
               {activeTab === 'video' && exercise?.videoUrl && (
-                <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
-                  <VideoSection video_url={exercise.videoUrl} />
-                </div>
+                <VideoSection video_url={exercise.videoUrl} />
               )}
 
               {activeTab === 'solution' && (

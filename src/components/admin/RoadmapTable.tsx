@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { AdminRoadmapMeta } from '@/hooks/useAdminRoadmaps';
+import { Button } from '@/components/ui';
 
 interface RoadmapTableProps {
   roadmaps: AdminRoadmapMeta[];
@@ -78,19 +79,23 @@ const RoadmapTable: React.FC<RoadmapTableProps> = ({
                 {formatDate(roadmap.createdAt)}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <button 
+                <Button 
                   onClick={() => onEdit(roadmap.id)}
-                  className="text-[#5a8aaf] dark:text-[#7d9bbf] hover:text-[#4a7ab0] dark:hover:text-[#8bafd9] mr-3"
+                  variant="text"
+                  size="sm"
+                  className="mr-3"
                 >
                   Edit
-                </button>
+                </Button>
                 {onDelete && (
-                  <button 
+                  <Button 
                     onClick={() => onDelete(roadmap.id)}
+                    variant="text"
+                    size="sm"
                     className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
                   >
                     Delete
-                  </button>
+                  </Button>
                 )}
               </td>
             </motion.tr>

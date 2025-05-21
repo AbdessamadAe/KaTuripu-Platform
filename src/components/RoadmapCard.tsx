@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { RoadmapMeta } from '@/types/types';
-import { Button } from '@/components/ui';
+import { Button, Badge } from '@/components/ui';
 
 interface RoadmapCardProps {
   roadmap: RoadmapMeta;
@@ -46,12 +46,14 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
         />
         <div className="absolute bottom-2 left-2 flex gap-1 flex-wrap">
           {getCategories().map((cat, i) => (
-            <span
+            <Badge
               key={i}
-              className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-[10px] px-2 py-1 rounded-md font-medium text-gray-700 dark:text-gray-200 shadow-sm"
+              variant="info"
+              size="sm"
+              className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-sm"
             >
               {cat}
-            </span>
+            </Badge>
           ))}
         </div>
       </div>

@@ -9,6 +9,7 @@ import { RoadmapMeta } from "@/types/types";
 import ErrorMessage from "@/components/Error";
 import { useRoadmaps } from "@/hooks/useRoadmap";
 import Loader from "@/components/Loader";
+import { Button, Input, Badge } from "@/components/ui";
 
 const RoadmapsPage = () => {
     const router = useRouter();
@@ -88,12 +89,18 @@ const RoadmapsPage = () => {
                             {/* Decorative element */}
                             <div className="absolute -z-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-24 bg-[#a7d1cf]/40 dark:bg-[#a7d1cf]/20 rounded-full blur-xl opacity-50"></div>
 
-                            <input
-                                type="text"
+                            <Input
                                 placeholder={t('searchPlaceholder')}
-                                className="w-full px-5 py-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg focus:shadow-xl focus:ring-2 focus:ring-[#5a8aaf] dark:focus:ring-[#7d9bbf] focus:border-[#5a8aaf] dark:focus:border-[#7d9bbf] outline-none transition dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-400 bg-white"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
+                                leftIcon={
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                }
+                                fullWidth
+                                size="lg"
+                                className="shadow-lg focus:shadow-xl"
                             />
                         </div>
                     </div>
@@ -101,17 +108,14 @@ const RoadmapsPage = () => {
                     {/* Category filter buttons */}
                     <div className="flex gap-3 overflow-x-auto flex-wrap justify-center lg:justify-end">
                         {categories.map((cat) => (
-                            <button
+                            <Button
                                 key={cat}
                                 onClick={() => setSelectedCategory(cat)}
-                                className={`px-6 py-3 text-sm font-medium rounded-xl transition-all ${
-                                    selectedCategory === cat
-                                        ? 'bg-gradient-to-r from-[#5a8aaf] to-[#7d9bbf] text-white shadow-md'
-                                        : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-md'
-                                }`}
+                                variant={selectedCategory === cat ? "primary" : "secondary"}
+                                size="md"
                             >
                                 {cat === 'All' ? t('all') : cat}
-                            </button>
+                            </Button>
                         ))}
                     </div>
                 </div>
@@ -132,12 +136,13 @@ const RoadmapsPage = () => {
                             <p className="text-gray-600 dark:text-gray-400 mb-4 text-lg">
                                 {!roadmaps ? 'No roadmaps available.' : t('noRoadmapsFound')}
                             </p>
-                            <button
+                            <Button
                                 onClick={() => { setSearchTerm(''); setSelectedCategory('All'); }}
-                                className="px-6 py-2.5 bg-[#f5f3ff] dark:bg-[#5a8aaf]/20 text-[#5a8aaf] dark:text-[#7d9bbf] rounded-lg hover:bg-[#e9e3ff] dark:hover:bg-[#5a8aaf]/30 transition-colors"
+                                variant="outline"
+                                size="md"
                             >
                                 {t('resetFilters')}
-                            </button>
+                            </Button>
                         </div>
                     ) : (
                         <motion.div

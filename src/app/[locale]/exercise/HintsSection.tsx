@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { MathJax } from 'better-react-mathjax';
 import ReactMarkdown from 'react-markdown';
 import { useTranslations } from 'next-intl';
+import { Card, Alert } from '@/components/ui';
 
 interface HintsSectionProps {
   hints?: string[];
@@ -13,10 +14,6 @@ interface HintsSectionProps {
 const HintsSection = ({ hints }: HintsSectionProps) => {
   const t = useTranslations('exercise');
   const [showHint, setShowHint] = useState<number | null>(null);
-
-  const triggerShowHint = (index: number) => {
-    setShowHint((prev) => (prev === index ? null : index));
-  };
 
   if (!hints || hints.length === 0) return null;
 
@@ -31,9 +28,11 @@ const HintsSection = ({ hints }: HintsSectionProps) => {
         <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Hints</h2>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm">
+      <Card>
         {!hints?.length && (
-          <div className="p-5 text-gray-500 dark:text-gray-400 text-center">No hints available for this exercise.</div>
+          <Card.Body>
+            <div className="text-gray-500 dark:text-gray-400 text-center">No hints available for this exercise.</div>
+          </Card.Body>
         )}
         {hints?.map((hint, i) => (
           <div key={i} className="border-b last:border-b-0 border-gray-100 dark:border-gray-700">
@@ -54,9 +53,7 @@ const HintsSection = ({ hints }: HintsSectionProps) => {
             </button>
 
             {showHint === i && (
-              <div
-                className="px-4 pb-5 sm:px-5"
-              >
+              <div className="px-4 pb-5 sm:px-5">
                 <div className="pl-4 border-l-2 border-yellow-200 dark:border-yellow-800 pt-1">
                   <MathJax>
                     <div className="prose dark:prose-invert prose-sm sm:prose-base max-w-none">
@@ -68,7 +65,7 @@ const HintsSection = ({ hints }: HintsSectionProps) => {
             )}
           </div>
         ))}
-      </div>
+      </Card>
     </div>
   );
 };

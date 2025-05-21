@@ -65,7 +65,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
-    const baseClasses = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4a7ab0]';
+    const baseClasses = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none';
     const widthClass = isFullWidth ? 'w-full' : '';
     const disabledClass = disabled || isLoading ? 'opacity-70 cursor-not-allowed pointer-events-none' : '';
     

@@ -27,4 +27,7 @@ export type { AlertProps, AlertVariant } from './Alert';
 export { default as Modal, ModalActions, ConfirmModal } from './Modal';
 export type { ModalProps } from './Modal';
 
+export { default as Tabs } from './Tabs';
+export type { TabsProps, TabItem } from './Tabs';
+
 // Add more component exports as they are created
