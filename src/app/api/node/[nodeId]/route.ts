@@ -1,8 +1,43 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { updateNode, deleteNode } from '@/services/nodeService';
+import { updateNode, deleteNode, getNode } from '@/services/nodeService';
 import Logger from '@/utils/logger';
 
 
+export async function GET(
+    request: NextRequest,
+    { params }: { params: Promise<{ nodeId: string }> }
+) {
+    try {
+        const { nodeId } = await params;
+
+        if (!nodeId) {
+            return NextResponse.json(
+                { error: "Node ID is required" },
+                { status: 400 }
+            );
+        }
+
+        const result = await getNode(nodeId);
+
+        if (!result.success) {
+            return NextResponse.json(
+                { error: result.error },
+                { status: result.error === 'Node not found' ? 404 : 400 }
+            );
+        }
+
+        return NextResponse.json({
+            success: true,
+            node: result.node
+        });
+    } catch (error) {
+        Logger.error("Error fetching node:", error);
+        return NextResponse.json(
+            { error: "Failed to fetch node" },
+            { status: 500 }
+        );
+    }
+}
 
 export async function PATCH(
     request: NextRequest,

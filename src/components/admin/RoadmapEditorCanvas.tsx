@@ -244,7 +244,7 @@ const RoadmapEditorCanvas: React.FC<RoadmapEditorProps> = ({ roadmapId }) => {
           <Panel position="top-right" className="bg-white dark:bg-gray-800 p-2 rounded shadow">
             <div className="flex space-x-2">
               <button
-                onClick={() => router.push(`/node/${selectedNode.id}/edit`)}
+                onClick={() => router.push(`/admin/roadmaps/edit/${roadmapId}/${selectedNode.id}`)}
                 className="px-3 py-1 bg-[#5a8aaf] hover:bg-[#4a7ab0] text-white rounded text-sm flex items-center"
               >
                 <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">

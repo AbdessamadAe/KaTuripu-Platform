@@ -6,6 +6,7 @@ export { useUpdateRoadmap } from './roadmap/mutations/useUpdateRoadmap';
 export { useRoadmapForm } from './roadmap/useRoadmapForm';
 
 // Export all node hooks
+export { useNode } from './node/queries/useNode';
 export { useCreateNode } from './node/mutations/useCreateNode';
 export { useUpdateNode } from './node/mutations/useUpdateNode';
 export { useDeleteNode } from './node/mutations/useDeleteNode';

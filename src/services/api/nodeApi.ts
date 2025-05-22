@@ -2,6 +2,41 @@ import { ReactFlowNode } from "@/types/types";
 import Logger from "@/utils/logger";
 
 /**
+ * Fetch a single node by ID
+ */
+export async function getNode(nodeId: string): Promise<ReactFlowNode> {
+  const response = await fetch(`/api/node/${nodeId}`);
+  
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Failed to fetch node');
+  }
+  
+  const result = await response.json();
+  
+  if (!result.success) {
+    throw new Error(result.error || 'Failed to fetch node');
+  }
+  
+  // Transform the response to match ReactFlowNode structure
+  return {
+    id: result.node.id,
+    type: result.node.type || 'progressNode',
+    data: {
+      label: result.node.label,
+      description: result.node.description || '',
+      progress: 0,
+      total_exercises: result.node.total_exercises || 0,
+      exercises: result.node.exercises || []
+    },
+    position: {
+      x: result.node.positionX || 0,
+      y: result.node.positionY || 0
+    }
+  };
+}
+
+/**
  * Create a new node for a roadmap
  */
 export async function createNode(roadmapId: string, node: Partial<ReactFlowNode>): Promise<ReactFlowNode> {

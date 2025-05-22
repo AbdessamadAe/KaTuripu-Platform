@@ -28,6 +28,8 @@ export interface ReactFlowNodeData {
   description?: string;
   progress: Progress;
   total_exercises: number;
+  exercises?: Exercise[];
+  lastUpdated?: string;
 }
 
 export interface ReactFlowNode extends Node {

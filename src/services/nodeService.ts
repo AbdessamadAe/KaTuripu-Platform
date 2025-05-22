@@ -2,6 +2,61 @@ import prisma from '@/lib/prisma';
 import { auth } from '@clerk/nextjs/server'
 import Logger from '@/utils/logger';
 
+export async function getNode(nodeId: string) {
+  try {
+    const { userId } = await auth();
+    
+    if (!userId) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    // Find the node
+    const node = await prisma.roadmapNode.findUnique({
+      where: { id: nodeId },
+      include: {
+        nodeExercises: {
+          include: {
+            exercise: true
+          },
+          orderBy: {
+            orderIndex: 'asc'
+          }
+        }
+      }
+    });
+
+    if (!node) {
+      return { success: false, error: 'Node not found' };
+    }
+
+    // Format node data
+    const formattedNode = {
+      id: node.id,
+      label: node.label,
+      description: node.description,
+      type: node.type || 'progressNode',
+      positionX: node.positionX,
+      positionY: node.positionY,
+      roadmapId: node.roadmapId,
+      exercises: node.nodeExercises.map(ne => ({
+        id: ne.exercise.id,
+        name: ne.exercise.name,
+        type: ne.exercise.type,
+        difficulty: ne.exercise.difficulty,
+        description: ne.exercise.description,
+        solution: ne.exercise.solution,
+        video_url: ne.exercise.videoUrl
+      })),
+      total_exercises: node.nodeExercises.length
+    };
+
+    return { success: true, node: formattedNode };
+  } catch (error) {
+    Logger.error('Error fetching node:', error);
+    return { success: false, error: 'Failed to fetch node' };
+  }
+}
+
 export async function createNode(nodeData: {
   roadmapId: string;
   label: string;

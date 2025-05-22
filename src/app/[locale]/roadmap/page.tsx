@@ -75,7 +75,6 @@ const RoadmapsPage = () => {
                             <span className="relative">{t('Concours')}</span>
                         </span>
                     </h1>
-                    {/* Debug info */}
                     <div className="text-sm text-gray-500 dark:text-gray-400">
                         {roadmaps ? `Found ${filteredRoadmaps.length} roadmaps` : 'No roadmaps data'}
                     </div>
@@ -106,7 +105,7 @@ const RoadmapsPage = () => {
                     </div>
 
                     {/* Category filter buttons */}
-                    <div className="flex gap-3 overflow-x-auto flex-wrap justify-center lg:justify-end">
+                    <div className="flex p-2 gap-3 overflow-x-auto flex-wrap justify-center lg:justify-end">
                         {categories.map((cat) => (
                             <Button
                                 key={cat}
