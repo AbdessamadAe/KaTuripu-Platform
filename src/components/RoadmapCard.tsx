@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { RoadmapMeta } from '@/types/types';
+import { Button, Badge } from '@/components/ui';
 
 interface RoadmapCardProps {
   roadmap: RoadmapMeta;
@@ -45,12 +46,14 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
         />
         <div className="absolute bottom-2 left-2 flex gap-1 flex-wrap">
           {getCategories().map((cat, i) => (
-            <span
+            <Badge
               key={i}
-              className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-[10px] px-2 py-1 rounded-md font-medium text-gray-700 dark:text-gray-200 shadow-sm"
+              variant="info"
+              size="sm"
+              className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-sm"
             >
               {cat}
-            </span>
+            </Badge>
           ))}
         </div>
       </div>
@@ -84,14 +87,14 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
         </div>
       </div>
 
-      <button
-        className={`w-full mt-2 rounded-xl px-6 py-3 text-sm font-semibold transition-all duration-300 cursor-pointer ${isHovered
-            ? 'bg-gradient-to-r from-[#4a7ab0] to-[#6b9bd1] text-white shadow-lg'
-            : 'bg-gradient-to-r from-[#4a7ab0] to-[#6b9bd1] text-white shadow hover:shadow-md'
-          }`}
+      <Button 
+        variant="primary"
+        size="md"
+        isFullWidth
+        className={isHovered ? 'shadow-lg' : 'shadow hover:shadow-md'}
       >
         {progress > 0 ? t('continue') : t('start')}
-      </button>
+      </Button>
     </div>
   );
 };

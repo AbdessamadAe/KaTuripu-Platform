@@ -6,7 +6,7 @@ import Breadcrumb from '@/components/Breadcrumb';
 import Loader from '@/components/Loader';
 import RoadmapEditorCanvas from '@/components/admin/RoadmapEditorCanvas';
 import { ReactFlowProvider } from '@xyflow/react';
-import { useAdminRoadmap, useCreateRoadmap, useUpdateRoadmap, useRoadmapForm } from '@/hooks/useAdminRoadmaps';
+import { useAdminRoadmap, useCreateRoadmap, useUpdateRoadmap, useRoadmapForm } from '@/hooks/index';
 import PageHeader from '@/components/admin/PageHeader';
 import ActionButtons from '@/components/admin/ActionButtons';
 import RoadmapDetailsForm from '@/components/admin/RoadmapDetailsForm';

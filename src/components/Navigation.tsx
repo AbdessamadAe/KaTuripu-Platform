@@ -8,7 +8,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation';
 import { Switch } from './Switch';
 import { useUser } from '@clerk/nextjs';
-import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
+import { Button } from '@/components/ui';
 
 
 const navigation = [
@@ -194,16 +195,17 @@ function LanguageDropdown({ languages, currentLang, switchLanguage }: {
         {languages.map((lang) => (
           <Menu.Item key={lang.code}>
             {({ active }) => (
-              <button
+              <Button
                 onClick={() => switchLanguage(lang.code)}
+                variant="text"
                 className={classNames(
                   active ? 'bg-gray-100 dark:bg-gray-700' : '',
                   currentLang === lang.code ? 'font-medium' : '',
-                  'flex w-full items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 text-left'
+                  'flex w-full items-center justify-start px-4 py-2 text-sm text-gray-700 dark:text-gray-200 text-left'
                 )}
               >
                 {lang.name}
-              </button>
+              </Button>
             )}
           </Menu.Item>
         ))}
@@ -248,16 +250,17 @@ function UserDropdown({ user }: { user: any }) {
           </Menu.Item>
           <Menu.Item>
             {({ active }) => (
-              <button
+              <Button
                 onClick={handleSignOut}
+                variant="text"
                 className={classNames(
                   active ? 'bg-gray-100 dark:bg-gray-700' : '',
-                  'flex w-full items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200'
+                  'flex w-full items-center justify-start px-4 py-2 text-sm text-gray-700 dark:text-gray-200'
                 )}
               >
                 <ArrowRightOnRectangleIcon className="w-4 h-4 mr-2" />
                 Déconnexion
-              </button>
+              </Button>
             )}
           </Menu.Item>
         </Menu.Items>

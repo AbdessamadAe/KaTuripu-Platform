@@ -1,5 +1,8 @@
+'use client'
+
 import React from 'react'
 import { useTranslations } from 'next-intl'
+import { Card, Input, Textarea, Button } from '@/components/ui'
 
 const ContactUs = () => {
   const t = useTranslations('contact-us')
@@ -19,53 +22,71 @@ const ContactUs = () => {
               </span>
             </h1>
             
-            <form
-              className="mt-8 space-y-5 bg-white dark:bg-gray-800/90 p-6 md:p-8 rounded-2xl shadow-lg border border-[#e9e3ff]/60 dark:border-gray-700/50 relative"
-              action="https://formsubmit.co/ssamad.2r@gmail.com"
-              method="POST"
+            <Card 
+              variant="elevated" 
+              className="mt-8 relative"
+              hoverEffect={false}
             >
-              {/* Decorative elements */}
-              <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-[#a7d1cf]/30 dark:bg-[#a7d1cf]/15 rounded-full blur-xl -z-10"></div>
-              <div className="absolute -left-4 -top-4 w-20 h-20 bg-[#f0b9ae]/30 dark:bg-[#f0b9ae]/15 rounded-full blur-xl -z-10"></div>
+              <form
+                className="space-y-5 p-6 md:p-8"
+                action="https://formsubmit.co/ssamad.2r@gmail.com"
+                method="POST"
+              >
+                {/* Decorative elements */}
+                <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-[#a7d1cf]/30 dark:bg-[#a7d1cf]/15 rounded-full blur-xl -z-10"></div>
+                <div className="absolute -left-4 -top-4 w-20 h-20 bg-[#f0b9ae]/30 dark:bg-[#f0b9ae]/15 rounded-full blur-xl -z-10"></div>
               
-              <input
+              <Input
                 type="text"
                 name="name"
                 placeholder={t('form.name')}
                 required
-                className="w-full rounded-lg py-3 px-4 bg-[#f7f7fe] dark:bg-gray-700 text-sm border border-[#e9e3ff] dark:border-gray-600 focus:ring-2 focus:ring-[#5a8aaf] focus:border-[#5a8aaf] dark:focus:ring-[#7d9bbf] dark:focus:border-[#7d9bbf] outline-none transition-all dark:text-gray-200 dark:placeholder-gray-400"
+                variant="filled"
+                fullWidth
+                size="md"
+                className="bg-[#f7f7fe] dark:bg-gray-700"
               />
               
-              <input
+              <Input
                 type="email"
                 name="email"
                 placeholder={t('form.email')}
                 required
-                className="w-full rounded-lg py-3 px-4 bg-[#f7f7fe] dark:bg-gray-700 text-sm border border-[#e9e3ff] dark:border-gray-600 focus:ring-2 focus:ring-[#5a8aaf] focus:border-[#5a8aaf] dark:focus:ring-[#7d9bbf] dark:focus:border-[#7d9bbf] outline-none transition-all dark:text-gray-200 dark:placeholder-gray-400"
+                variant="filled"
+                fullWidth
+                size="md"
+                className="bg-[#f7f7fe] dark:bg-gray-700"
               />
               
-              <input
+              <Input
                 type="text"
                 name="subject"
                 placeholder={t('form.subject')}
-                className="w-full rounded-lg py-3 px-4 bg-[#f7f7fe] dark:bg-gray-700 text-sm border border-[#e9e3ff] dark:border-gray-600 focus:ring-2 focus:ring-[#5a8aaf] focus:border-[#5a8aaf] dark:focus:ring-[#7d9bbf] dark:focus:border-[#7d9bbf] outline-none transition-all dark:text-gray-200 dark:placeholder-gray-400"
+                variant="filled"
+                fullWidth
+                size="md"
+                className="bg-[#f7f7fe] dark:bg-gray-700"
               />
               
-              <textarea
+              <Textarea
                 name="message"
                 placeholder={t('form.message')}
                 rows={6}
                 required
-                className="w-full rounded-lg py-3 px-4 bg-[#f7f7fe] dark:bg-gray-700 text-sm border border-[#e9e3ff] dark:border-gray-600 focus:ring-2 focus:ring-[#5a8aaf] focus:border-[#5a8aaf] dark:focus:ring-[#7d9bbf] dark:focus:border-[#7d9bbf] outline-none transition-all dark:text-gray-200 dark:placeholder-gray-400 resize-none"
-              ></textarea>
+                variant="filled"
+                fullWidth
+                className="bg-[#f7f7fe] dark:bg-gray-700 resize-none"
+              />
               
-              <button
+              <Button
                 type="submit"
-                className="w-full rounded-xl px-6 py-3.5 text-base font-semibold text-white bg-gradient-to-r from-[#5a8aaf] to-[#7d9bbf] hover:from-[#4d7a9d] hover:to-[#6c8bad] dark:from-[#5a8aaf] dark:to-[#7d9bbf] dark:hover:from-[#4d7a9d] dark:hover:to-[#6c8bad] shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300"
+                isFullWidth
+                size="lg"
               >
                 {t('form.submit')}
-              </button>
-            </form>
+              </Button>
+              </form>
+            </Card>
           </div>
           
           <div className="hidden sm:flex  justify-center items-center">

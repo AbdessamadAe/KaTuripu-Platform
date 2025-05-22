@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
 interface BreadcrumbItem {
-  name: string;
+  label: string;
   href?: string;
 }
 
@@ -37,7 +37,7 @@ const Breadcrumb = ({ items }: BreadcrumbProps) => {
                   href={item.href}
                   className="text-gray-500 dark:text-gray-400 hover:text-[#69c0cf] dark:hover:text-[#b9dbe1] truncate max-w-[180px] inline-block align-bottom transition-colors"
                 >
-                  {item.name}
+                  {item.label}
                 </Link>
               ) : (
                 <span className="text-[#69c0cf] dark:text-[#b9dbe1] font-medium truncate max-w-[180px] inline-block align-bottom">

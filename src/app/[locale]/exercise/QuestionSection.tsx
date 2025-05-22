@@ -1,9 +1,9 @@
 "use client";
 
-import Image from 'next/image';
 import { MathJaxContext } from 'better-react-mathjax';
 import { useCallback, useState } from 'react';
 import Logger from '@/utils/logger';
+import { Card, Alert } from '@/components/ui';
 
 interface QuestionSectionProps {
   question?: string;
@@ -26,14 +26,14 @@ const QuestionSection = ({ question, imageUrl }: QuestionSectionProps) => {
         <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Question</h2>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm">
+      <Card>
         {/* Question text with MathJax support */}
         {question && (
-          <div className="p-4 sm:p-5">
+          <Card.Body>
             <MathJaxContext>
               <div className="prose dark:prose-invert prose-sm sm:prose-base max-w-none overflow-x-auto" dangerouslySetInnerHTML={{ __html: question }} />
             </MathJaxContext>
-          </div>
+          </Card.Body>
         )}
 
         {/* Question image if available - responsive container */}
@@ -51,14 +51,16 @@ const QuestionSection = ({ question, imageUrl }: QuestionSectionProps) => {
         )}
 
         {imageUrl && imageError && (
-          <div className="mt-2 p-4 flex flex-col sm:flex-row items-center justify-center gap-2 bg-gray-50 dark:bg-gray-750 text-gray-400 dark:text-gray-500">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-            <span>Image could not be loaded</span>
-          </div>
+          <Card.Body className="bg-gray-50 dark:bg-gray-750">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-gray-400 dark:text-gray-500">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <span>Image could not be loaded</span>
+            </div>
+          </Card.Body>
         )}
-      </div>
+      </Card>
     </div>
   );
 };
