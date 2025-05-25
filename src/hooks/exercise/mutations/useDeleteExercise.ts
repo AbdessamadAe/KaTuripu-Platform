@@ -8,10 +8,11 @@ export function useDeleteExercise() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: deleteExercise,
-    onSuccess: () => {
-      // Invalidate relevant queries after deleting an exercise
-      queryClient.invalidateQueries({ queryKey: ['admin', 'roadmap'] });
+    mutationFn: ({ exerciseId, nodeId }: { exerciseId: string; nodeId: string }) => deleteExercise(exerciseId),
+    onSuccess: (_, variables) => {
+      console.log('Exercise deleted successfully:', variables);
+      queryClient.invalidateQueries({ queryKey: ['exercises', variables.nodeId] });
+      queryClient.invalidateQueries({ queryKey: ['exercise', variables.exerciseId] });
     }
   });
 }

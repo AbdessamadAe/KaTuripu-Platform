@@ -11,7 +11,7 @@ import ExerciseSidebar from '@/components/Sidebar';
 import VideoSection from '@/app/[locale]/exercise/videoSection';
 import Breadcrumb from '@/components/Breadcrumb';
 import ErrorMessage from '@/components/Error';
-import { useExercise, useCompleteExercise } from '@/hooks/useExercise';
+import { useExercise, useCompleteExercise } from '@/hooks/exercise/queries/useExercise';
 import { Button, Card, Alert, Tabs } from '@/components/ui';
 
 const ExercisePage = () => {

@@ -8,17 +8,7 @@ export async function POST(
   try {
     // Parse the request body
     const body = await request.json();
-    
-    // Validate required fields
-    if (!body.name || !body.difficulty || !Array.isArray(body.hints)) {
-      return NextResponse.json(
-        { error: "Missing required fields: name, difficulty, and hints are required" },
-        { status: 400 }
-      );
-    }
-    
-    // Call the service function to create the exercise
-    const result = await createExercise(body);
+    const result = await createExercise(body?.data);
     
     if (!result.success) {
       return NextResponse.json(

@@ -14,7 +14,7 @@ import { celebrateProgress } from "@/utils/utils";
 import Loader from "./Loader";
 import RoadmapNode from "./RoadmapNode";
 import { Roadmap } from "@/types/types";
-import { useRoadmap } from "@/hooks/useRoadmap";
+import { useRoadmap } from "@/hooks/roadmap/queries/useRoadmap";
 import ErrorMessage from "./Error";
 
 interface RoadmapProps {

@@ -150,7 +150,13 @@ export const createExercise = async (exerciseData: {
       const exercise = await tx.exercise.create({
         data: {
           id,
-          ...exerciseFields,
+          videoUrl: exerciseData.video_url || null,
+          name: exerciseData.name,
+          difficulty: exerciseData.difficulty,
+          hints: exerciseData.hints || [],
+          solution: exerciseData.solution || null,
+          description: exerciseData.description || null,
+          type: exerciseData.type || 'default',
           isActive: exerciseData.isActive ?? true
         }
       });
@@ -183,5 +189,89 @@ export const createExercise = async (exerciseData: {
     }
     
     return { success: false, error: 'Failed to create exercise' };
+  }
+}
+
+export const updateExercise = async (exerciseData: {
+  id: string;
+  name?: string;
+  difficulty?: string;
+  hints?: string[];
+  solution?: string;
+  videoUrl?: string;
+  description?: string;
+  questionImageUrl?: string;
+  type?: string;
+  isActive?: boolean;
+}) => {
+  try {
+    const { userId } = await auth();
+    
+    if (!userId) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    // Update the exercise
+    const updatedExercise = await prisma.exercise.update({
+      where: { id: exerciseData.id },
+      data: {
+        name: exerciseData.name,
+        difficulty: exerciseData.difficulty,
+        hints: exerciseData.hints || [],
+        solution: exerciseData.solution || null,
+        videoUrl: exerciseData.videoUrl || null,
+        description: exerciseData.description || null,
+        type: exerciseData.type || 'default',
+        isActive: exerciseData.isActive ?? true
+      }
+    });
+
+    return { success: true, exercise: updatedExercise };
+  } catch (error) {
+    Logger.error('Failed to update exercise', error);
+    
+    // Handle specific Prisma errors
+    if (error.code === 'P2025') {
+      return { success: false, error: 'Exercise not found' };
+    }
+    
+    return { success: false, error: 'Failed to update exercise' };
+  }
+}
+
+export const deleteExercise = async (exerciseId: string, nodeId: string) => {
+  try {
+    const { userId } = await auth();
+    
+    if (!userId) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    // Start a transaction to ensure both operations complete together
+    await prisma.$transaction(async (tx) => {
+      // Delete the exercise-node relationship
+      await tx.nodeExercise.deleteMany({
+        where: {
+          exerciseId,
+          nodeId
+        }
+      });
+
+      // Delete the exercise itself
+      await tx.exercise.delete({
+        where: { id: exerciseId }
+      });
+    });
+
+    return { success: true };
+  } catch (error) {
+    Logger.error('Failed to delete exercise', error);
+    
+    // Handle specific Prisma errors
+    if (error.code === 'P2025') {
+      return { success: false, error: 'Exercise not found' };
+    }
+    
+    return { success: false, error: 'Failed to delete exercise' };
   }
 }

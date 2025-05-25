@@ -8,6 +8,7 @@ export interface Exercise {
   solution?: string;
   description?: string;
   video_url?: string;
+  hints?: string[];
 }
 
 

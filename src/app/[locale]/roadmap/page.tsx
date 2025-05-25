@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from 'next-intl';
 import { RoadmapMeta } from "@/types/types";
 import ErrorMessage from "@/components/Error";
-import { useRoadmaps } from "@/hooks/useRoadmap";
+import { useRoadmaps } from "@/hooks/roadmap/queries/useRoadmap";
 import Loader from "@/components/Loader";
 import { Button, Input, Badge } from "@/components/ui";
 

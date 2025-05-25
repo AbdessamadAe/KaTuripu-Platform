@@ -9,7 +9,7 @@ import PageHeader from '@/components/admin/PageHeader';
 import AdminErrorState from '@/components/admin/AdminErrorState';
 import NodeSection from './NodeSection';
 import ExercisesSection from './ExercisesSection';
-import { useExercisesByNodeId } from '@/hooks/useExercise';
+import { useExercisesByNodeId } from '@/hooks/exercise/queries/useExercise';
 
 export default function NodeEditPage({ params }: { params: { roadmapId: string; nodeId: string } }) {
   const router = useRouter();
@@ -18,7 +18,7 @@ export default function NodeEditPage({ params }: { params: { roadmapId: string; 
   // Fetch roadmap data to get context about the node
   const { data: roadmapData, isLoading: isRoadmapLoading, isError: isRoadmapError } = 
     useAdminRoadmap(roadmapId);
-  const {data: nodeExercises} = useExercisesByNodeId(nodeId);
+  const {data: nodeExercises, isLoading: isExercisesLoading, isError: isExercisesError} = useExercisesByNodeId(nodeId);
 
   // Handle loading state
   if (isRoadmapLoading) {
@@ -47,19 +47,6 @@ export default function NodeEditPage({ params }: { params: { roadmapId: string; 
   ];
 
 
-
-
-  // Handle exercise updates
-  const handleUpdateExercises = (exercises: any[]) => {
-    // Update node data with new exercises
-    // This assumes you're using a state management system
-    // or making API calls to update the node data
-    if (node && node.data) {
-      node.data.exercises = exercises;
-      node.data.total_exercises = exercises.length;
-    }
-  };
-
   return (
     <div className="container mx-auto px-4 py-12 max-w-7xl">
       <Breadcrumb items={breadcrumbItems} />
@@ -79,8 +66,9 @@ export default function NodeEditPage({ params }: { params: { roadmapId: string; 
       
       <ExercisesSection 
         nodeId={nodeId}
-        initialExercises={nodeExercises}
-        onUpdateExercises={handleUpdateExercises}
+        exercises={nodeExercises}
+        isLoading={isExercisesLoading}
+        isError={isExercisesError}
       />
     </div>
   );

@@ -9,9 +9,8 @@ export function useCreateExercise() {
   
   return useMutation({
     mutationFn: createExercise,
-    onSuccess: () => {
-      // Invalidate relevant queries after creating an exercise
-      queryClient.invalidateQueries({ queryKey: ['admin', 'roadmap'] });
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['exercises', variables.data.nodeId] });
     }
   });
 }

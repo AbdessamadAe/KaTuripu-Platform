@@ -4,21 +4,37 @@ import React, { useState } from 'react';
 import { Exercise } from '@/types/types';
 import {ExercisesPanel} from './components';
 import {ExerciseModal} from './components';
+import { useCreateExercise, useDeleteExercise, useUpdateExercise } from '@/hooks';
 
 interface ExercisesSectionProps {
   nodeId: string;
-  initialExercises: Exercise[];
-  onUpdateExercises: (exercises: Exercise[]) => void;
+  exercises: Exercise[];
+  isLoading: boolean;
+  isError: boolean;
 }
 
 const ExercisesSection: React.FC<ExercisesSectionProps> = ({ 
   nodeId, 
-  initialExercises, 
-  onUpdateExercises 
+  exercises,
+  isLoading,
+  isError
 }) => {
-  const [exercises, setExercises] = useState<Exercise[]>(initialExercises || []);
   const [isExerciseModalOpen, setIsExerciseModalOpen] = useState(false);
   const [currentExercise, setCurrentExercise] = useState<Exercise | undefined>(undefined);
+  
+  const createExerciseMutation = useCreateExercise();
+  const updateExerciseMutation = useUpdateExercise();
+  const deleteExerciseMutation = useDeleteExercise();
+
+  // Handle loading state
+  if (isLoading) {
+    return <div className="text-center py-10">Loading...</div>;
+  }
+
+  // Handle error state
+  if (isError) {
+    return <div className="text-center py-10">Failed to load exercises</div>;
+  }
 
   // Exercise handlers
   const handleAddExercise = () => {
@@ -27,31 +43,38 @@ const ExercisesSection: React.FC<ExercisesSectionProps> = ({
   };
 
   const handleEditExercise = (exercise: Exercise) => {
-    setCurrentExercise(exercise);
+    // We only need to set the ID since the modal will fetch the exercise by ID
+    setCurrentExercise({ id: exercise.id } as Exercise);
     setIsExerciseModalOpen(true);
   };
 
-  const handleDeleteExercise = (exerciseId: string) => {
-    const updatedExercises = exercises.filter(ex => ex.id !== exerciseId);
-    setExercises(updatedExercises);
-    onUpdateExercises(updatedExercises);
+  const handleDeleteExercise = async (exerciseId: string) => {
+    await deleteExerciseMutation.mutateAsync({
+      exerciseId: exerciseId,
+      nodeId: nodeId
+    });
   };
 
-  const handleSaveExercise = (exercise: Exercise) => {
+  const handleSaveExercise = async (exercise: Exercise) => {
     const existingIndex = exercises.findIndex(ex => ex.id === exercise.id);
-    let updatedExercises: Exercise[];
     
     if (existingIndex >= 0) {
       // Update existing exercise
-      updatedExercises = [...exercises];
-      updatedExercises[existingIndex] = exercise;
+      await updateExerciseMutation.mutateAsync({
+        id: exercise.id,
+        data: exercise,
+        nodeId: nodeId
+      });
     } else {
       // Add new exercise
-      updatedExercises = [...exercises, exercise];
+      await createExerciseMutation.mutateAsync({
+        data: {
+          ...exercise,
+          nodeId: nodeId
+        }
+      });
     }
     
-    setExercises(updatedExercises);
-    onUpdateExercises(updatedExercises);
     setIsExerciseModalOpen(false);
   };
 
@@ -70,7 +93,7 @@ const ExercisesSection: React.FC<ExercisesSectionProps> = ({
         isOpen={isExerciseModalOpen}
         onClose={() => setIsExerciseModalOpen(false)}
         onSave={handleSaveExercise}
-        exercise={currentExercise}
+        exerciseId={currentExercise?.id}
       />
     </div>
   );

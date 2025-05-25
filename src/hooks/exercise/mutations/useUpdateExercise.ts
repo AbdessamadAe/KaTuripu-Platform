@@ -8,10 +8,10 @@ export function useUpdateExercise() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => updateExercise({ id, data }),
-    onSuccess: () => {
-      // Invalidate relevant queries after updating an exercise
-      queryClient.invalidateQueries({ queryKey: ['admin', 'roadmap'] });
+    mutationFn: ({ id, data, nodeId }: { id: string; data: any }) => updateExercise({ id, data }),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['exercises', variables.nodeId] });
+      queryClient.invalidateQueries({ queryKey: ['exercise', variables.id] });
     }
   });
 }

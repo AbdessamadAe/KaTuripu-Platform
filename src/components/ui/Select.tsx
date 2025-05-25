@@ -92,9 +92,9 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
             disabled={disabled}
             {...props}
           >
-            {options.map((option) => (
+            {options.map((option, i) => (
               <option 
-                key={option.value} 
+                key={i} 
                 value={option.value}
                 disabled={option.disabled}
               >
