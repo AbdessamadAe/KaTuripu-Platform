@@ -1,10 +1,12 @@
-# KaTuripu 🎓
+# KaTuripu
+
+![image](https://github.com/user-attachments/assets/adde95f9-3c07-4536-92d7-bfc42e7a1e95)
 
 ## Overview
 
 KaTuripu is an educational platform that uses knowledge graphs to guide students through their learning journey. The platform is primarily built to help Moroccan students as they prepare for university admissions tests and entrance exams. Our mission is to provide a structured, interactive approach to exam preparation that helps students master subjects efficiently.
 
-## Features ✨
+## Features
 
 - **Interactive Roadmaps**: Follow personalized learning paths specifically designed for different entrance exams and institutions.
 - **Practice Problems**: Access hundreds of practice problems with detailed solutions to strengthen understanding and test knowledge.
@@ -14,7 +16,7 @@ KaTuripu is an educational platform that uses knowledge graphs to guide students
 - **Achievement System**: Stay motivated with achievement badges and clearly defined learning goals.
 - **Responsive Design**: Fully responsive interface that works seamlessly on desktop, tablet, and mobile devices.
 
-## Technologies 🛠️
+## Technologies
 
 ### Frontend
 - **Next.js 15**: React framework with server-side rendering and routing
@@ -33,15 +35,7 @@ KaTuripu is an educational platform that uses knowledge graphs to guide students
 - **Clerk**: Authentication and user management
 - **Docker**: Containerization for development and deployment
 
-## Architecture 🏗️
-
-KaTuripu uses a knowledge graph approach to represent educational content, where:
-- **Roadmaps**: Represent learning paths for specific exams or subjects
-- **Nodes**: Topics within a roadmap that contain exercises and resources
-- **Edges**: Connections between nodes representing prerequisites and progression paths
-- **Exercises**: Practice problems with hints, solutions, and video explanations
-
-## Getting Started 🚀
+## Getting Started 
 
 ### Prerequisites
 - Node.js (v20+)
