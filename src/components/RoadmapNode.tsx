@@ -11,11 +11,7 @@ export default memo(({ data, isConnectable }) => {
       <Handle
         type="target"
         position={Position.Top}
-        isConnectable={isConnectable}
-      />
-      <Handle
-        type="source"
-        position={Position.Top}
+        id="target"
         isConnectable={isConnectable}
       />
       <div
@@ -38,11 +34,7 @@ export default memo(({ data, isConnectable }) => {
       </div>
       <Handle
         type="source"
-        position={Position.Bottom}
-        isConnectable={isConnectable}
-      />
-      <Handle
-        type="target"
+        id="source"
         position={Position.Bottom}
         isConnectable={isConnectable}
       />
