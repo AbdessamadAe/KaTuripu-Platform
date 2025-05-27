@@ -112,7 +112,6 @@ const RoadmapEditorCanvas: React.FC<RoadmapEditorProps> = ({ roadmapId }) => {
     if (!roadmapId) return;
 
     const newNode = {
-      id: nanoid(),
       position: { x: 50, y: 250 },
       data: {
         label: "New Node",
@@ -124,12 +123,12 @@ const RoadmapEditorCanvas: React.FC<RoadmapEditorProps> = ({ roadmapId }) => {
     };
 
     // Create the node in the backend
-    await createNodeMutation.mutateAsync({
+    const createdNode = await createNodeMutation.mutateAsync({
       roadmapId,
       node: newNode
     });
 
-    setNodes((prev) => prev.concat(newNode));
+    setNodes((prev) => prev.concat(createdNode));
   };
 
   const handleNodeClick = (_: React.MouseEvent, node: Node) => {
