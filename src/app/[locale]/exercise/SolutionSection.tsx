@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import { UseMutateFunction } from '@tanstack/react-query';
 import Logger from '@/utils/logger';
 import { Button, Card } from '@/components/ui';
+import MathBlock from '@/components/MathBlock';
 
 interface SolutionSectionProps {
   solution?: string;
@@ -116,27 +117,7 @@ const SolutionSection = ({
                   {t('solution')}
                 </Card.Title>
               </Card.Header>
-              <Card.Body>
-                <div className="prose dark:prose-invert max-w-none">
-                  <MathJax dynamic>
-                    <ReactMarkdown
-                      components={{
-                        code({ node, className, children, ...props }) {
-                          return (
-                            <pre className="bg-gray-200 dark:bg-gray-600 p-3 rounded overflow-x-auto">
-                              <code className={className} {...props}>
-                                {children}
-                              </code>
-                            </pre>
-                          );
-                        }
-                      }}
-                    >
-                      {solution}
-                    </ReactMarkdown>
-                  </MathJax>
-                </div>
-              </Card.Body>
+              <MathBlock content={solution} />
             </Card>
           </motion.div>
         )}
