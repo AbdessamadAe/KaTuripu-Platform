@@ -24,8 +24,7 @@ export async function PATCH(
   const data = await request.json();
 
   try {
-    const updatedExercise = await updateExercise({ id: exerciseId, data });
-    return NextResponse.json(updatedExercise);
+    const updatedExercise = await updateExercise({ id: exerciseId, ...data });    return NextResponse.json(updatedExercise);
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
