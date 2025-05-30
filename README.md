@@ -66,6 +66,7 @@ KaTuripu is an educational platform that uses knowledge graphs to guide students
    DATABASE_URL="postgresql://admin:admin@localhost:5433/katuripu_db"
    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
    CLERK_SECRET_KEY=your_clerk_secret_key
+   CLERK_WEBHOOK_SECRET=your_clerk_webhook_secret
    ```
 
 5. Run database migrations and seed the database:
@@ -79,7 +80,13 @@ KaTuripu is an educational platform that uses knowledge graphs to guide students
    npm run dev
    ```
 
-7. Open [http://localhost:3000](http://localhost:3000) in your browser.
+7. Set up Clerk Webhook (for automatic user creation):
+   - In your Clerk Dashboard, go to Webhooks
+   - Create a new webhook with the endpoint: `https://your-domain.com/api/clerk-webhook`
+   - Select the `user.created` and `user.updated` events
+   - Copy the webhook secret and add it to your `.env` file as `CLERK_WEBHOOK_SECRET`
+
+8. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Contributing 👥
 
