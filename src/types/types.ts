@@ -1,17 +1,18 @@
 import { Node, Edge } from "@xyflow/react";
+import { 
+  Exercise as PrismaExercise, 
+  Roadmap as PrismaRoadmap,
+  RoadmapNode as PrismaRoadmapNode,
+  RoadmapEdge as PrismaRoadmapEdge,
+  User as PrismaUser,
+  UserExerciseProgress as PrismaUserExerciseProgress
+} from "@prisma/client";
 
-export interface Exercise {
-  id: string;
-  name: string;
-  difficulty?: string;
-  type?: string;
-  solution?: string;
-  description?: string;
-  video_url?: string;
-  hints?: string[];
-  questionImageUrl?: string;
+// Use Prisma-generated types with proper field mappings
+export interface Exercise extends Omit<PrismaExercise, 'videoUrl' | 'questionImageUrl' | 'isActive'> {
+  video_url?: string; // Map from Prisma's videoUrl
+  questionImageUrl?: string; // Map from Prisma's questionImageUrl
 }
-
 
 export interface ExerciseMeta {
   id: string;
@@ -34,6 +35,7 @@ export interface ReactFlowNodeData {
   lastUpdated?: string;
 }
 
+// Extend Prisma's RoadmapNode type for ReactFlow compatibility
 export interface ReactFlowNode extends Node {
   id: string; // Must be string
   type: string; // 'default' | 'input' | 'output' | 'custom'
@@ -46,7 +48,8 @@ export interface ReactFlowNode extends Node {
   // https://reactflow.dev/api-reference/types/node
 }
 
-export interface ReactFlowEdge {
+// Extend Prisma's RoadmapEdge type for ReactFlow compatibility
+export interface ReactFlowEdge extends Edge {
   id: string;
   source: string;
   target: string;
@@ -55,13 +58,9 @@ export interface ReactFlowEdge {
   // https://reactflow.dev/api-reference/types/edge
 }
 
-// used in full roadmap page
-export interface Roadmap {
-  id: string;
-  title: string;
-  description?: string;
+// Extend Prisma's Roadmap type for frontend use
+export interface Roadmap extends Omit<PrismaRoadmap, 'imageUrl' | 'createdAt'> {
   slug: string;
-  category?: string;
   image_url?: string;
   nodes: ReactFlowNode[];
   edges: ReactFlowEdge[];

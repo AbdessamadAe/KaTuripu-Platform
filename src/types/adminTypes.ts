@@ -1,4 +1,5 @@
 import { ReactFlowNode, ReactFlowEdge } from "./types";
+import { Roadmap as PrismaRoadmap } from "@prisma/client";
 
 /**
  * Basic metadata about a roadmap for admin views
@@ -15,13 +16,9 @@ export interface AdminRoadmapMeta {
 }
 
 /**
- * Full details of a roadmap for admin editing
+ * Full details of a roadmap for admin editing - extends Prisma Roadmap
  */
-export interface AdminRoadmapDetails {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
+export interface AdminRoadmapDetails extends Omit<PrismaRoadmap, 'imageUrl' | 'createdAt'> {
   imageUrl: string;
   slug?: string;
   nodes: ReactFlowNode[];
