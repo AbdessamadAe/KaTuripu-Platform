@@ -13,7 +13,7 @@ export interface CardProps {
 const Card: React.FC<CardProps> = ({
   children,
   className = '',
-  variant = 'elevated',
+  variant = 'outlined',
   hoverEffect = false,
   clickable = false,
   onClick,

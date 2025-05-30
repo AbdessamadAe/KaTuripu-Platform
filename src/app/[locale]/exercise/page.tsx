@@ -80,7 +80,7 @@ const ExercisePage = () => {
       ),
       color: '[#69c0cf]'
     },
-    ...(exercise?.hints && exercise.hints.length > 0 ? [{
+    {
       id: 'hints',
       label: t('hints'),
       icon: (
@@ -89,8 +89,8 @@ const ExercisePage = () => {
         </svg>
       ),
       color: 'yellow-600'
-    }] : []),
-    ...(exercise?.videoUrl ? [{
+    },
+    {
       id: 'video',
       label: t('videoExplanation'),
       icon: (
@@ -99,7 +99,7 @@ const ExercisePage = () => {
         </svg>
       ),
       color: 'blue-600'
-    }] : []),
+    },
     {
       id: 'solution',
       label: t('solution'),

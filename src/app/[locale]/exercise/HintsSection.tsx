@@ -15,8 +15,6 @@ const HintsSection = ({ hints }: HintsSectionProps) => {
   const t = useTranslations('exercise');
   const [showHint, setShowHint] = useState<number | null>(null);
 
-  if (!hints || hints.length === 0) return null;
-
   return (
     <div className="mb-8">
       <div className="flex items-center mb-3">
