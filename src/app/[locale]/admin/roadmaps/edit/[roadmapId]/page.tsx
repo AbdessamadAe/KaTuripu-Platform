@@ -104,9 +104,9 @@ export default function RoadmapEditor({ params }: { params: { roadmapId: string 
         <div className="mb-8">
           <Breadcrumb 
             items={[
-              { label: 'Admin', href: '/admin' },
-              { label: 'Roadmaps', href: '/admin/roadmaps' },
-              { label: isNewRoadmap ? 'Create New' : 'Edit Roadmap', href: '#' }
+              { name: 'Admin', href: '/admin' },
+              { name: 'Roadmaps', href: '/admin/roadmaps' },
+              { name: isNewRoadmap ? 'Create New' : 'Edit Roadmap', href: '#' }
             ]} 
           />
         </div>

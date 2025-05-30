@@ -59,8 +59,8 @@ export default function AdminRoadmaps() {
         <div className="mb-8">
           <Breadcrumb 
             items={[
-              { label: 'Admin', href: '/admin' },
-              { label: 'Roadmaps', href: '/admin/roadmaps' }
+              { name: 'Admin', href: '/admin' },
+              { name: 'Roadmaps', href: '/admin/roadmaps' }
             ]} 
           />
         </div>

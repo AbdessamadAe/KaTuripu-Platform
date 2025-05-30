@@ -6,6 +6,9 @@ import { getDifficultyStyle } from "@/utils/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@clerk/nextjs";
 import { Button, Card, Badge, Alert } from '@/components/ui';
+// Import icons from react-icons
+import { HiCheck, HiPlay, HiClock, HiDocument } from 'react-icons/hi2';
+import { HiX } from "react-icons/hi";
 
 
 async function fetchExerciseMetaList(nodeId: string): Promise<ExerciseMeta[]> {
@@ -19,7 +22,7 @@ interface SidebarProps {
   roadmapId: string | undefined;
   prerequisites?: string[];
   nodeProgressPercent?: number;
-  roadmapTitle?: string;
+  roadmapTitle: string;
   onClose?: () => void;
   allowClose?: boolean;
   onexerciseToggle?: (userId: string, exerciseId: string, completed: boolean, nodeId: string) => void;
@@ -33,7 +36,6 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
   onClose,
   allowClose = false,
 }) => {
-
   const { user } = useUser();
   const userId = user?.id;
 
@@ -75,20 +77,7 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
             size="sm"
             aria-label="Close sidebar"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <HiX className="h-5 w-5" />
           </Button>
         )}
       </Card.Header>
@@ -147,34 +136,25 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
                           ? "bg-green-100 dark:bg-green-900/30 text-green-500 dark:text-green-400"
                           : "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-500 dark:text-indigo-400"}`}>
                         {exercise.completed ? (
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
+                          <HiCheck className="h-4 w-4" />
                         ) : exercise.videoUrl ? (
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
+                          <HiPlay className="h-4 w-4" />
                         ) : (
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                          </svg>
+                          <HiDocument className="h-4 w-4" />
                         )}
                       </div>
 
                       <div className="flex-grow min-w-0">
                         <Link href={{
                           pathname: `/exercise`,
-                          query: { exerciseId: exercise.id, nodeId, roadmapId, nodeTitle: title, roadmapTitle }
+                          query: { exerciseId: exercise.id, nodeId, roadmapId, nodeTitle: title, roadmapTitle: roadmapTitle}
                         }} passHref>
                           <div className="text-gray-800 dark:text-white font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors cursor-pointer truncate">
                             {exercise.name}
                           </div>
                         </Link>
                         <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex items-center">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
+                          <HiClock className="h-3.5 w-3.5 mr-1" />
                           {"20 min"}
                         </div>
                       </div>

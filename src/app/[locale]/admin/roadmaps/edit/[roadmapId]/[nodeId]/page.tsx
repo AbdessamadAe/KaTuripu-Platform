@@ -39,10 +39,10 @@ export default function NodeEditPage({ params }: { params: { roadmapId: string; 
 
   // Breadcrumb items
   const breadcrumbItems = [
-    { label: 'Admin', href: '/admin' },
-    { label: 'Roadmaps', href: '/admin/roadmaps' },
-    { label: roadmapData.title, href: `/admin/roadmaps/edit/${roadmapId}` },
-    { label: `${node.data.label}`, href: `/admin/roadmaps/edit/${roadmapId}/${nodeId}` },
+    { name: 'Admin', href: '/admin' },
+    { name: 'Roadmaps', href: '/admin/roadmaps' },
+    { name: roadmapData.title, href: `/admin/roadmaps/edit/${roadmapId}` },
+    { name: node.data.label, href: `/admin/roadmaps/edit/${roadmapId}/${nodeId}` },
   ];
 
 

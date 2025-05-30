@@ -1,4 +1,6 @@
-// Reusable Select component for consistent form styling
+// Import icon from react-icons
+import { HiChevronDown } from 'react-icons/hi2';
+
 import { forwardRef } from 'react';
 
 export interface SelectOption {
@@ -104,20 +106,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
           </select>
           
           <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-500 dark:text-gray-400">
-            <svg 
-              className="w-5 h-5" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24" 
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M19 9l-7 7-7-7" 
-              />
-            </svg>
+            <HiChevronDown className="w-5 h-5" />
           </div>
         </div>
         
