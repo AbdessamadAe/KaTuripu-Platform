@@ -39,8 +39,10 @@ export default async function RootLayout({
       <body className={`antialiased min-h-screen w-full overflow-x-hidden`}>
         <QueryProvider>
           <ClerkProvider
+            signInUrl={`/${locale}/auth/login`}
             appearance={{
-              signIn: { baseTheme: neobrutalism }
+              baseTheme: neobrutalism,
+              variables: { colorPrimary: '#4a7ab0' },
             }}>
             <NextIntlClientProvider messages={messages} locale={locale}>
               <ThemeProvider>
