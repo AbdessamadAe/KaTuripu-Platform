@@ -28,15 +28,12 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     type: 'quiz',
     description: '',
     solution: '',
-    video_url: '',
-    hints: []
+    videoUrl: '',
+    hints: [],
+    questionImageUrl: ''
   });
 
-  // For managing hints
   const [currentHint, setCurrentHint] = useState('');
-
-  // checkpoint: form has to have all exercise fields like question image url
-  // videoUrl etc....
 
   useEffect(() => {
     setFormData({
@@ -46,8 +43,9 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       type: exercise?.type ?? 'quiz',
       description: exercise?.description ?? '',
       solution: exercise?.solution ?? '',
-      video_url: exercise?.videoUrl ?? '',
-      hints: exercise?.hints ?? []
+      videoUrl: exercise?.videoUrl ?? '',
+      hints: exercise?.hints ?? [],
+      questionImageUrl: exercise?.questionImageUrl ?? ''
     });
     setCurrentHint('');
     console.log('Exercise data loaded:', exercise);
@@ -63,6 +61,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Form data being submitted:', formData);
     onSave(formData as Exercise);
   };
 
@@ -205,15 +204,29 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
 
               {/* Video URL */}
               <div>
-                <label htmlFor="video_url" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label htmlFor="videoUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Video URL (optional)
                 </label>
                 <Input
-                  id="video_url"
-                  name="video_url"
-                  value={formData.video_url || ''}
+                  id="videoUrl"
+                  name="videoUrl"
+                  value={formData.videoUrl || ''}
                   onChange={handleInputChange}
                   placeholder="https://www.youtube.com/watch?v=..."
+                />
+              </div>
+
+              {/* Question Image URL */}
+              <div>
+                <label htmlFor="questionImageUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Question Image URL (optional)
+                </label>
+                <Input
+                  id="questionImageUrl"
+                  name="questionImageUrl"
+                  value={formData.questionImageUrl || ''}
+                  onChange={handleInputChange}
+                  placeholder="https://.../image.png"
                 />
               </div>
 

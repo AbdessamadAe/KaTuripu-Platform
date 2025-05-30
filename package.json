@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "db": "docker start katuripu_db",
     "postinstall": "prisma generate",
     "seed": "node prisma/seed.js",
-    "dev": "docker start katuripu_db && npx prisma generate && next dev",
+    "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

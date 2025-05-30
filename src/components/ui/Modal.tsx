@@ -2,7 +2,7 @@
 'use client';
 
 import { Fragment, useRef, useEffect } from 'react';
-import { Button } from './Button';
+import Button from './Button';
 
 export interface ModalProps {
   isOpen: boolean;

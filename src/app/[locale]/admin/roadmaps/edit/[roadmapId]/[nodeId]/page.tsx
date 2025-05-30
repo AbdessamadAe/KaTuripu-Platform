@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import Breadcrumb from '@/components/Breadcrumb';
 import Loader from '@/components/Loader';
 import { useAdminRoadmap } from '@/hooks/index';
-import PageHeader from '@/components/admin/PageHeader';
 import AdminErrorState from '@/components/admin/AdminErrorState';
 import NodeSection from './NodeSection';
 import ExercisesSection from './ExercisesSection';
@@ -48,13 +47,8 @@ export default function NodeEditPage({ params }: { params: { roadmapId: string; 
 
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-7xl">
+    <div className="container mx-auto px-4 mb-18 max-w-7xl">
       <Breadcrumb items={breadcrumbItems} />
-      
-      <PageHeader 
-        title={`${node.data.label}`}
-        description={`Edit node details for roadmap: ${roadmapData.title}`}
-      />
 
       <div className="mt-8">
         <NodeSection 

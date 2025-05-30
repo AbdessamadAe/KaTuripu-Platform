@@ -221,6 +221,7 @@ export const updateExercise = async (exerciseData: {
         solution: exerciseData.solution || null,
         videoUrl: exerciseData.videoUrl || null,
         description: exerciseData.description || null,
+        questionImageUrl: exerciseData.questionImageUrl || null,
         type: exerciseData.type || 'default',
         isActive: exerciseData.isActive ?? true
       }

@@ -1,8 +1,6 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=Montserrat&family=Amiri&family=Noto+Naskh+Arabic&display=swap');
-
 :root {
   --primary-color: #4F55C1;
   --secondary-color: #aa74fa;

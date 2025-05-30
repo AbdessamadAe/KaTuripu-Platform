@@ -24,7 +24,13 @@ export async function PATCH(
   const data = await request.json();
 
   try {
-    const updatedExercise = await updateExercise({ id: exerciseId, ...data });    return NextResponse.json(updatedExercise);
+    const result = await updateExercise({ id: exerciseId, ...data });
+    
+    if (!result.success) {
+      return NextResponse.json({ error: result.error }, { status: 400 });
+    }
+    
+    return NextResponse.json({ success: true, exercise: result.exercise });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
