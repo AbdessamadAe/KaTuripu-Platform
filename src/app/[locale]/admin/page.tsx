@@ -34,7 +34,7 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-[#f5f3ff] dark:from-gray-900 dark:to-indigo-950/30 text-gray-800 dark:text-gray-200 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-white to-[var(--primary-color-light)]/30 dark:from-gray-900 dark:to-indigo-950/30 text-gray-800 dark:text-gray-200 py-12 px-4">
       <div className="max-w-6xl mx-auto">
         <PageHeader 
           title="Admin Dashboard" 

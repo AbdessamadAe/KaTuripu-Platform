@@ -33,11 +33,11 @@ const ExercisesPanel: React.FC<ExercisesPanelProps> = ({
   const getDifficultyColor = (difficulty?: string): string => {
     switch (difficulty) {
       case 'easy':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+        return 'bg-[var(--success-color)]/20 text-[var(--success-color)] dark:bg-[var(--success-color)]/20 dark:text-[var(--success-color)]';
       case 'hard':
-        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+        return 'bg-[var(--error-color)]/20 text-[var(--error-color)] dark:bg-[var(--error-color)]/20 dark:text-[var(--error-color)]';
       default: // medium
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+        return 'bg-[var(--warning-color)]/20 text-[var(--warning-color)] dark:bg-[var(--warning-color)]/20 dark:text-[var(--warning-color)]';
     }
   };
 
@@ -83,7 +83,7 @@ const ExercisesPanel: React.FC<ExercisesPanelProps> = ({
                       </span>
                     )}
                     {exercise.type && (
-                      <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                      <span className="text-xs px-2 py-1 rounded-full bg-[var(--info-color)]/20 text-[var(--info-color)] dark:bg-[var(--info-color)]/20 dark:text-[var(--info-color)]">
                         {exercise.type}
                       </span>
                     )}
@@ -108,7 +108,7 @@ const ExercisesPanel: React.FC<ExercisesPanelProps> = ({
                   <button
                     type="button"
                     onClick={() => handleDeleteClick(exercise.id)}
-                    className="p-1.5 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 rounded hover:bg-red-50 dark:hover:bg-red-900/20"
+                    className="p-1.5 text-[var(--error-color)] hover:text-[var(--error-color-dark)] dark:text-[var(--error-color)] dark:hover:text-[var(--error-color-dark)] rounded hover:bg-[var(--error-color)]/10 dark:hover:bg-[var(--error-color)]/20"
                     aria-label="Delete exercise"
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -119,13 +119,13 @@ const ExercisesPanel: React.FC<ExercisesPanelProps> = ({
               </div>
               
               {confirmingDelete === exercise.id && (
-                <div className="mt-3 p-2 bg-red-50 dark:bg-red-900/20 rounded flex items-center justify-between">
-                  <span className="text-sm text-red-600 dark:text-red-400">Confirm delete?</span>
+                <div className="mt-3 p-2 bg-[var(--error-color)]/10 dark:bg-[var(--error-color)]/20 rounded flex items-center justify-between">
+                  <span className="text-sm text-[var(--error-color)] dark:text-[var(--error-color)]">Confirm delete?</span>
                   <div className="space-x-2">
                     <button
                       type="button"
                       onClick={() => handleDeleteClick(exercise.id)}
-                      className="px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700"
+                      className="px-2 py-1 text-xs bg-[var(--error-color)] text-white rounded hover:bg-[var(--error-color-dark)]"
                     >
                       Delete
                     </button>

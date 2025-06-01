@@ -17,15 +17,15 @@ export interface AlertProps {
 const getVariantClasses = (variant: AlertVariant): string => {
   switch (variant) {
     case 'info':
-      return 'bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-800/50';
+      return 'bg-[var(--info-color)]/10 dark:bg-[var(--info-color)]/20 text-[var(--info-color)] dark:text-[var(--info-color)] border-[var(--info-color)]/30 dark:border-[var(--info-color)]/50';
     case 'success':
-      return 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300 border-green-200 dark:border-green-800/50';
+      return 'bg-[var(--success-color)]/10 dark:bg-[var(--success-color)]/20 text-[var(--success-color)] dark:text-[var(--success-color)] border-[var(--success-color)]/30 dark:border-[var(--success-color)]/50';
     case 'warning':
-      return 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300 border-yellow-200 dark:border-yellow-800/50';
+      return 'bg-[var(--warning-color)]/10 dark:bg-[var(--warning-color)]/20 text-[var(--warning-color)] dark:text-[var(--warning-color)] border-[var(--warning-color)]/30 dark:border-[var(--warning-color)]/50';
     case 'error':
-      return 'bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300 border-red-200 dark:border-red-800/50';
+      return 'bg-[var(--error-color)]/10 dark:bg-[var(--error-color)]/20 text-[var(--error-color)] dark:text-[var(--error-color)] border-[var(--error-color)]/30 dark:border-[var(--error-color)]/50';
     default:
-      return 'bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-800/50';
+      return 'bg-[var(--info-color)]/10 dark:bg-[var(--info-color)]/20 text-[var(--info-color)] dark:text-[var(--info-color)] border-[var(--info-color)]/30 dark:border-[var(--info-color)]/50';
   }
 };
 

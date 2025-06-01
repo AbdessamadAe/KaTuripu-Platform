@@ -6,7 +6,6 @@ import { getMessages } from "next-intl/server";
 import MathJaxProvider from "@/providers/MathJaxProvider";
 import Nav from "@/components/Navigation";
 import ToastProvider from "@/providers/ToastProvider";
-import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import QueryProvider from "@/providers/QueryProvider";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -42,7 +41,7 @@ export default async function RootLayout({
             signInUrl={`/${locale}/auth/login`}
             appearance={{
               baseTheme: neobrutalism,
-              variables: { colorPrimary: '#4a7ab0' },
+              variables: { colorPrimary: 'var(--primary-color)' },
             }}>
             <NextIntlClientProvider messages={messages} locale={locale}>
               <ThemeProvider>

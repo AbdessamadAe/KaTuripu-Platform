@@ -20,17 +20,17 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 const getVariantClasses = (variant: ButtonVariant): string => {
   switch (variant) {
     case 'primary':
-      return 'bg-gradient-to-r from-[#4a7ab0] to-[#6b9bd1] text-white shadow hover:shadow-md hover:from-[#3d699d] hover:to-[#588ac0] dark:from-[#4a7ab0] dark:to-[#6b9bd1] dark:hover:from-[#3d699d] dark:hover:to-[#588ac0]';
+      return 'bg-gradient-to-r from-[var(--primary-color)] to-[var(--secondary-color)] text-white shadow hover:shadow-md hover:opacity-90 transition-opacity';
     case 'secondary':
       return 'bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600';
     case 'outline':
-      return 'bg-transparent border border-[#4a7ab0] text-[#4a7ab0] hover:bg-[#4a7ab0]/10 dark:border-[#6b9bd1] dark:text-[#6b9bd1] dark:hover:bg-[#6b9bd1]/10';
+      return 'bg-transparent border border-[var(--primary-color)] text-[var(--primary-color)] hover:bg-[var(--primary-color)]/10 dark:border-[var(--secondary-color)] dark:text-[var(--secondary-color)] dark:hover:bg-[var(--secondary-color)]/10';
     case 'text':
-      return 'bg-transparent text-[#4a7ab0] hover:bg-[#4a7ab0]/10 dark:text-[#6b9bd1] dark:hover:bg-[#6b9bd1]/10';
+      return 'bg-transparent text-[var(--primary-color)] hover:bg-[var(--primary-color)]/10 dark:text-[var(--secondary-color)] dark:hover:bg-[var(--secondary-color)]/10';
     case 'danger':
-      return 'bg-red-500 text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700';
+      return 'bg-[var(--error-color)] text-white hover:bg-[var(--error-color-dark)] dark:bg-[var(--error-color)] dark:hover:bg-[var(--error-color-dark)]';
     default:
-      return 'bg-gradient-to-r from-[#4a7ab0] to-[#6b9bd1] text-white shadow hover:shadow-md';
+      return 'bg-gradient-to-r from-[var(--primary-color)] to-[var(--secondary-color)] text-white shadow hover:shadow-md';
   }
 };
 
@@ -65,7 +65,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
-    const baseClasses = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none';
+    const baseClasses = 'inline-flex items-center justify-center cursor-pointer font-semibold rounded-xl transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none';
     const widthClass = isFullWidth ? 'w-full' : '';
     const disabledClass = disabled || isLoading ? 'opacity-70 cursor-not-allowed pointer-events-none' : '';
     

@@ -40,7 +40,7 @@ const SectionCard: React.FC<SectionCardProps> = ({ section, variants }) => {
           <div className="mt-auto">
             <Button 
               variant="text" 
-              className={`p-0 ${isHovered ? 'text-[#4a7ab0] dark:text-[#8bafd9]' : 'text-[#5a8aaf] dark:text-[#7d9bbf]'}`}
+              className={`p-0 ${isHovered ? 'text-[var(--primary-color-dark)] dark:text-[var(--primary-color-light)]' : 'text-[var(--primary-color)] dark:text-[var(--secondary-color)]'}`}
               rightIcon={
                 <svg className={`w-4 h-4 ml-1 transform ${
                   isHovered ? 'translate-x-1' : ''

@@ -14,8 +14,8 @@ const ToastProvider: React.FC<ToastProviderProps> = ({ position = 'bottom-right'
         // Default options
         duration: 4000,
         style: {
-          background: '#192C88',
-          color: '#fff',
+          background: 'var(--primary-color)',
+          color: 'white',
           fontWeight: '600',
           padding: '16px',
           borderRadius: '10px',
@@ -24,29 +24,29 @@ const ToastProvider: React.FC<ToastProviderProps> = ({ position = 'bottom-right'
         // Custom toast types
         success: {
           style: {
-            background: 'linear-gradient(135deg, #4ade80 0%, #22c55e 100%)',
-            color: '#fff',
+            background: 'linear-gradient(135deg, var(--success-color) 0%, var(--success-color-dark) 100%)',
+            color: 'white',
           },
           iconTheme: {
-            primary: '#fff',
-            secondary: '#22c55e',
+            primary: 'white',
+            secondary: 'var(--success-color-dark)',
           },
         },
         error: {
           style: {
-            background: 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)',
-            color: '#fff',
+            background: 'linear-gradient(135deg, var(--error-color) 0%, var(--error-color-dark) 100%)',
+            color: 'white',
           },
           iconTheme: {
-            primary: '#fff',
-            secondary: '#b91c1c',
+            primary: 'white',
+            secondary: 'var(--error-color-dark)',
           },
         },
         // Special gamification toasts
         loading: {
           style: {
-            background: '#3730a3',
-            color: '#fff',
+            background: 'var(--primary-color-dark)',
+            color: 'white',
           },
         },
       }}

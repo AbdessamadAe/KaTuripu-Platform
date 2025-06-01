@@ -12,7 +12,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, description }) => {
     <div className="my-12 text-center">
       <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
         <span className="relative">
-          <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#7d9bbf] to-[#f0b9ae] blur-lg opacity-30"></span>
+          <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-[var(--primary-color)] to-[var(--secondary-color)] blur-lg opacity-30"></span>
           <span className="relative">{title}</span>
         </span>
       </h1>

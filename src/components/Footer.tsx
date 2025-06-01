@@ -15,7 +15,7 @@ export const Footer: React.FC = () => {
                         href="https://github.com/abdessamadae"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-medium hover:text-indigo-400 dark:hover:text-indigo-300"
+                        className="font-medium hover:text-[var(--primary-color)] dark:hover:text-[var(--primary-color)]"
                     >
                         Abdessamad Ait Elmouden
                     </a>

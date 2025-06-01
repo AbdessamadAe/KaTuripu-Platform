@@ -20,7 +20,7 @@ const Hero = ({ locale = 'en' }: HeroProps) => {
   };
 
   return (
-    <div className="w-full min-h-[90vh] flex items-center overflow-hidden bg-gradient-to-b from-white to-[#eae6ff] dark:from-gray-900 dark:to-indigo-900/30 pt-10 pb-16">
+    <div className="w-full min-h-[90vh] flex items-center overflow-hidden pt-10 pb-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-12">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
 
@@ -29,15 +29,15 @@ const Hero = ({ locale = 'en' }: HeroProps) => {
             className={`w-full lg:w-1/2 text-center ${isRTL ? 'lg:text-right' : 'lg:text-left'}`}
           >
             <div className="relative mb-8">
-              <span className="absolute -left-2 -top-2 w-16 h-16 bg-[#66c2bc]/60 dark:bg-[#66c2bc]/30 rounded-full blur-2xl opacity-70"></span>
-              <span className="absolute -right-10 bottom-0 w-20 h-20 bg-[#ff9d8a]/60 dark:bg-[#ff9d8a]/30 rounded-full blur-2xl opacity-70"></span>
+              <span className="absolute -left-2 -top-2 w-16 h-16 bg-[var(--secondary-color)]/60 dark:bg-[var(--secondary-color)]/30 rounded-full blur-2xl opacity-70"></span>
+              <span className="absolute -right-10 bottom-0 w-20 h-20 bg-[var(--primary-color)]/60 dark:bg-[var(--primary-color)]/30 rounded-full blur-2xl opacity-70"></span>
 
               <h1 className={`relative font-bold ${locale === 'fr' ? 'text-3xl sm:text-4xl md:text-5xl' : 'text-4xl sm:text-5xl md:text-6xl'} tracking-tight`}>
                 <span className="block text-gray-900 dark:text-white">{t('tagline')}</span>
                 <span className="block mt-2">
                   <span className="relative">
-                    <span className="absolute dark:hidden inset-0 w-full h-full bg-gradient-to-r from-[#6b9bd1] to-[#ff9d8a] blur-lg opacity-40"></span>
-                    <span className="relative bg-gradient-to-r from-[#4a7ab0] to-[#ff8066] bg-clip-text text-transparent dark:from-[#6b9bd1] dark:to-[#ff9d8a]">
+                    <span className="absolute dark:hidden inset-0 w-full h-full bg-gradient-to-r from-[var(--secondary-color)] to-[var(--primary-color)] blur-lg opacity-40"></span>
+                    <span className="relative bg-gradient-to-r from-[var(--primary-color)] to-[var(--secondary-color)] bg-clip-text text-transparent dark:from-[var(--secondary-color)] dark:to-[var(--primary-color)]">
                       {t('highlight1')}
                     </span>
                   </span>
@@ -95,8 +95,8 @@ const Hero = ({ locale = 'en' }: HeroProps) => {
           >
             <div className="relative">
               {/* Decorative elements */}
-              <div className="absolute -z-10 w-40 h-40 bg-[#66c2bc]/50 dark:bg-[#66c2bc]/30 rounded-full blur-3xl top-1/4 left-1/4 opacity-70"></div>
-              <div className="absolute -z-10 w-32 h-32 bg-[#ff9d8a]/50 dark:bg-[#ff9d8a]/30 rounded-full blur-3xl bottom-1/3 right-1/4 opacity-70"></div>
+              <div className="absolute -z-10 w-40 h-40 bg-[var(--secondary-color)]/50 dark:bg-[var(--secondary-color)]/30 rounded-full blur-3xl top-1/4 left-1/4 opacity-70"></div>
+              <div className="absolute -z-10 w-32 h-32 bg-[var(--primary-color)]/50 dark:bg-[var(--primary-color)]/30 rounded-full blur-3xl bottom-1/3 right-1/4 opacity-70"></div>
 
               <img
                 src="/images/hero.svg"

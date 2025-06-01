@@ -27,14 +27,14 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
 
   return (
     <div
-      className={`transition-all w-full h-[400px] bg-white dark:bg-gray-800/90 rounded-2xl border border-[#c5b3ff]/60 dark:border-gray-700/50 p-5 flex flex-col justify-between gap-3 relative overflow-hidden ${isHovered ? 'shadow-xl scale-[1.02] border-transparent' : 'hover:shadow-lg'
+      className={`transition-all w-full h-[400px] bg-white dark:bg-gray-800/90 rounded-2xl border border-[var(--primary-color-light)]/60 dark:border-gray-700/50 p-5 flex flex-col justify-between gap-3 relative overflow-hidden ${isHovered ? 'shadow-xl scale-[1.02] border-transparent' : 'hover:shadow-lg'
         }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Decorative elements with vibrant colors */}
-      <div className="absolute -z-10 -bottom-6 -right-6 w-24 h-24 bg-[#66c2bc]/40 dark:bg-[#66c2bc]/20 rounded-full blur-xl opacity-60"></div>
-      <div className="absolute -z-10 -top-6 -left-6 w-24 h-24 bg-[#ff9d8a]/40 dark:bg-[#ff9d8a]/20 rounded-full blur-xl opacity-50"></div>
+      <div className="absolute -z-10 -bottom-6 -right-6 w-24 h-24 bg-[var(--secondary-color)]/40 dark:bg-[var(--secondary-color)]/20 rounded-full blur-xl opacity-60"></div>
+      <div className="absolute -z-10 -top-6 -left-6 w-24 h-24 bg-[var(--primary-color)]/40 dark:bg-[var(--primary-color)]/20 rounded-full blur-xl opacity-50"></div>
 
       <div
         className={`w-full h-44 rounded-xl flex items-center justify-center overflow-hidden relative shadow-inner`}
@@ -67,10 +67,10 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
         <div className="relative h-2.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden shadow-inner">
           <div
             className={`absolute left-0 top-0 h-full transition-all duration-700 rounded-full ${progress === 100
-                ? 'bg-[#4ade80]'
+                ? 'bg-[var(--success-color)]'
                 : progress > 50
-                  ? 'bg-gradient-to-r from-[#6b9bd1] to-[#4a7ab0]'
-                  : 'bg-gradient-to-r from-[#4a7ab0] to-[#6b9bd1]'
+                  ? 'bg-gradient-to-r from-[var(--secondary-color)] to-[var(--primary-color)]'
+                  : 'bg-gradient-to-r from-[var(--primary-color)] to-[var(--secondary-color)]'
               }`}
             style={{ width: `${progress}%` }}
           />
@@ -80,7 +80,7 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
             {progress > 0 ? `${progress}% ${t('complete')}` : t('notStarted')}
           </span>
           {progress === 100 && (
-            <span className="bg-gradient-to-r from-[#66c2bc] to-[#4db6b0] text-white px-2 py-0.5 rounded-full text-[10px] font-medium">
+            <span className="bg-gradient-to-r from-[var(--secondary-color)] to-[var(--secondary-color-dark)] text-white px-2 py-0.5 rounded-full text-[10px] font-medium">
               {t('complete')} ✓
             </span>
           )}

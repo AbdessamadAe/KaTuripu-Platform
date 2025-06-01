@@ -99,7 +99,7 @@ export default function RoadmapEditor({ params }: { params: { roadmapId: string 
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-[#f5f3ff] dark:from-gray-900 dark:to-indigo-950/30 text-gray-800 dark:text-gray-200 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-white to-[var(--primary-color-light)]/30 dark:from-gray-900 dark:to-indigo-950/30 text-gray-800 dark:text-gray-200 py-8 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <Breadcrumb 

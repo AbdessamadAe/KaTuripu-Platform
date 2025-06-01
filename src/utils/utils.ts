@@ -7,10 +7,10 @@ import Logger from './logger';
 
 export const getDifficultyStyle = (difficulty: string | undefined, isBackground = false): string => {
   const colors: Record<any, string> = {
-    easy: isBackground ? "bg-green-500 hover:bg-green-600" : "border-green-400",
-    medium: isBackground ? "bg-yellow-500 hover:bg-yellow-600 text-gray-800" : "border-yellow-400",
-    hard: isBackground ? "bg-red-500 hover:bg-red-600" : "border-red-400",
-    default: isBackground ? "bg-blue-500 hover:bg-blue-600" : "border-blue-400"
+    easy: isBackground ? "bg-[var(--success-color)] hover:bg-[var(--success-color-dark)] text-white" : "border-[var(--success-color)]",
+    medium: isBackground ? "bg-[var(--warning-color)] hover:bg-[var(--warning-color-dark)] text-gray-800" : "border-[var(--warning-color)]",
+    hard: isBackground ? "bg-[var(--error-color)] hover:bg-[var(--error-color-dark)] text-white" : "border-[var(--error-color)]",
+    default: isBackground ? "bg-[var(--info-color)] hover:bg-[var(--info-color-dark)] text-white" : "border-[var(--info-color)]"
   };
 
   return colors[difficulty?.toLowerCase() || 'default'] || colors.default;
@@ -61,8 +61,8 @@ export const celebrateProgress = (percentage: number) => {
         duration: 5000,
         icon: '🏆',
         style: {
-          background: 'linear-gradient(135deg, #f97316 0%, #7e22ce 100%)',
-          color: '#fff',
+          background: 'linear-gradient(135deg, var(--warning-color) 0%, var(--primary-color-dark) 100%)',
+          color: 'white',
           padding: '16px',
           fontWeight: 'bold',
         },
@@ -112,8 +112,8 @@ export const celebrateProgress = (percentage: number) => {
       {
         icon: '🔥',
         style: {
-          background: '#3730a3',
-          color: '#fff',
+          background: 'var(--primary-color-dark)',
+          color: 'white',
         }
       }
     );
@@ -128,8 +128,8 @@ export const celebrateProgress = (percentage: number) => {
       {
         icon: '👍',
         style: {
-          background: '#1e40af',
-          color: '#fff',
+          background: 'var(--info-color-dark)',
+          color: 'white',
         }
       }
     );
@@ -162,8 +162,8 @@ export const showAchievement = (title: string, description: string) => {
       duration: 5000,
       icon: '🏅',
       style: {
-        background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-        color: '#fff',
+        background: 'linear-gradient(135deg, var(--warning-color) 0%, var(--warning-color-dark) 100%)',
+        color: 'white',
         padding: '16px',
       }
     }
@@ -196,7 +196,7 @@ export const fireConfetti = (options = {}) => {
     particleCount: 100,
     spread: 60,
     origin: { y: 0.7 },
-    colors: ['#4ade80', '#3b82f6', '#a855f7', '#ec4899']
+    colors: ['var(--success-color)', 'var(--info-color)', 'var(--primary-color)', 'var(--secondary-color)']
   };
 
   // Merge defaults with provided options

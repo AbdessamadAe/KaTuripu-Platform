@@ -38,7 +38,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
     ref
   ) => {
     // Base classes
-    const baseSelectClasses = 'w-full rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-[#4a7ab0] transition-colors appearance-none';
+    const baseSelectClasses = 'w-full rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] transition-colors appearance-none';
     
     // Size classes
     const sizeClasses = {
@@ -49,7 +49,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
     
     // Variant classes
     const variantClasses = {
-      outline: 'border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-[#4a7ab0] dark:focus:border-[#6b9bd1]',
+      outline: 'border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-[var(--primary-color)] dark:focus:border-[var(--secondary-color)]',
       filled: 'border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-700 focus:bg-white dark:focus:bg-gray-800',
     };
     

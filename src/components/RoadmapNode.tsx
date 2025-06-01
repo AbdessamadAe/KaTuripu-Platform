@@ -15,7 +15,7 @@ export default memo(({ data, isConnectable }) => {
         isConnectable={isConnectable}
       />
       <div
-        className={`px-4 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 w-[180px] cursor-pointer bg-[#192C88] text-white border border-white/10 flex flex-col items-center`}
+        className={`px-4 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 w-[180px] cursor-pointer bg-[var(--primary-color)] text-white border border-white/10 flex flex-col items-center`}
       >
         <div className="font-semibold text-sm tracking-wide text-center">{data.label}</div>
         <div className="mt-2 w-full">
@@ -26,7 +26,7 @@ export default memo(({ data, isConnectable }) => {
               initial={{ width: 0 }}
               animate={{ width: `${data.progress}%` }}
               transition={{ duration: 0.8, ease: "easeInOut" }}
-              className={`h-full ${data.progress === 100 ? "bg-green-300" : "bg-blue-300"
+              className={`h-full ${data.progress === 100 ? "bg-[var(--success-color)]" : "bg-[var(--secondary-color)]"
                 }`}
             />
           </div>

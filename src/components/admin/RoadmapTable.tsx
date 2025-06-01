@@ -65,7 +65,7 @@ const RoadmapTable: React.FC<RoadmapTableProps> = ({
                 </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
-                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-[#f5f3ff] dark:bg-gray-700 text-[#5a8aaf] dark:text-[#7d9bbf]">
+                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-[var(--primary-color)] bg-opacity-10 dark:bg-gray-700 text-[var(--primary-color)] dark:text-[var(--secondary-color)]">
                   {roadmap.category}
                 </span>
               </td>

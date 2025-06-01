@@ -54,7 +54,7 @@ export default function AdminRoadmaps() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-[#f5f3ff] dark:from-gray-900 dark:to-indigo-950/30 text-gray-800 dark:text-gray-200 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-white to-[var(--primary-color-light)]/30 dark:from-gray-900 dark:to-indigo-950/30 text-gray-800 dark:text-gray-200 py-8 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <Breadcrumb 
@@ -72,7 +72,7 @@ export default function AdminRoadmaps() {
           
           <button 
             onClick={handleCreateNewRoadmap}
-            className="px-4 py-2 bg-[#5a8aaf] hover:bg-[#4a7ab0] text-white rounded-lg shadow transition-colors flex items-center"
+            className="px-4 py-2 bg-[var(--primary-color)] hover:bg-[var(--primary-color-dark)] text-white rounded-lg shadow transition-colors flex items-center"
           >
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />

@@ -35,7 +35,7 @@ const RoadmapDetailsForm: React.FC<RoadmapDetailsFormProps> = ({
             value={formData.title}
             onChange={onChange}
             placeholder="Enter roadmap title"
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#5a8aaf] focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent"
             required
           />
         </div>
@@ -48,7 +48,7 @@ const RoadmapDetailsForm: React.FC<RoadmapDetailsFormProps> = ({
             name="category"
             value={formData.category}
             onChange={onChange}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#5a8aaf] focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent"
           >
             <option value="">Select category</option>
             {categories.map((category) => (
@@ -67,7 +67,7 @@ const RoadmapDetailsForm: React.FC<RoadmapDetailsFormProps> = ({
             value={formData.imageUrl}
             onChange={onChange}
             placeholder="Enter image URL"
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#5a8aaf] focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent"
           />
         </div>
         <div>
@@ -81,7 +81,7 @@ const RoadmapDetailsForm: React.FC<RoadmapDetailsFormProps> = ({
             onChange={onChange}
             placeholder="Enter roadmap description"
             rows={3}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#5a8aaf] focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent"
           />
         </div>
       </div>

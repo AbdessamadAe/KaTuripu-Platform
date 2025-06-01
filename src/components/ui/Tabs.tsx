@@ -27,8 +27,6 @@ const Tabs: React.FC<TabsProps> = ({
       <div className="flex justify-between flex-wrap gap-y-2 -mb-px">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
-          // Set default color if not specified
-          const color = tab.color || '[#69c0cf]';
           
           return (
             <button
@@ -37,7 +35,7 @@ const Tabs: React.FC<TabsProps> = ({
               disabled={tab.disabled}
               className={`py-3 px-4 relative font-medium flex items-center mr-4 mb-2 sm:mb-0 transition-colors
                 ${isActive
-                  ? `text-${color} dark:text-${color} border-b-2 border-${color}`
+                  ? 'text-[var(--primary-color)] dark:text-[var(--secondary-color)] border-b-2 border-[var(--primary-color)] dark:border-[var(--secondary-color)]'
                   : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                 }
                 ${tab.disabled ? 'opacity-50 cursor-not-allowed' : ''}

@@ -96,7 +96,7 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.8, ease: "easeInOut" }}
-              className={`h-full ${progress === 100 ? "bg-green-300" : "bg-blue-300"
+              className={`h-full ${progress === 100 ? "bg-[var(--success-color)]" : "bg-[var(--secondary-color)]"
                 }`}
             />
         </div>
@@ -133,8 +133,8 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
                     <div className="flex items-center w-full">
                       <div className={`mr-2.5 flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full 
                         ${exercise.completed
-                          ? "bg-green-100 dark:bg-green-900/30 text-green-500 dark:text-green-400"
-                          : "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-500 dark:text-indigo-400"}`}>
+                          ? "bg-[var(--success-color)]/20 dark:bg-[var(--success-color)]/30 text-[var(--success-color)] dark:text-[var(--success-color)]"
+                          : "bg-[var(--primary-color)]/20 dark:bg-[var(--primary-color)]/30 text-[var(--primary-color)] dark:text-[var(--primary-color)]"}`}>
                         {exercise.completed ? (
                           <HiCheck className="h-4 w-4" />
                         ) : exercise.videoUrl ? (
@@ -149,7 +149,7 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
                           pathname: `/exercise`,
                           query: { exerciseId: exercise.id, nodeId, roadmapId, nodeTitle: title, roadmapTitle: roadmapTitle}
                         }} passHref>
-                          <div className="text-gray-800 dark:text-white font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors cursor-pointer truncate">
+                          <div className="text-gray-800 dark:text-white font-medium hover:text-[var(--primary-color)] dark:hover:text-[var(--primary-color)] transition-colors cursor-pointer truncate">
                             {exercise.name}
                           </div>
                         </Link>

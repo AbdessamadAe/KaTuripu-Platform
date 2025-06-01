@@ -15,7 +15,7 @@ export interface BadgeProps {
 const getVariantClasses = (variant: BadgeVariant): string => {
   switch (variant) {
     case 'primary':
-      return 'bg-[#4a7ab0]/15 text-[#4a7ab0] dark:bg-[#4a7ab0]/20 dark:text-[#6b9bd1]';
+      return 'bg-[var(--primary-color)]/15 text-[var(--primary-color)] dark:bg-[var(--secondary-color)]/20 dark:text-[var(--secondary-color)]';
     case 'secondary':
       return 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
     case 'success':
@@ -27,7 +27,7 @@ const getVariantClasses = (variant: BadgeVariant): string => {
     case 'info':
       return 'bg-blue-100 text-blue-800 dark:bg-blue-800/20 dark:text-blue-400';
     default:
-      return 'bg-[#4a7ab0]/15 text-[#4a7ab0] dark:bg-[#4a7ab0]/20 dark:text-[#6b9bd1]';
+      return 'bg-[var(--primary-color)]/15 text-[var(--primary-color)] dark:bg-[var(--secondary-color)]/20 dark:text-[var(--secondary-color)]';
   }
 };
 

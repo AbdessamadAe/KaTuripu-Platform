@@ -40,9 +40,9 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
     // Combine all classes
     const checkboxClasses = `
       form-checkbox rounded
-      text-[#4a7ab0] dark:text-[#6b9bd1]
+      text-[var(--primary-color)] dark:text-[var(--secondary-color)]
       border-gray-300 dark:border-gray-600
-      focus:ring-[#4a7ab0] dark:focus:ring-[#6b9bd1]
+      focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)]
       transition-colors
       ${sizeClasses[size]}
       ${error ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}
@@ -78,7 +78,7 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             )}
             
             {error && (
-              <p className="text-red-500 text-sm mt-1">{error}</p>
+              <p className="text-[var(--error-color)] text-sm mt-1">{error}</p>
             )}
           </div>
         )}
