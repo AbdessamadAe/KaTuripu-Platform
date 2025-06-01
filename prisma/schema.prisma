@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "./node_modules/@prisma/client"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -32,11 +32,11 @@ model Roadmap {
   title       String
   description String?
   category    String?
-  duration    Int
   imageUrl    String?   @map(name: "image_url")
   createdAt   DateTime  @default(now()) @map(name: "created_at")
   nodes       RoadmapNode[]
   edges       RoadmapEdge[]
+  duration    Int
   
   @@map(name: "roadmaps")
 }

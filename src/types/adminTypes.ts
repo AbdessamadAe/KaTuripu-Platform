@@ -23,4 +23,5 @@ export interface AdminRoadmapDetails extends Omit<PrismaRoadmap, 'imageUrl' | 'c
   slug?: string;
   nodes: ReactFlowNode[];
   edges: ReactFlowEdge[];
+  duration: number; // in hours
 }

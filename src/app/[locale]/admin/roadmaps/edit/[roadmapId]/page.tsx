@@ -53,6 +53,7 @@ export default function RoadmapEditor({ params }: { params: { roadmapId: string 
           description: formData.description,
           category: formData.category,
           imageUrl: formData.imageUrl,
+          duration: formData.duration || 1,
           nodes: [],
           edges: []
         }
@@ -62,7 +63,7 @@ export default function RoadmapEditor({ params }: { params: { roadmapId: string 
           description: formData.description, 
           category: formData.category,
           imageUrl: formData.imageUrl,
-          duration: formData.duration || 1
+          duration: formData.duration
         };
     
     try {
@@ -74,7 +75,6 @@ export default function RoadmapEditor({ params }: { params: { roadmapId: string 
       router.push('/admin/roadmaps');
     } catch (error) {
       console.error('Error saving roadmap:', error);
-      // You would show an error toast here in a real app
     } finally {
       setIsSaving(false);
     }

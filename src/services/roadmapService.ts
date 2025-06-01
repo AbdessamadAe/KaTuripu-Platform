@@ -7,7 +7,7 @@ export async function createRoadmap(roadmapData: {
   description?: string;
   category?: string;
   imageUrl?: string;
-  duration?: number; // in hours
+  duration?: number | string;
 }) {
   try {
     const { userId } = await auth();
@@ -33,7 +33,7 @@ export async function createRoadmap(roadmapData: {
         description: roadmapData.description,
         category: roadmapData.category,
         imageUrl: roadmapData.imageUrl,
-        duration: roadmapData.duration,
+        duration: roadmapData.duration ? parseInt(roadmapData.duration.toString(), 10) : 0,
       }
     });
 
@@ -118,7 +118,8 @@ export async function getRoadmaps() {
         roadmap_description: roadmap.description,
         roadmap_image_url: roadmap.imageUrl,
         roadmap_category: roadmap.category,
-        roadmap_created_at: roadmap.createdAt
+        roadmap_created_at: roadmap.createdAt,
+        duration: roadmap.duration || 1,
       };
     });
 
@@ -136,6 +137,7 @@ export async function updateRoadmap(
     description?: string;
     category?: string;
     imageUrl?: string;
+    duration?: number | string; // in hours (will be parsed to number)
   }
 ) {
   try {
@@ -173,7 +175,8 @@ export async function updateRoadmap(
         title: roadmapData.title,
         description: roadmapData.description,
         category: roadmapData.category,
-        imageUrl: roadmapData.imageUrl
+        imageUrl: roadmapData.imageUrl,
+        duration: roadmapData.duration ? parseInt(roadmapData.duration.toString(), 10) : undefined
       }
     });
 
@@ -272,6 +275,7 @@ export async function getFullRoadmapWithProgress(roadmapId: string) {
         title: roadmap.title,
         description: roadmap.description,
         slug: roadmap.slug,
+        duration: roadmap.duration || 1,
         category: roadmap.category,
         image_url: roadmap.imageUrl,
         nodes: nodesWithProgress,

@@ -38,6 +38,7 @@ export async function fetchAdminRoadmap(roadmapId: string): Promise<AdminRoadmap
       description: "",
       category: "",
       imageUrl: "",
+      duration: 1,
       nodes: [
         {
           id: nanoid(),
@@ -71,6 +72,7 @@ export async function fetchAdminRoadmap(roadmapId: string): Promise<AdminRoadmap
     description: data.roadmap.description || '',
     category: data.roadmap.category || '',
     imageUrl: data.roadmap.image_url || '',
+    duration: data.roadmap.duration || 1,
     slug: data.roadmap.slug,
     nodes: data.roadmap.nodes || [],
     edges: data.roadmap.edges || []
@@ -151,7 +153,8 @@ export async function updateRoadmap(data: AdminRoadmapDetails): Promise<AdminRoa
       title: data.title,
       description: data.description,
       category: data.category,
-      imageUrl: data.imageUrl
+      imageUrl: data.imageUrl,
+      duration: data.duration
     }),
   });
   

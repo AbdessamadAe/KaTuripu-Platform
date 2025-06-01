@@ -115,7 +115,7 @@ const RoadmapsPage = () => {
                             <Select
                                 options={[
                                     { value: 'all', label: 'Duration' },
-                                    { value: 'short', label: 'Short (< 1 hour)' },
+                                    { value: 'short', label: 'Short (< 3 hour)' },
                                     { value: 'medium', label: 'Medium (1-10 hours)' },
                                     { value: 'long', label: 'Long (> 10 hours)' },
                                 ]}

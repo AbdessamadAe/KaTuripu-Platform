@@ -79,7 +79,7 @@ const RoadmapDetailsForm: React.FC<RoadmapDetailsFormProps> = ({
             type="number"
             id="duration"
             name="duration"
-            value={formData.duration || 1}
+            value={formData.duration}
             onChange={onChange}
             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent"
           />

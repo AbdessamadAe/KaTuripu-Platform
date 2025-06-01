@@ -7,16 +7,6 @@ async function main() {
   try {
     console.log('🌱 Starting seeding...');
 
-    // Clear existing data in correct dependency order
-    await prisma.userExerciseProgress.deleteMany();
-    await prisma.nodeExercise.deleteMany();
-    await prisma.roadmapEdge.deleteMany();
-    await prisma.roadmapNode.deleteMany();
-    await prisma.exercise.deleteMany();
-    await prisma.roadmap.deleteMany();
-    await prisma.user.deleteMany();
-
-    console.log('🧹 Database cleared');
 
     // Seed Users
     const users = [];
@@ -72,6 +62,7 @@ async function main() {
           description: faker.lorem.paragraph(),
           category: faker.helpers.arrayElement(roadmapCategories),
           imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-ZxOCMznxGcjBhMPkS8cI5K8Ka3_owCf0q4luMEOTtMuon3LKYART4xpMkKF_Atu73f0&usqp=CAU",
+          duration: faker.number.int({ min: 1, max: 30 }),
           createdAt: faker.date.past()
         }
       });
