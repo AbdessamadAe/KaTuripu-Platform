@@ -10,7 +10,8 @@ export function useRoadmapForm(initialData?: Partial<AdminRoadmapDetails>) {
     title: initialData?.title || '',
     description: initialData?.description || '',
     category: initialData?.category || '',
-    imageUrl: initialData?.imageUrl || ''
+    imageUrl: initialData?.imageUrl || '',
+    duration: initialData?.duration || 1,
   });
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {

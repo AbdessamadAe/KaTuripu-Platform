@@ -27,7 +27,8 @@ export async function POST(request: NextRequest) {
       title: body.title,
       description: body.description,
       category: body.category,
-      imageUrl: body.imageUrl
+      imageUrl: body.imageUrl,
+      duration: body.duration,
     });
     
     if (!result.success) {

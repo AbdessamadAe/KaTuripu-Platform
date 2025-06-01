@@ -52,7 +52,7 @@ export default function Nav() {
   }, [pathname]);
 
   return (
-    <Disclosure as="nav" className="border-b border-gray-200 dark:border-gray-700 shadow-sm sticky top-0 z-50 bg-white dark:bg-gray-900">
+    <Disclosure as="nav" className="border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 bg-white dark:bg-gray-900">
       <div className="mx-auto px-4">
         <div className="relative flex h-16 items-center justify-between">
 

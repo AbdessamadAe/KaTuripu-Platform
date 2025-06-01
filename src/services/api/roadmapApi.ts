@@ -88,7 +88,8 @@ export async function createRoadmap(data: AdminRoadmapDetails): Promise<AdminRoa
       title: data.title,
       description: data.description,
       category: data.category,
-      imageUrl: data.imageUrl
+      imageUrl: data.imageUrl,
+      duration: data.duration,
     }),
   });
   

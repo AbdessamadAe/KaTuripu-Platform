@@ -7,6 +7,7 @@ export async function createRoadmap(roadmapData: {
   description?: string;
   category?: string;
   imageUrl?: string;
+  duration?: number; // in hours
 }) {
   try {
     const { userId } = await auth();
@@ -31,7 +32,8 @@ export async function createRoadmap(roadmapData: {
         title: roadmapData.title,
         description: roadmapData.description,
         category: roadmapData.category,
-        imageUrl: roadmapData.imageUrl
+        imageUrl: roadmapData.imageUrl,
+        duration: roadmapData.duration,
       }
     });
 

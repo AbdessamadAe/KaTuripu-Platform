@@ -32,6 +32,7 @@ model Roadmap {
   title       String
   description String?
   category    String?
+  duration    Int
   imageUrl    String?   @map(name: "image_url")
   createdAt   DateTime  @default(now()) @map(name: "created_at")
   nodes       RoadmapNode[]

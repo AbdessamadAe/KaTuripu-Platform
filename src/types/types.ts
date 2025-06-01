@@ -75,5 +75,6 @@ export interface RoadmapMeta {
   roadmap_category: string;
   progress_percent: number;
   roadmap_created_at: string;
-  level?: 'beginner' | 'intermediate' | 'advanced';
+  total_exercises?: number; // Total exercises in the roadmap
+  roadmap_duration?: string; // Duration of the roadmap
 }

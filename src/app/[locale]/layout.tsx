@@ -41,7 +41,7 @@ export default async function RootLayout({
             signInUrl={`/${locale}/auth/login`}
             appearance={{
               baseTheme: neobrutalism,
-              variables: { colorPrimary: 'var(--primary-color)' },
+              variables: { colorPrimary: '#4a7ab0' },
             }}>
             <NextIntlClientProvider messages={messages} locale={locale}>
               <ThemeProvider>

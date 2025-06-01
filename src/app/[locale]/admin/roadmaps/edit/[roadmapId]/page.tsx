@@ -36,7 +36,8 @@ export default function RoadmapEditor({ params }: { params: { roadmapId: string 
         title: roadmapData.title,
         description: roadmapData.description,
         category: roadmapData.category,
-        imageUrl: roadmapData.imageUrl
+        imageUrl: roadmapData.imageUrl,
+        duration: roadmapData.duration || 1
       });
     }
   }, [roadmapData, isLoading, setFormData]);
@@ -60,7 +61,8 @@ export default function RoadmapEditor({ params }: { params: { roadmapId: string 
           title: formData.title,
           description: formData.description, 
           category: formData.category,
-          imageUrl: formData.imageUrl
+          imageUrl: formData.imageUrl,
+          duration: formData.duration || 1
         };
     
     try {

@@ -7,6 +7,7 @@ interface RoadmapFormData {
   description: string;
   category: string;
   imageUrl: string;
+  duration: number; // in hrs
 }
 
 interface RoadmapDetailsFormProps {
@@ -67,6 +68,19 @@ const RoadmapDetailsForm: React.FC<RoadmapDetailsFormProps> = ({
             value={formData.imageUrl}
             onChange={onChange}
             placeholder="Enter image URL"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label htmlFor="duration" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Duration
+          </label>
+          <input
+            type="number"
+            id="duration"
+            name="duration"
+            value={formData.duration || 1}
+            onChange={onChange}
             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent"
           />
         </div>

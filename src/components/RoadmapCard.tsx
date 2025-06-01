@@ -24,77 +24,83 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
         ? [roadmap?.roadmap_category]
         : [];
 
+  // Hardcoded values to match the design
+  const topicsCount = roadmap.total_exercises || 'N/A';
+  const difficulty = roadmap?.difficulty || 'Beginner';
+  const duration = roadmap?.duration || 'N/A';
+  const category = getPrimaryCategory() || 'Any';
 
   return (
     <div
-      className={`transition-all w-full h-[400px] bg-white dark:bg-gray-800/90 rounded-2xl border border-[var(--primary-color-light)]/60 dark:border-gray-700/50 p-5 flex flex-col justify-between gap-3 relative overflow-hidden ${isHovered ? 'shadow-xl scale-[1.02] border-transparent' : 'hover:shadow-lg'
-        }`}
+      className={`transition-all w-[280px] bg-white dark:bg-gray-800/90 rounded-xl overflow-hidden shadow-md ${
+        isHovered ? 'shadow-xl scale-[1.02]' : 'hover:shadow-lg'
+      }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Decorative elements with vibrant colors */}
-      <div className="absolute -z-10 -bottom-6 -right-6 w-24 h-24 bg-[var(--secondary-color)]/40 dark:bg-[var(--secondary-color)]/20 rounded-full blur-xl opacity-60"></div>
-      <div className="absolute -z-10 -top-6 -left-6 w-24 h-24 bg-[var(--primary-color)]/40 dark:bg-[var(--primary-color)]/20 rounded-full blur-xl opacity-50"></div>
-
-      <div
-        className={`w-full h-44 rounded-xl flex items-center justify-center overflow-hidden relative shadow-inner`}
-      >
-        <img
-          src={roadmap?.roadmap_image_url}
-          alt={roadmap?.roadmap_title}
-          className="object-cover"
-        />
-        <div className="absolute bottom-2 left-2 flex gap-1 flex-wrap">
-          {getCategories().map((cat, i) => (
-            <Badge
-              key={i}
-              variant="info"
-              size="sm"
-              className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-sm"
-            >
-              {cat}
-            </Badge>
-          ))}
-        </div>
-      </div>
-
-      <div className="flex-1 w-full">
-        <h3 className="font-bold text-base md:text-lg line-clamp-1 text-gray-900 dark:text-white">{roadmap?.roadmap_title}</h3>
-        <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">{roadmap?.roadmap_description}</p>
-      </div>
-
-      <div className="w-full mt-2">
-        <div className="relative h-2.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden shadow-inner">
-          <div
-            className={`absolute left-0 top-0 h-full transition-all duration-700 rounded-full ${progress === 100
-                ? 'bg-[var(--success-color)]'
-                : progress > 50
-                  ? 'bg-gradient-to-r from-[var(--secondary-color)] to-[var(--primary-color)]'
-                  : 'bg-gradient-to-r from-[var(--primary-color)] to-[var(--secondary-color)]'
-              }`}
-            style={{ width: `${progress}%` }}
+      {/* Image container */}
+      <div className="relative w-full h-[195px] bg-gradient-to-br from-orange-100 to-blue-100 dark:from-orange-900/30 dark:to-blue-900/30">
+        {roadmap?.roadmap_image_url && (
+          <img
+            src="https://app.manara.tech/_next/image?url=https%3A%2F%2Flite-production.s3.us-east-2.amazonaws.com%2Flearning_path_images%2Flp_card_images%2Fp.english.png&w=640&q=75"
+            alt={roadmap?.roadmap_title}
+            className="w-full h-full object-center object-contain"
           />
-        </div>
-        <div className="flex justify-between items-center mt-2 text-xs text-gray-500 dark:text-gray-400">
-          <span>
-            {progress > 0 ? `${progress}% ${t('complete')}` : t('notStarted')}
-          </span>
-          {progress === 100 && (
-            <span className="bg-gradient-to-r from-[var(--secondary-color)] to-[var(--secondary-color-dark)] text-white px-2 py-0.5 rounded-full text-[10px] font-medium">
-              {t('complete')} ✓
-            </span>
-          )}
-        </div>
+        )}
       </div>
 
-      <Button 
-        variant="primary"
-        size="md"
-        isFullWidth
-        className={isHovered ? 'shadow-lg' : 'shadow hover:shadow-md'}
-      >
-        {progress > 0 ? t('continue') : t('start')}
-      </Button>
+      {/* Content section */}
+      <div className="p-5">
+        {/* Learning path & courses count */}
+        <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-1">
+          <span>Concours</span>
+          <span className="mx-2">•</span>
+          <span>{topicsCount} exercises</span>
+        </div>
+
+        {/* Title */}
+        <h3 className="font-bold text-sm h-11 text-gray-900 dark:text-white mb-4">
+          {roadmap?.roadmap_title || "How to Land a Job at a Global Tech Company"}
+        </h3>
+
+        {/* Progress bar */}
+        <div className="w-full mt-2 mb-4">
+          <div className="relative h-2 bg-orange-100 dark:bg-orange-900/20 rounded-full overflow-hidden">
+            <div
+              className="absolute left-0 top-0 h-full bg-gradient-to-r from-orange-400 to-orange-500"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Category, Difficulty, Duration */}
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-gray-700 dark:text-gray-300 font-medium">
+            {category}
+          </span>
+          
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-4">
+                <svg viewBox="0 0 24 24" fill="none" className="text-green-500">
+                  <path d="M12 6V18M4 10V14M20 10V14M16 7V17M8 7V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </div>
+              <span className="text-gray-600 dark:text-gray-400">{difficulty}</span>
+            </div>
+            
+            <div className="flex items-center gap-1">
+              <div className="w-4 h-4">
+                <svg viewBox="0 0 24 24" fill="none" className="text-gray-400">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M12 6V12L16 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </div>
+              <span className="text-gray-600 dark:text-gray-400">{duration} hr</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
