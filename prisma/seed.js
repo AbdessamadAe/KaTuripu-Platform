@@ -7,7 +7,6 @@ async function main() {
   try {
     console.log('🌱 Starting seeding...');
 
-
     // Seed Users
     const users = [];
     for (let i = 0; i < 1; i++) {
@@ -27,23 +26,32 @@ async function main() {
     console.log(`👥 Created ${users.length} users`);
 
     // Seed Exercises
-    const exerciseTypes = ['QUIZ', 'CODING', 'THEORETICAL'];
     const difficulties = ['EASY', 'MEDIUM', 'HARD'];
 
     const exercises = [];
     for (let i = 0; i < 30; i++) {
+      const choices = [
+        faker.lorem.sentence(),
+        faker.lorem.sentence(),
+        faker.lorem.sentence(),
+        faker.lorem.sentence()
+      ];
+      
+      const correctAnswerIndex = faker.number.int({ min: 0, max: choices.length - 1 });
+      
       const exercise = await prisma.exercise.create({
         data: {
           id: `ex_${faker.string.uuid()}`,
           name: faker.lorem.words(3),
-          difficulty: faker.helpers.arrayElement(difficulties),
-          hints: [faker.lorem.paragraph(), faker.lorem.paragraph()], // Array of strings
-          solution: faker.lorem.paragraph(),
-          videoUrl: "https://www.youtube.com/watch?v=9XzosPEdnWA&t=1s",
           description: faker.lorem.paragraphs(3),
+          choices: choices,
+          correctAnswer: correctAnswerIndex,
+          explanation: faker.lorem.paragraph(),
+          difficulty: faker.helpers.arrayElement(difficulties),
+          hints: [faker.lorem.sentence(), faker.lorem.sentence()],
+          videoUrl: "https://www.youtube.com/watch?v=9XzosPEdnWA&t=1s",
           questionImageUrl: "https://wmyedjqjxixlmdlgnjzy.supabase.co/storage/v1/object/public/exercises/question_images/medicine-e1-2023.png",
-          type: faker.helpers.arrayElement(exerciseTypes),
-          isActive: faker.datatype.boolean(0.9) // 90% chance of being active
+          isActive: faker.datatype.boolean(0.9)
         }
       });
       exercises.push(exercise);
@@ -75,7 +83,7 @@ async function main() {
     const edges = [];
     
     for (const roadmap of roadmaps) {
-      const nodeCount = faker.number.int({ min: 3, max: 7 }); // Need enough nodes for binary tree
+      const nodeCount = faker.number.int({ min: 3, max: 7 });
       const roadmapNodes = [];
       
       // Create nodes in a way that forms a binary tree
@@ -150,6 +158,41 @@ async function main() {
     }
     console.log(`📚 Created ${nodeExercises.length} node-exercise relationships`);
 
+    // Create Quizzes for Roadmaps
+    const quizzes = [];
+    for (const roadmap of roadmaps) {
+      const quiz = await prisma.quiz.create({
+        data: {
+          id: faker.string.uuid(),
+          roadmapId: roadmap.id,
+          title: `Quiz for ${roadmap.title}`,
+          createdAt: faker.date.past()
+        }
+      });
+      quizzes.push(quiz);
+    }
+    console.log(`📝 Created ${quizzes.length} quizzes`);
+
+    // Add Questions to Quizzes
+    const quizQuestions = [];
+    for (const quiz of quizzes) {
+      const questionCount = faker.number.int({ min: 5, max: 10 });
+      const selectedExercises = faker.helpers.arrayElements(exercises, questionCount);
+
+      for (let i = 0; i < selectedExercises.length; i++) {
+        const quizQuestion = await prisma.quizQuestion.create({
+          data: {
+            id: faker.string.uuid(),
+            quizId: quiz.id,
+            exerciseId: selectedExercises[i].id,
+            orderIndex: i + 1
+          }
+        });
+        quizQuestions.push(quizQuestion);
+      }
+    }
+    console.log(`❓ Created ${quizQuestions.length} quiz questions`);
+
     // Create User Progress (random completion)
     const userProgressRecords = [];
     for (const user of users) {
@@ -172,6 +215,19 @@ async function main() {
           }
         });
         userProgressRecords.push(progress);
+      }
+
+      // Create Quiz Results
+      for (const quiz of quizzes) {
+        const quizResult = await prisma.userQuizResult.create({
+          data: {
+            id: faker.string.uuid(),
+            userId: user.id,
+            quizId: quiz.id,
+            score: faker.number.int({ min: 50, max: 100 }),
+            completedAt: faker.date.recent()
+          }
+        });
       }
     }
     console.log(`✅ Created ${userProgressRecords.length} user progress records`);
