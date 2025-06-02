@@ -27,7 +27,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     difficulty: 'medium',
     type: 'quiz',
     description: '',
-    solution: '',
+    explanation: '',
     videoUrl: '',
     hints: [],
     questionImageUrl: ''
@@ -42,7 +42,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       difficulty: exercise?.difficulty ?? 'medium',
       type: exercise?.type ?? 'quiz',
       description: exercise?.description ?? '',
-      solution: exercise?.solution ?? '',
+      explanation: exercise?.explanation ?? '',
       videoUrl: exercise?.videoUrl ?? '',
       hints: exercise?.hints ?? [],
       questionImageUrl: exercise?.questionImageUrl ?? ''
@@ -179,25 +179,25 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                 />
               </div>
 
-              {/* Solution */}
+              {/* explanation */}
               <div className='grid grid-cols-1 md:grid-cols-2 gap-2 w-full'>
                 <div>
-                  <label htmlFor="solution" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Solution
+                  <label htmlFor="explanation" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    explanation
                   </label>
                   <Textarea
-                    id="solution"
-                    name="solution"
-                    value={formData.solution || ''}
+                    id="explanation"
+                    name="explanation"
+                    value={formData.explanation || ''}
                     onChange={handleInputChange}
                     rows={4}
-                    placeholder="Enter exercise solution"
+                    placeholder="Enter exercise explanation"
                   />
                 </div>
                 <div >
-                  <label htmlFor="solution preview" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"> Preview</label>
+                  <label htmlFor="explanation preview" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"> Preview</label>
                   <div className=" border h-full border-gray-200 dark:border-gray-600 rounded-md">
-                    <MathBlock content={formData.solution || ''} />
+                    <MathBlock content={formData.explanation || ''} />
                   </div>
                 </div>
               </div>
@@ -258,7 +258,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                     </div>
                   ) : (
                     <div className="text-sm text-gray-500 dark:text-gray-400 mb-3">
-                      No hints added. Hints help students solve the exercise without showing the full solution.
+                      No hints added. Hints help students solve the exercise without showing the full explanation.
                     </div>
                   )}
 

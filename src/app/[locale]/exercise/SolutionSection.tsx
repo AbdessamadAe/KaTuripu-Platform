@@ -10,33 +10,33 @@ import Logger from '@/utils/logger';
 import { Button, Card } from '@/components/ui';
 import MathBlock from '@/components/MathBlock';
 
-interface SolutionSectionProps {
-  solution?: string;
+interface ExplanationSectionProps {
+  explanation?: string;
   exerciseId: string;
   completed?: boolean;
   completeExerciseMutate: UseMutateFunction<any, Error, string, unknown>;
 }
 
-const SolutionSection = ({ 
-  solution, 
+const ExplanationSection = ({ 
+  explanation, 
   exerciseId, 
   completed, 
   completeExerciseMutate
-}: SolutionSectionProps) => {
+}: ExplanationSectionProps) => {
   const t = useTranslations('exercise');
-  const [showSolution, setShowSolution] = useState(false);
+  const [showExplanation, setShowExplanation] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
 
-  const triggerSolution = async () => {
+  const triggerExplanation = async () => {
     if (isAnimating) return;
     
     setIsAnimating(true);
-    setShowSolution((prev) => !prev);
+    setShowExplanation((prev) => !prev);
     
     try {
-      // Only trigger completion if showing solution for the first time
-      if (!showSolution && !completed) {
+      // Only trigger completion if showing explanation for the first time
+      if (!showExplanation && !completed) {
         setIsCompleting(true);
         await completeExerciseMutate(exerciseId);
       }
@@ -49,18 +49,18 @@ const SolutionSection = ({
     }
   };
 
-  if (!solution) return null;
+  if (!explanation) return null;
 
   return (
     <Card variant="outlined" className="mb-6">
       <Card.Body>
         <Button
           variant="outline"
-          onClick={triggerSolution}
+          onClick={triggerExplanation}
           disabled={isCompleting || isAnimating}
           isLoading={isCompleting}
           className={`w-full flex items-center justify-between py-4 transition-colors ${
-            showSolution
+            showExplanation
               ? 'text-green-700 dark:text-green-300 border-green-200 dark:border-green-900'
               : 'text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-900'
           }`}
@@ -83,7 +83,7 @@ const SolutionSection = ({
           rightIcon={
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className={`h-5 w-5 transition-transform ${showSolution ? 'rotate-180' : ''}`}
+              className={`h-5 w-5 transition-transform ${showExplanation? 'rotate-180' : ''}`}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -93,14 +93,14 @@ const SolutionSection = ({
           }
         >
           <div className="flex-grow text-left">
-            {showSolution ? t('hideSolution') : t('showSolution')}
+            {showExplanation ? t('hideExplanation') : t('showExplanation')}
             {isCompleting && (
               <span className="ml-2 text-sm">saving...</span>
             )}
           </div>
         </Button>
 
-        {showSolution && (
+        {showExplanation && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
@@ -114,10 +114,10 @@ const SolutionSection = ({
             >
               <Card.Header className="border-b border-gray-200 dark:border-gray-600">
                 <Card.Title className="text-green-600 dark:text-green-400">
-                  {t('solution')}
+                  {t('explanation')}
                 </Card.Title>
               </Card.Header>
-              <MathBlock content={solution} />
+              <MathBlock content={explanation} />
             </Card>
           </motion.div>
         )}
@@ -126,4 +126,4 @@ const SolutionSection = ({
   );
 };
 
-export default SolutionSection;
+export default ExplanationSection;

@@ -44,7 +44,7 @@ export async function getNode(nodeId: string) {
         type: ne.exercise.type,
         difficulty: ne.exercise.difficulty,
         description: ne.exercise.description,
-        solution: ne.exercise.solution,
+        explanation: ne.exercise.explanation,
         video_url: ne.exercise.videoUrl
       })),
       total_exercises: node.nodeExercises.length

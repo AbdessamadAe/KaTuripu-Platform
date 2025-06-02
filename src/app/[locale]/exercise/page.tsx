@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import Loader from '@/components/Loader';
 import QuestionSection from '@/app/[locale]/exercise/QuestionSection';
 import HintsSection from '@/app/[locale]/exercise/HintsSection';
-import SolutionSection from '@/app/[locale]/exercise/SolutionSection';
+import ExplanationSection from '@/app/[locale]/exercise/ExplanationSection';
 import ExerciseSidebar from '@/components/Sidebar';
 import VideoSection from '@/app/[locale]/exercise/videoSection';
 import Breadcrumb from '@/components/Breadcrumb';
@@ -92,8 +92,8 @@ const ExercisePage = () => {
       color: 'blue-600'
     },
     {
-      id: 'solution',
-      label: t('solution'),
+      id: 'explanation',
+      label: t('explanation'),
       icon: <HiLightBulb className="h-5 w-5" />,
       color: 'green-600'
     }
@@ -140,9 +140,9 @@ const ExercisePage = () => {
                 <VideoSection video_url={exercise.videoUrl} />
               )}
 
-              {activeTab === 'solution' && (
-                <SolutionSection
-                  solution={exercise?.solution}
+              {activeTab === 'explanation' && (
+                <ExplanationSection
+                  explanation={exercise?.explanation}
                   exerciseId={exerciseId as string}
                   completed={exercise?.completed}
                   completeExerciseMutate={completeExerciseMutate}

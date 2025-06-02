@@ -122,7 +122,7 @@ export const createExercise = async (exerciseData: {
   name: string;
   difficulty: string;
   hints: string[];
-  solution?: string;
+  explanation?: string;
   videoUrl?: string;
   description?: string;
   questionImageUrl?: string;
@@ -154,7 +154,7 @@ export const createExercise = async (exerciseData: {
           name: exerciseData.name,
           difficulty: exerciseData.difficulty,
           hints: exerciseData.hints || [],
-          solution: exerciseData.solution || null,
+          explanation: exerciseData.explanation || null,
           description: exerciseData.description || null,
           type: exerciseData.type || 'default',
           isActive: exerciseData.isActive ?? true
@@ -197,7 +197,7 @@ export const updateExercise = async (exerciseData: {
   name?: string;
   difficulty?: string;
   hints?: string[];
-  solution?: string;
+  explanation?: string;
   videoUrl?: string;
   description?: string;
   questionImageUrl?: string;
@@ -218,7 +218,7 @@ export const updateExercise = async (exerciseData: {
         name: exerciseData.name,
         difficulty: exerciseData.difficulty,
         hints: exerciseData.hints || [],
-        solution: exerciseData.solution || null,
+        explanation: exerciseData.explanation || null,
         videoUrl: exerciseData.videoUrl || null,
         description: exerciseData.description || null,
         questionImageUrl: exerciseData.questionImageUrl || null,
