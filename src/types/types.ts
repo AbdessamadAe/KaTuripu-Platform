@@ -54,7 +54,6 @@ export interface ReactFlowEdge extends Edge {
 
 // Extend Prisma's Roadmap type for frontend use
 export interface Roadmap extends Omit<PrismaRoadmap, 'imageUrl' | 'createdAt'> {
-  slug: string;
   image_url?: string;
   nodes: ReactFlowNode[];
   edges: ReactFlowEdge[];

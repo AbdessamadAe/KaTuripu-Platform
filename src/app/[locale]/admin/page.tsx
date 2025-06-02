@@ -13,11 +13,11 @@ export default function AdminDashboard() {
 
   const user = useUser();
 
-  if (!user || user.user?.publicMetadata.admin !== true) {
+  if (user.user?.publicMetadata.admin !== true) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-800">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">
+          <h1 className="text-md text-gray-800 dark:text-gray-200 mb-4">
             Finawa ghadi fin ghadi? You do not have permission to access this page.
           </h1>
         </div>
@@ -57,7 +57,7 @@ export default function AdminDashboard() {
         />
 
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid mt-24 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           variants={containerVariants}
           initial="hidden"
           animate="visible"

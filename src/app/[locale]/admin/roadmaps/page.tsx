@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import Breadcrumb from '@/components/Breadcrumb';
 import Loader from '@/components/Loader';
 import ErrorMessage from '@/components/Error';
-import { useAdminRoadmaps } from '@/hooks/index';
+import { useAdminRoadmaps, useDeleteRoadmap } from '@/hooks/index';
 import PageHeader from '@/components/admin/PageHeader';
 import SearchBar from '@/components/admin/SearchBar';
 import RoadmapTable from '@/components/admin/RoadmapTable';
@@ -17,7 +17,17 @@ export default function AdminRoadmaps() {
 
   const user = useUser();
 
-
+  if (!user || user.user?.publicMetadata.admin !== true) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+        <div className="text-center">
+          <h1 className="text-md text-gray-800 dark:text-gray-200 mb-4">
+            Finawa ghadi fin ghadi? You do not have permission to access this page.
+          </h1>
+        </div>
+      </div>
+    );
+  }
 
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
@@ -26,8 +36,8 @@ export default function AdminRoadmaps() {
   // Filter roadmaps based on search term
   const filteredRoadmaps = roadmaps?.filter(
     roadmap => roadmap.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      roadmap.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      roadmap.category.toLowerCase().includes(searchTerm.toLowerCase())
+      (roadmap.description?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
+      (roadmap.category?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false)
   ) || [];
 
   const containerVariants = {
@@ -50,19 +60,27 @@ export default function AdminRoadmaps() {
   const handleEditRoadmap = (id: string) => {
     router.push(`/admin/roadmaps/edit/${id}`);
   };
-
-  if (!user || user.user?.publicMetadata.admin !== true) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-800">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">
-            Finawa ghadi fin ghadi? You do not have permission to access this page.
-          </h1>
-        </div>
-      </div>
-    );
-  }
-
+  
+  const [isDeleting, setIsDeleting] = useState(false);
+  const deleteRoadmapMutation = useDeleteRoadmap();
+  
+  const handleDeleteRoadmap = async (id: string) => {
+    if (confirm("Are you sure you want to delete this roadmap? This action cannot be undone.")) {
+      setIsDeleting(true);
+      try {
+        await deleteRoadmapMutation.mutateAsync(id);
+        return true; // Successfully deleted
+      } catch (error) {
+        console.error("Failed to delete roadmap:", error);
+        alert("Failed to delete roadmap. Please try again.");
+        throw error; // Re-throw to indicate failure
+      } finally {
+        setIsDeleting(false);
+      }
+    }
+    return false; // User cancelled
+  };
+  
   if (isLoading) {
     return <Loader />;
   }
@@ -70,10 +88,10 @@ export default function AdminRoadmaps() {
   if (isError) {
     return <ErrorMessage />;
   }
-
+  
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-[var(--primary-color-light)]/30 dark:from-gray-900 dark:to-indigo-950/30 text-gray-800 dark:text-gray-200 py-8 px-4">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-b from-white to-[var(--primary-color-light)]/30 dark:from-gray-900 dark:to-indigo-950/30 text-gray-800 dark:text-gray-200">
+      <div className="px-16 mx-auto">
         <div className="mb-8">
           <Breadcrumb
             items={[
@@ -128,7 +146,7 @@ export default function AdminRoadmaps() {
             onEdit={handleEditRoadmap}
             containerVariants={containerVariants}
             itemVariants={itemVariants}
-            onDelete={() => { }}
+            onDelete={handleDeleteRoadmap}
           />
         )}
       </div>

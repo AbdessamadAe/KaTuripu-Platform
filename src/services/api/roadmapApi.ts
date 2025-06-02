@@ -20,11 +20,10 @@ export async function fetchAdminRoadmaps(): Promise<AdminRoadmapMeta[]> {
   return data.roadmaps.map((item: any) => ({
     id: item.roadmap_id,
     title: item.roadmap_title,
-    description: item.roadmap_description || '',
-    category: item.roadmap_category || '',
-    imageUrl: item.roadmap_image_url || '',
+    description: item.roadmap_description,
+    category: item.roadmap_category,
+    imageUrl: item.roadmap_image_url,
     createdAt: item.roadmap_created_at,
-    nodesCount: item.nodes?.length || 0,
     exercisesCount: item.total_exercises || 0
   }));
 }
@@ -35,9 +34,9 @@ export async function fetchAdminRoadmap(roadmapId: string): Promise<AdminRoadmap
     return {
       id: nanoid(),
       title: "",
-      description: "",
-      category: "",
-      imageUrl: "",
+      description: undefined,
+      category: undefined,
+      imageUrl: undefined,
       duration: 1,
       nodes: [
         {
@@ -69,11 +68,10 @@ export async function fetchAdminRoadmap(roadmapId: string): Promise<AdminRoadmap
   return {
     id: data.roadmap.id,
     title: data.roadmap.title,
-    description: data.roadmap.description || '',
-    category: data.roadmap.category || '',
-    imageUrl: data.roadmap.image_url || '',
+    description: data.roadmap.description,
+    category: data.roadmap.category,
+    imageUrl: data.roadmap.image_url,
     duration: data.roadmap.duration || 1,
-    slug: data.roadmap.slug,
     nodes: data.roadmap.nodes || [],
     edges: data.roadmap.edges || []
   };
@@ -176,4 +174,27 @@ export async function updateRoadmap(data: AdminRoadmapDetails): Promise<AdminRoa
     ...data,
     ...result.roadmap
   };
+}
+
+/**
+ * Delete a roadmap by ID
+ * @param roadmapId The ID of the roadmap to delete
+ */
+export async function deleteRoadmap(roadmapId: string): Promise<boolean> {
+  const response = await fetch(`/api/roadmap/${roadmapId}`, {
+    method: 'DELETE',
+  });
+  
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || `Failed to delete roadmap with ID ${roadmapId}`);
+  }
+  
+  const result = await response.json();
+  
+  if (!result.success) {
+    throw new Error(result.error || `Failed to delete roadmap with ID ${roadmapId}`);
+  }
+  
+  return true;
 }

@@ -277,7 +277,6 @@ export async function getFullRoadmapWithProgress(roadmapId: string) {
         id: roadmap.id,
         title: roadmap.title,
         description: roadmap.description,
-        slug: roadmap.slug,
         duration: roadmap.duration || 1,
         category: roadmap.category,
         image_url: roadmap.imageUrl,

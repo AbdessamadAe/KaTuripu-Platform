@@ -1,8 +1,8 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { AdminRoadmapMeta } from '@/hooks/useAdminRoadmaps';
+import { AdminRoadmapMeta } from '@/types/adminTypes';
 import { Button } from '@/components/ui';
 
 interface RoadmapTableProps {
@@ -20,6 +20,8 @@ const RoadmapTable: React.FC<RoadmapTableProps> = ({
   containerVariants, 
   itemVariants 
 }) => {
+  // Track which roadmap is being deleted
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -27,6 +29,17 @@ const RoadmapTable: React.FC<RoadmapTableProps> = ({
       month: 'short',
       day: 'numeric'
     });
+  };
+  
+  const handleDelete = async (id: string) => {
+    if (!onDelete) return;
+    
+    setDeletingId(id);
+    try {
+      await onDelete(id);
+    } finally {
+      setDeletingId(null);
+    }
   };
   
   return (
@@ -41,7 +54,6 @@ const RoadmapTable: React.FC<RoadmapTableProps> = ({
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Title</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Category</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Nodes</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Exercises</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Created At</th>
             <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
@@ -57,20 +69,15 @@ const RoadmapTable: React.FC<RoadmapTableProps> = ({
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center">
                   <div className="h-10 w-10 flex-shrink-0">
-                    <img className="h-10 w-10 rounded object-cover" src={roadmap.imageUrl} alt="" />
+                    <img className="h-10 w-10 rounded object-contain" src={roadmap.imageUrl || "/images/logo.png"} alt="" />
                   </div>
                   <div className="ml-4">
                     <div className="text-sm font-medium text-gray-900 dark:text-white">{roadmap.title}</div>
                   </div>
                 </div>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-[var(--primary-color)] bg-opacity-10 dark:bg-gray-700 text-[var(--primary-color)] dark:text-[var(--secondary-color)]">
-                  {roadmap.category}
-                </span>
-              </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                {roadmap.nodesCount}
+                  {roadmap.category || "Uncategorized"}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                 {roadmap.exercisesCount}
@@ -89,12 +96,13 @@ const RoadmapTable: React.FC<RoadmapTableProps> = ({
                 </Button>
                 {onDelete && (
                   <Button 
-                    onClick={() => onDelete(roadmap.id)}
+                    onClick={() => handleDelete(roadmap.id)}
                     variant="text"
                     size="sm"
                     className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
+                    disabled={deletingId === roadmap.id}
                   >
-                    Delete
+                    {deletingId === roadmap.id ? "Deleting..." : "Delete"}
                   </Button>
                 )}
               </td>

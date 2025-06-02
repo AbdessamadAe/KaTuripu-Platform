@@ -7,11 +7,10 @@ import { Roadmap as PrismaRoadmap } from "@prisma/client";
 export interface AdminRoadmapMeta {
   id: string;
   title: string;
-  description: string;
-  category: string;
-  imageUrl: string;
+  description?: string;
+  category?: string;
+  imageUrl?: string;
   createdAt: string;
-  nodesCount: number;
   exercisesCount: number;
 }
 
@@ -19,8 +18,7 @@ export interface AdminRoadmapMeta {
  * Full details of a roadmap for admin editing - extends Prisma Roadmap
  */
 export interface AdminRoadmapDetails extends Omit<PrismaRoadmap, 'imageUrl' | 'createdAt'> {
-  imageUrl: string;
-  slug?: string;
+  imageUrl?: string;
   nodes: ReactFlowNode[];
   edges: ReactFlowEdge[];
   duration: number; // in hours

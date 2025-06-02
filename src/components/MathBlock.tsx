@@ -17,7 +17,7 @@ const MathBlock: React.FC<MathBlockProps> = ({ content, className = '' }) => {
             components={{
               code({ node, className, children, ...props }) {
                 return (
-                  <pre className="bg-gray-200 dark:bg-gray-600 p-3 rounded overflow-x-auto">
+                  <pre className="bg-gray-200 dark:bg-gray-600 rounded overflow-x-auto">
                     <code className={className} {...props}>
                       {children}
                     </code>

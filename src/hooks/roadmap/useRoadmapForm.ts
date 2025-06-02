@@ -8,9 +8,9 @@ import { AdminRoadmapDetails } from "@/types/adminTypes";
 export function useRoadmapForm(initialData?: Partial<AdminRoadmapDetails>) {
   const [formData, setFormData] = useState({
     title: initialData?.title || '',
-    description: initialData?.description || '',
-    category: initialData?.category || '',
-    imageUrl: initialData?.imageUrl || '',
+    description: initialData?.description ?? '',
+    category: initialData?.category ?? '',
+    imageUrl: initialData?.imageUrl ?? '',
     duration: initialData?.duration || 1,
   });
   

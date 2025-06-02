@@ -3,6 +3,7 @@ export { useAdminRoadmaps } from './roadmap/queries/useAdminRoadmaps';
 export { useAdminRoadmap } from './roadmap/queries/useAdminRoadmap';
 export { useCreateRoadmap } from './roadmap/mutations/useCreateRoadmap';
 export { useUpdateRoadmap } from './roadmap/mutations/useUpdateRoadmap';
+export { useDeleteRoadmap } from './roadmap/mutations/useDeleteRoadmap';
 export { useRoadmapForm } from './roadmap/useRoadmapForm';
 
 // Export all node hooks

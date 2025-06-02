@@ -12,11 +12,6 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
   const [isHovered, setIsHovered] = useState(false);
   const t = useTranslations('roadmap');
 
-  const getPrimaryCategory = (): string => {
-    if (Array.isArray(roadmap?.roadmap_category)) return roadmap?.roadmap_category[0]?.toLowerCase() || '';
-    return roadmap?.roadmap_category?.toLowerCase() || '';
-  };
-
   const getCategories = (): string[] =>
     Array.isArray(roadmap?.roadmap_category)
       ? roadmap?.roadmap_category
@@ -24,11 +19,10 @@ const RoadmapCard: React.FC<RoadmapCardProps> = ({ roadmap, progress }) => {
         ? [roadmap?.roadmap_category]
         : [];
 
-  // Hardcoded values to match the design
   const topicsCount = roadmap.total_exercises || 'N/A';
   const difficulty = roadmap?.difficulty || 'Beginner';
   const duration = roadmap?.duration || 'N/A';
-  const category = getPrimaryCategory() || 'Any';
+  const category = roadmap?.roadmap_category || 'N/A';
 
   return (
     <div

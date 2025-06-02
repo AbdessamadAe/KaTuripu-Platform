@@ -17,7 +17,7 @@ interface BreadcrumbProps {
 const Breadcrumb = ({ items }: BreadcrumbProps) => {
 
   return (
-    <div className="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 py-5 px-4 sm:px-6">
+    <div className="dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 py-5 px-4 sm:px-6">
       <nav className="flex" aria-label="Breadcrumb">
         <ol className="flex flex-wrap items-center space-x-1 text-md">
           <li className="flex items-center">

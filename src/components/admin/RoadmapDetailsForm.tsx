@@ -19,7 +19,7 @@ interface RoadmapDetailsFormProps {
 const RoadmapDetailsForm: React.FC<RoadmapDetailsFormProps> = ({
   formData,
   onChange,
-  categories = ["Mathematics", "Physics", "Chemistry", "Computer Science", "Biology"]
+  categories = ["BAC-SM", "BAC-PC", "BAC-SVT"]
 }) => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8">

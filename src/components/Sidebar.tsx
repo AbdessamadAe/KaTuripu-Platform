@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@clerk/nextjs";
 import { Button, Card, Badge, Alert } from '@/components/ui';
 // Import icons from react-icons
-import { HiCheck, HiPlay, HiClock, HiDocument } from 'react-icons/hi2';
+import { HiCheck, HiPlay, HiClock, HiAcademicCap } from 'react-icons/hi2';
 import { HiX } from "react-icons/hi";
 
 
@@ -160,20 +160,18 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
                 >
                   <Card.Body className="p-3 flex justify-between items-center">
                     <div className="flex items-center w-full">
-                      <div className={`mr-2.5 flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full 
+                      <div className={`mr-2.5 flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full 
                         ${exercise.completed
                           ? "bg-[var(--success-color)]/20 dark:bg-[var(--success-color)]/30 text-[var(--success-color)] dark:text-[var(--success-color)]"
                           : "bg-[var(--primary-color)]/20 dark:bg-[var(--primary-color)]/30 text-[var(--primary-color)] dark:text-[var(--primary-color)]"}`}>
                         {exercise.completed ? (
                           <HiCheck className="h-4 w-4" />
-                        ) : exercise.videoUrl ? (
-                          <HiPlay className="h-4 w-4" />
                         ) : (
-                          <HiDocument className="h-4 w-4" />
+                          <HiAcademicCap className="h-4 w-4" />
                         )}
                       </div>
 
-                      <div className="flex-grow min-w-0">
+                      <div className="flex-grow ml-2 min-w-0">
                         <Link href={{
                           pathname: `/exercise`,
                           query: { exerciseId: exercise.id, nodeId, roadmapId, nodeTitle: title, roadmapTitle: roadmapTitle}
