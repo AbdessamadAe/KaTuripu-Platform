@@ -11,8 +11,10 @@ import PageHeader from '@/components/admin/PageHeader';
 import ActionButtons from '@/components/admin/ActionButtons';
 import RoadmapDetailsForm from '@/components/admin/RoadmapDetailsForm';
 import AdminErrorState from '@/components/admin/AdminErrorState';
+import { useUser } from '@clerk/nextjs';
 
 export default function RoadmapEditor({ params }: { params: { roadmapId: string } }) {
+  const user = useUser();
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   
@@ -83,6 +85,18 @@ export default function RoadmapEditor({ params }: { params: { roadmapId: string 
   const handleCancel = () => {
     router.push('/admin/roadmaps');
   };
+
+  if (!user || user.user?.publicMetadata.admin !== true) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">
+            Finawa ghadi fin ghadi? You do not have permission to access this page.
+          </h1>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return <Loader />;

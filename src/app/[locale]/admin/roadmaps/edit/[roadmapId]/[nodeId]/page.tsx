@@ -9,8 +9,10 @@ import AdminErrorState from '@/components/admin/AdminErrorState';
 import NodeSection from './NodeSection';
 import ExercisesSection from './ExercisesSection';
 import { useExercisesByNodeId } from '@/hooks/exercise/queries/useExercise';
+import { useUser } from '@clerk/nextjs';
 
 export default function NodeEditPage({ params }: { params: { roadmapId: string; nodeId: string } }) {
+  const user = useUser();
   const router = useRouter();
   const { roadmapId, nodeId } = use(params);
   
@@ -44,6 +46,19 @@ export default function NodeEditPage({ params }: { params: { roadmapId: string; 
     { name: roadmapData.title, href: `/admin/roadmaps/edit/${roadmapId}` },
     { name: node.data.label, href: `/admin/roadmaps/edit/${roadmapId}/${nodeId}` },
   ];
+
+
+  if (!user || user.user?.publicMetadata.admin !== true) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">
+            Finawa ghadi fin ghadi? You do not have permission to access this page.
+          </h1>
+        </div>
+      </div>
+    );
+  }
 
 
   return (

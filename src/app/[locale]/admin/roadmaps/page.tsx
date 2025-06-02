@@ -11,17 +11,23 @@ import PageHeader from '@/components/admin/PageHeader';
 import SearchBar from '@/components/admin/SearchBar';
 import RoadmapTable from '@/components/admin/RoadmapTable';
 import EmptyState from '@/components/admin/EmptyState';
+import { useUser } from '@clerk/nextjs';
 
 export default function AdminRoadmaps() {
+
+  const user = useUser();
+
+
+
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const { data: roadmaps, isLoading, isError } = useAdminRoadmaps();
-  
+
   // Filter roadmaps based on search term
   const filteredRoadmaps = roadmaps?.filter(
     roadmap => roadmap.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               roadmap.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               roadmap.category.toLowerCase().includes(searchTerm.toLowerCase())
+      roadmap.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      roadmap.category.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 
   const containerVariants = {
@@ -45,6 +51,18 @@ export default function AdminRoadmaps() {
     router.push(`/admin/roadmaps/edit/${id}`);
   };
 
+  if (!user || user.user?.publicMetadata.admin !== true) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">
+            Finawa ghadi fin ghadi? You do not have permission to access this page.
+          </h1>
+        </div>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return <Loader />;
   }
@@ -57,20 +75,20 @@ export default function AdminRoadmaps() {
     <div className="min-h-screen bg-gradient-to-b from-white to-[var(--primary-color-light)]/30 dark:from-gray-900 dark:to-indigo-950/30 text-gray-800 dark:text-gray-200 py-8 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <Breadcrumb 
+          <Breadcrumb
             items={[
               { name: 'Admin', href: '/admin' },
               { name: 'Roadmaps', href: '/admin/roadmaps' }
-            ]} 
+            ]}
           />
         </div>
 
         <div className="flex justify-between items-center mb-8">
-          <PageHeader 
-            title="Roadmaps Management" 
+          <PageHeader
+            title="Roadmaps Management"
           />
-          
-          <button 
+
+          <button
             onClick={handleCreateNewRoadmap}
             className="px-4 py-2 bg-[var(--primary-color)] hover:bg-[var(--primary-color-dark)] text-white rounded-lg shadow transition-colors flex items-center"
           >
@@ -110,7 +128,7 @@ export default function AdminRoadmaps() {
             onEdit={handleEditRoadmap}
             containerVariants={containerVariants}
             itemVariants={itemVariants}
-            onDelete={() => {}}
+            onDelete={() => { }}
           />
         )}
       </div>
