@@ -8,12 +8,6 @@ import {
   UserExerciseProgress as PrismaUserExerciseProgress
 } from "@prisma/client";
 
-// Use Prisma-generated types with proper field mappings
-export interface Exercise extends Omit<PrismaExercise, 'videoUrl' | 'questionImageUrl' | 'isActive'> {
-  video_url?: string; // Map from Prisma's videoUrl
-  questionImageUrl?: string; // Map from Prisma's questionImageUrl
-}
-
 export interface ExerciseMeta {
   id: string;
   name: string;

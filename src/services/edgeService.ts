@@ -1,5 +1,5 @@
 import prisma from '@/lib/prisma';
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import { Prisma } from '@prisma/client';
 import Logger from '@/utils/logger';
 
@@ -9,9 +9,11 @@ export async function createEdge(edgeData: {
   targetNodeId: string;
 }) {
   try {
-    const { userId } = await auth();
-    
-    if (!userId) {
+    const user = await currentUser();
+    const userId = user?.id;
+
+    if (!user || user.publicMetadata?.admin !== true) {
+      Logger.error('Unauthorized attempt to create edge', { userId });
       return { success: false, error: 'Unauthorized' };
     }
 
@@ -89,9 +91,11 @@ export async function createEdge(edgeData: {
 
 export async function deleteEdge(edgeId: string) {
   try {
-    const { userId } = await auth();
-    
-    if (!userId) {
+    const user = await currentUser();
+    const userId = user?.id;
+
+    if (!user || user.publicMetadata?.admin !== true) {
+      Logger.error('Unauthorized attempt to update edge', { userId });
       return { success: false, error: 'Unauthorized' };
     }
     

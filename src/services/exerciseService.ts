@@ -1,5 +1,5 @@
 import prisma from '@/lib/prisma';
-import { auth } from '@clerk/nextjs/server'
+import { auth, currentUser } from '@clerk/nextjs/server'
 import { Prisma } from '@prisma/client';
 import type { Exercise } from '@/types/types';
 import Logger from "@/utils/logger";
@@ -32,8 +32,6 @@ export const getExerciseById = async (exerciseId: string) => {
       }
     });
 
-    Logger.info('User progress:', userProgress);
-
     // Format the response
     const response = {
       ...exercise,
@@ -63,7 +61,12 @@ export const completeExercise = async (exerciseId: string) => {
     });
 
     if (!userExists) {
-      return { success: false, error: 'User not found' };
+      // get user name from Clerk
+      const user = await currentUser();
+      // insert user if not exists
+      await prisma.user.create({
+        data: { id: userId, name: user?.fullName, email: user?.emailAddresses[0]?.emailAddress }
+      });
     }
 
     // 2. Verify the exercise exists
@@ -126,18 +129,20 @@ export const createExercise = async (exerciseData: {
   videoUrl?: string;
   description?: string;
   questionImageUrl?: string;
-  type?: string;
+  choices?: string[];
+  correctAnswer?: string | null;
   isActive?: boolean;
   nodeId?: string;
-  orderIndex?: number;
 }) => {
   try {
-    const { userId } = await auth();
-    
-    if (!userId) {
+    const user = await currentUser();
+    const userId = user?.id; 
+
+    if (!user || user.publicMetadata?.admin !== true) {
+      Logger.error('Unauthorized attempt to create exercise', { userId });
       return { success: false, error: 'Unauthorized' };
     }
-    Logger.info('Creating exercise:', exerciseData);
+
     // Start a transaction to ensure both operations complete together
     const result = await prisma.$transaction(async (tx) => {
       // Generate a UUID if not provided
@@ -156,7 +161,8 @@ export const createExercise = async (exerciseData: {
           hints: exerciseData.hints || [],
           explanation: exerciseData.explanation || null,
           description: exerciseData.description || null,
-          type: exerciseData.type || 'default',
+          choices:  exerciseData.choices || [],
+          correctAnswer: exerciseData.correctAnswer || 0,
           isActive: exerciseData.isActive ?? true
         }
       });
@@ -194,20 +200,23 @@ export const createExercise = async (exerciseData: {
 
 export const updateExercise = async (exerciseData: {
   id: string;
-  name?: string;
-  difficulty?: string;
-  hints?: string[];
+  name: string;
+  difficulty: string;
+  hints: string[];
   explanation?: string;
   videoUrl?: string;
   description?: string;
   questionImageUrl?: string;
-  type?: string;
+  choices?: string[];
+  correctAnswer?: string | null;
   isActive?: boolean;
 }) => {
   try {
-    const { userId } = await auth();
-    
-    if (!userId) {
+    const user = await currentUser();
+    const userId = user?.id; 
+       
+    if (!user || user.publicMetadata?.admin !== true) {
+      Logger.error('Unauthorized attempt to update exercise', { userId });
       return { success: false, error: 'Unauthorized' };
     }
 
@@ -215,16 +224,16 @@ export const updateExercise = async (exerciseData: {
     const updatedExercise = await prisma.exercise.update({
       where: { id: exerciseData.id },
       data: {
-        name: exerciseData.name,
-        difficulty: exerciseData.difficulty,
-        hints: exerciseData.hints || [],
-        explanation: exerciseData.explanation || null,
-        videoUrl: exerciseData.videoUrl || null,
-        description: exerciseData.description || null,
-        questionImageUrl: exerciseData.questionImageUrl || null,
-        type: exerciseData.type || 'default',
-        isActive: exerciseData.isActive ?? true
-      }
+          videoUrl: exerciseData.video_url || null,
+          name: exerciseData.name,
+          difficulty: exerciseData.difficulty,
+          hints: exerciseData.hints || [],
+          explanation: exerciseData.explanation || null,
+          description: exerciseData.description || null,
+          choices:  exerciseData.choices || [],
+          correctAnswer: exerciseData.correctAnswer || 0,
+          isActive: exerciseData.isActive ?? true
+        }
     });
 
     return { success: true, exercise: updatedExercise };
@@ -242,9 +251,11 @@ export const updateExercise = async (exerciseData: {
 
 export const deleteExercise = async (exerciseId: string, nodeId: string) => {
   try {
-    const { userId } = await auth();
-    
-    if (!userId) {
+    const user = await currentUser();
+    const userId = user?.id; 
+       
+    if (!user || user.publicMetadata?.admin !== true) {
+      Logger.error('Unauthorized attempt to delete exercise', { userId });
       return { success: false, error: 'Unauthorized' };
     }
 

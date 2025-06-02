@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Exercise } from '@/types/types';
+import { Exercise } from '@prisma/client';
 import { Button, Input, Select, Textarea } from '@/components/ui';
 import { useExercise } from '@/hooks/exercise/queries/useExercise';
 import MathBlock from '@/components/MathBlock';
@@ -25,27 +25,32 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     id: '',
     name: '',
     difficulty: 'medium',
-    type: 'quiz',
     description: '',
     explanation: '',
-    videoUrl: '',
+    video_url: '',
     hints: [],
-    questionImageUrl: ''
+    questionImageUrl: '',
+    choices: [],
+    correctAnswer: 0,
+    isActive: true
   });
 
   const [currentHint, setCurrentHint] = useState('');
+  const [currentChoice, setCurrentChoice] = useState('');
 
   useEffect(() => {
     setFormData({
       id: exercise?.id ?? '',
       name: exercise?.name ?? '',
       difficulty: exercise?.difficulty ?? 'medium',
-      type: exercise?.type ?? 'quiz',
       description: exercise?.description ?? '',
       explanation: exercise?.explanation ?? '',
-      videoUrl: exercise?.videoUrl ?? '',
+      video_url: exercise?.video_url ?? '',
       hints: exercise?.hints ?? [],
-      questionImageUrl: exercise?.questionImageUrl ?? ''
+      questionImageUrl: exercise?.questionImageUrl ?? '',
+      choices: exercise?.choices ?? [],
+      correctAnswer: exercise?.correctAnswer ?? 0,
+      isActive: exercise?.isActive ?? true
     });
     setCurrentHint('');
     console.log('Exercise data loaded:', exercise);
@@ -59,8 +64,25 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     }));
   };
 
+  const [validationError, setValidationError] = useState<string | null>(null);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate that we have at least two choices
+    if (!formData.choices || formData.choices.length < 2) {
+      setValidationError('Please add at least two answer choices');
+      return;
+    }
+    
+    // Validate that correctAnswer is within range
+    if (formData.correctAnswer === undefined || formData.correctAnswer < 0 || 
+        formData.correctAnswer >= (formData.choices?.length || 0)) {
+      setValidationError('Please select a valid correct answer');
+      return;
+    }
+    
+    setValidationError(null);
     console.log('Form data being submitted:', formData);
     onSave(formData as Exercise);
   };
@@ -80,6 +102,28 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     setFormData(prev => ({
       ...prev,
       hints: (prev.hints || []).filter((_, index) => index !== indexToRemove)
+    }));
+  };
+  
+  // Choices management
+  const addChoice = () => {
+    if (currentChoice.trim() !== '') {
+      setFormData(prev => ({
+        ...prev,
+        choices: [...(prev.choices || []), currentChoice]
+      }));
+      setCurrentChoice('');
+    }
+  };
+
+  const removeChoice = (indexToRemove: number) => {
+    setFormData(prev => ({
+      ...prev,
+      choices: (prev.choices || []).filter((_, index) => index !== indexToRemove),
+      // If correct answer is at or after this index, adjust it
+      correctAnswer: prev.correctAnswer !== undefined && prev.correctAnswer >= indexToRemove ? 
+        (prev.correctAnswer === indexToRemove ? 0 : prev.correctAnswer - 1) : 
+        prev.correctAnswer
     }));
   };
 
@@ -146,22 +190,6 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                     ]}
                   />
                 </div>
-                <div>
-                  <label htmlFor="type" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Type
-                  </label>
-                  <Select
-                    id="type"
-                    name="type"
-                    value={formData.type}
-                    onChange={handleInputChange}
-                    options={[
-                      { value: 'quiz', label: 'Quiz' },
-                      { value: 'coding', label: 'Coding' },
-                      { value: 'theory', label: 'Theory' }
-                    ]}
-                  />
-                </div>
               </div>
 
               {/* Description */}
@@ -204,13 +232,13 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
 
               {/* Video URL */}
               <div>
-                <label htmlFor="videoUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label htmlFor="video_url" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Video URL (optional)
                 </label>
                 <Input
-                  id="videoUrl"
-                  name="videoUrl"
-                  value={formData.videoUrl || ''}
+                  id="video_url"
+                  name="video_url"
+                  value={formData.video_url || ''}
                   onChange={handleInputChange}
                   placeholder="https://www.youtube.com/watch?v=..."
                 />
@@ -230,6 +258,69 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                 />
               </div>
 
+              {/* Choices */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Answer Choices <span className="text-red-500">*</span>
+                </label>
+                <div className="space-y-2">
+                  {/* Existing choices */}
+                  {formData.choices && formData.choices.length > 0 ? (
+                    <div className="flex flex-col space-y-2 mb-3">
+                      {formData.choices.map((choice, index) => (
+                        <div key={index} className="flex items-center gap-2 bg-gray-50 dark:bg-gray-700 p-2 rounded border border-gray-200 dark:border-gray-600">
+                          <div className="flex items-center gap-2 flex-1">
+                            <input
+                              type="radio"
+                              id={`choice-${index}`}
+                              name="correctAnswer"
+                              checked={formData.correctAnswer === index}
+                              onChange={() => setFormData(prev => ({ ...prev, correctAnswer: index }))}
+                              className="h-4 w-4 text-[var(--primary-color)] focus:ring-[var(--primary-color)]"
+                            />
+                            <label htmlFor={`choice-${index}`} className="text-sm text-gray-700 dark:text-gray-300 flex-1">
+                              {choice}
+                            </label>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removeChoice(index)}
+                            className="p-1 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                          >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                      No choices added. Add at least two answer options and select the correct one.
+                    </div>
+                  )}
+
+                  {/* Add new choice */}
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="current-choice"
+                      value={currentChoice}
+                      onChange={(e) => setCurrentChoice(e.target.value)}
+                      placeholder="Enter an answer choice"
+                      className="flex-1"
+                    />
+                    <Button
+                      type="button"
+                      onClick={addChoice}
+                      disabled={currentChoice.trim() === ''}
+                      variant="secondary"
+                    >
+                      Add Choice
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              
               {/* Hints */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -282,7 +373,31 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                   </div>
                 </div>
               </div>
+              
+              {/* Active Status */}
+              <div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="isActive"
+                    name="isActive"
+                    checked={formData.isActive}
+                    onChange={(e) => setFormData(prev => ({ ...prev, isActive: e.target.checked }))}
+                    className="h-4 w-4 text-[var(--primary-color)] focus:ring-[var(--primary-color)] rounded"
+                  />
+                  <label htmlFor="isActive" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Active (exercise will be shown to students)
+                  </label>
+                </div>
+              </div>
             </div>
+            {/* Validation error message */}
+            {validationError && (
+              <div className="mb-4 p-3 bg-red-100 border border-red-300 rounded-md text-red-700">
+                {validationError}
+              </div>
+            )}
+
             {/* Footer */}
             <div className="flex justify-end space-x-3 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
               <Button

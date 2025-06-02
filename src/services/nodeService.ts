@@ -1,5 +1,5 @@
 import prisma from '@/lib/prisma';
-import { auth } from '@clerk/nextjs/server'
+import { auth, currentUser } from '@clerk/nextjs/server'
 import Logger from '@/utils/logger';
 
 export async function getNode(nodeId: string) {
@@ -41,7 +41,6 @@ export async function getNode(nodeId: string) {
       exercises: node.nodeExercises.map(ne => ({
         id: ne.exercise.id,
         name: ne.exercise.name,
-        type: ne.exercise.type,
         difficulty: ne.exercise.difficulty,
         description: ne.exercise.description,
         explanation: ne.exercise.explanation,
@@ -66,9 +65,11 @@ export async function createNode(nodeData: {
   positionY?: number;
 }) {
   try {
-    const { userId } = await auth();
-    
-    if (!userId) {
+    const user = await currentUser();
+    const userId = user?.id; 
+       
+    if (!user || user.publicMetadata?.admin !== true) {
+      Logger.error('Unauthorized attempt to create node', { userId });
       return { success: false, error: 'Unauthorized' };
     }
 
@@ -117,9 +118,11 @@ export async function updateNode(
   }
 ) {
   try {
-    const { userId } = await auth();
-    
-    if (!userId) {
+    const user = await currentUser();
+    const userId = user?.id; 
+       
+    if (!user || user.publicMetadata?.admin !== true) {
+      Logger.error('Unauthorized attempt to update node', { userId });
       return { success: false, error: 'Unauthorized' };
     }
 
@@ -180,7 +183,6 @@ export async function getNodeExerciseList(nodeId: string) {
           select: {
             id: true,
             name: true,
-            type: true,
             difficulty: true
           }
         }
@@ -214,7 +216,6 @@ export async function getNodeExerciseList(nodeId: string) {
     const formattedExercises = nodeExercises.map(ne => ({
       id: ne.exercise.id,
       name: ne.exercise.name,
-      type: ne.exercise.type,
       difficulty: ne.exercise.difficulty,
       completed: progressMap.get(ne.exercise.id)?.completed || false,
       completed_at: progressMap.get(ne.exercise.id)?.completedAt || null
@@ -236,9 +237,11 @@ export async function getNodeExerciseList(nodeId: string) {
 
 export async function deleteNode(nodeId: string) {
   try {
-    const { userId } = await auth();
-    
-    if (!userId) {
+    const user = await currentUser();
+    const userId = user?.id; 
+       
+    if (!user || user.publicMetadata?.admin !== true) {
+      Logger.error('Unauthorized attempt to delete node', { userId });
       return { success: false, error: 'Unauthorized' };
     }
     
@@ -248,7 +251,7 @@ export async function deleteNode(nodeId: string) {
     //   select: { role: true }
     // });
     
-    // if (!user || user.role !== 'admin') {
+    // if (!user || user.admin !== true) {
     //   return { success: false, error: 'Unauthorized: Admin role required' };
     // }
 

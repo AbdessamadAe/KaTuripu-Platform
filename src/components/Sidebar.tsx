@@ -12,8 +12,22 @@ import { HiX } from "react-icons/hi";
 
 
 async function fetchExerciseMetaList(nodeId: string): Promise<ExerciseMeta[]> {
-  const res = await fetch(`/api/node/${nodeId}/exercise-list`);
-  return res.json();
+  try {
+    const res = await fetch(`/api/node/${nodeId}/exercise-list`);
+    
+    if (!res.ok) {
+      console.error(`Error fetching exercises: ${res.status} ${res.statusText}`);
+      return [];
+    }
+    
+    const data = await res.json();
+    
+    // Ensure we always return an array
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error("Failed to fetch exercises:", error);
+    return [];
+  }
 }
 
 interface SidebarProps {
@@ -46,22 +60,37 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
     refetchOnWindowFocus: false
   });
 
+  // Ensure exercises is always an array to prevent "filter is not a function" error
+  const exercises = Array.isArray(exerciseList) ? exerciseList : [];
 
-  const exercises = exerciseList || [];
+  if (errorExerciseList) {
+    console.error("Exercise list error:", errorExerciseList);
+    return (
+      <Card variant="flat" className="h-full w-94 md:w-100">
+        <Card.Body className="flex items-center justify-center">
+          <Alert variant="error" title="Error">
+            Failed to load exercises. Please try again later.
+          </Alert>
+        </Card.Body>
+      </Card>
+    );
+  }
 
-  if (errorExerciseList) return (
-    <Card variant="flat" className="h-full w-94 md:w-100">
-      <Card.Body className="flex items-center justify-center">
-        <Alert variant="error" title="Error">
-          Failed to load exercises. Please try again later.
-        </Alert>
-      </Card.Body>
-    </Card>
-  );
+  if (!exercises || exercises.length === 0) {
+    return (
+      <Card variant="flat" className="h-full w-94 md:w-100">
+        <Card.Body className="flex items-center justify-center">
+          <Alert variant="info" title="No Exercises">
+            No exercises available for this section.
+          </Alert>
+        </Card.Body>
+      </Card>
+    );
+  }
 
-  const completedExercises = exercises?.filter(ex => ex.completed).length;
+  const completedExercises = exercises.filter(ex => ex.completed).length;
   const totalExercises = exercises.length;
-  const progress = Math.round((completedExercises / totalExercises) * 100);
+  const progress = totalExercises > 0 ? Math.round((completedExercises / totalExercises) * 100) : 0;
 
   return (
     <Card 

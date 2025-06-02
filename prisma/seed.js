@@ -1,6 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
 const { faker } = require('@faker-js/faker/locale/fr');
-const { hash } = require('bcryptjs');
 
 async function main() {
   const prisma = new PrismaClient();
@@ -9,16 +8,12 @@ async function main() {
 
     // Seed Users
     const users = [];
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < 5; i++) {
       const user = await prisma.user.create({
         data: {
-          id: `user_2wtpRa9c3zkxE2q2CBeLhwUVkz2`,
           email: faker.internet.email(),
           name: faker.person.fullName(),
-          image: faker.image.avatar(),
           role: i === 0 ? 'ADMIN' : 'USER',
-          createdAt: faker.date.past(),
-          updatedAt: faker.date.recent()
         }
       });
       users.push(user);
@@ -41,7 +36,6 @@ async function main() {
       
       const exercise = await prisma.exercise.create({
         data: {
-          id: `ex_${faker.string.uuid()}`,
           name: faker.lorem.words(3),
           description: faker.lorem.paragraphs(3),
           choices: choices,
@@ -65,13 +59,11 @@ async function main() {
     for (let i = 0; i < 2; i++) {
       const roadmap = await prisma.roadmap.create({
         data: {
-          id: faker.string.uuid(),
           title: faker.lorem.words(3),
           description: faker.lorem.paragraph(),
           category: faker.helpers.arrayElement(roadmapCategories),
           imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-ZxOCMznxGcjBhMPkS8cI5K8Ka3_owCf0q4luMEOTtMuon3LKYART4xpMkKF_Atu73f0&usqp=CAU",
-          duration: faker.number.int({ min: 1, max: 30 }),
-          createdAt: faker.date.past()
+          duration: faker.number.int({ min: 1, max: 30 })
         }
       });
       roadmaps.push(roadmap);
@@ -103,7 +95,6 @@ async function main() {
           
           const node = await prisma.roadmapNode.create({
             data: {
-              id: faker.string.uuid(),
               roadmapId: roadmap.id,
               label: faker.lorem.words(2),
               description: faker.lorem.sentence(),
@@ -123,7 +114,6 @@ async function main() {
             
             const edge = await prisma.roadmapEdge.create({
               data: {
-                id: faker.string.uuid(),
                 roadmapId: roadmap.id,
                 sourceNodeId: parentNode.id,
                 targetNodeId: node.id
@@ -163,10 +153,8 @@ async function main() {
     for (const roadmap of roadmaps) {
       const quiz = await prisma.quiz.create({
         data: {
-          id: faker.string.uuid(),
           roadmapId: roadmap.id,
-          title: `Quiz for ${roadmap.title}`,
-          createdAt: faker.date.past()
+          title: `Quiz for ${roadmap.title}`
         }
       });
       quizzes.push(quiz);
@@ -182,7 +170,6 @@ async function main() {
       for (let i = 0; i < selectedExercises.length; i++) {
         const quizQuestion = await prisma.quizQuestion.create({
           data: {
-            id: faker.string.uuid(),
             quizId: quiz.id,
             exerciseId: selectedExercises[i].id,
             orderIndex: i + 1
@@ -219,13 +206,11 @@ async function main() {
 
       // Create Quiz Results
       for (const quiz of quizzes) {
-        const quizResult = await prisma.userQuizResult.create({
+        await prisma.userQuizResult.create({
           data: {
-            id: faker.string.uuid(),
             userId: user.id,
             quizId: quiz.id,
-            score: faker.number.int({ min: 50, max: 100 }),
-            completedAt: faker.date.recent()
+            score: faker.number.int({ min: 50, max: 100 })
           }
         });
       }

@@ -82,11 +82,6 @@ const ExercisesPanel: React.FC<ExercisesPanelProps> = ({
                         {exercise.difficulty}
                       </span>
                     )}
-                    {exercise.type && (
-                      <span className="text-xs px-2 py-1 rounded-full bg-[var(--info-color)]/20 text-[var(--info-color)] dark:bg-[var(--info-color)]/20 dark:text-[var(--info-color)]">
-                        {exercise.type}
-                      </span>
-                    )}
                   </div>
                   {exercise.description && (
                     <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
