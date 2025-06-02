@@ -20,3 +20,6 @@ export { useDeleteEdge } from './edge/mutations/useDeleteEdge';
 export { useCreateExercise } from './exercise/mutations/useCreateExercise';
 export { useUpdateExercise } from './exercise/mutations/useUpdateExercise';
 export { useDeleteExercise } from './exercise/mutations/useDeleteExercise';
+
+// Export all quiz hooks
+export { useQuizByRoadmap, useSubmitQuizResult } from './quiz';

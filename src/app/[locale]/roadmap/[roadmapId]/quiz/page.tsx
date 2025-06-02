@@ -1,5 +1,7 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { useUser } from '@clerk/nextjs';
 import ProgressBar from '@/components/quiz/ProgressBar';
 import QuestionDisplay from '@/components/quiz/QuestionDisplay';
 import AnswerGrid from '@/components/quiz/AnswerGrid';
@@ -7,104 +9,219 @@ import FeedbackIndicator from '@/components/quiz/FeedbackIndicator';
 import ContinueButton from '@/components/quiz/ContinueButton';
 import { Quiz, Question } from '@/components/quiz/types';
 import QuizHeader from '@/components/quiz/QuizHeader';
-
-
-// Mock Data
-const mockQuiz: Quiz = {
-    id: 'quiz1',
-    title: 'Math Quiz',
-    questions: [
-        {
-            id: 'q1',
-            text: "What's $$\sum_{}^{}?$$",
-            answers: [
-                { id: 'a1', text: '4', isCorrect: false },
-                { id: 'a2', text: '8', isCorrect: true },
-                { id: 'a3', text: '10', isCorrect: false },
-                { id: 'a4', text: '16', isCorrect: false },
-            ],
-            correctAnswerId: 'a2',
-        },
-        {
-            id: 'q2',
-            text: 'What is 2 + 2?',
-            answers: [
-                { id: 'b1', text: '3', isCorrect: false },
-                { id: 'b2', text: '4', isCorrect: true },
-                { id: 'b3', text: '5', isCorrect: false },
-                { id: 'b4', text: '6', isCorrect: false },
-            ],
-            correctAnswerId: 'b2',
-        },
-    ],
-};
+import { useQuizByRoadmap, useSubmitQuizResult } from '@/hooks';
+import { QuizWithQuestions } from '@/services/quizService';
+import  Modal, { ModalActions } from '@/components/ui/Modal';
+import Button from '@/components/ui/Button';
+import { showAchievement, fireConfetti } from '@/utils/utils';
 
 const QuizPage: React.FC = () => {
+    const router = useRouter();
+    const { roadmapId } = useParams<{ roadmapId: string }>();
+    const { user } = useUser();
+    
+    const { data: quiz, isLoading, error } = useQuizByRoadmap(roadmapId as string);
+    const { mutate: submitQuizResult, isLoading: isSubmitting } = useSubmitQuizResult();
+    
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [selectedAnswerId, setSelectedAnswerId] = useState<string | undefined>(undefined);
+    const [selectedAnswerIndex, setSelectedAnswerIndex] = useState<number | null>(null);
     const [showFeedback, setShowFeedback] = useState(false);
     const [isAnswerCorrect, setIsAnswerCorrect] = useState(false);
+    const [score, setScore] = useState(0);
+    const [showResults, setShowResults] = useState(false);
 
-    const currentQuestion = mockQuiz.questions[currentQuestionIndex];
+    // Initialize/reset quiz state when quiz data is loaded
+    useEffect(() => {
+        if (quiz) {
+            setCurrentQuestionIndex(0);
+            setSelectedAnswerIndex(null);
+            setShowFeedback(false);
+            setIsAnswerCorrect(false);
+            setScore(0);
+            setShowResults(false);
+        }
+    }, [quiz]);
 
-    const handleAnswerClick = (answerId: string) => {
+    const currentQuestion = quiz?.questions[currentQuestionIndex]?.exercise;
+
+    const handleAnswerClick = (index: number) => {
         if (showFeedback) return;
 
-        setSelectedAnswerId(answerId);
-        const correctAnswer = currentQuestion.correctAnswerId === answerId;
+        setSelectedAnswerIndex(index);
+        const correctAnswer = currentQuestion?.correctAnswer === index;
         setIsAnswerCorrect(correctAnswer);
         setShowFeedback(true);
+        
+        // Update score if answer is correct
+        if (correctAnswer) {
+            setScore(prevScore => prevScore + 1);
+        }
     };
 
     const handleContinue = () => {
         setShowFeedback(false);
-        setSelectedAnswerId(undefined);
-        if (currentQuestionIndex < mockQuiz.questions.length - 1) {
+        setSelectedAnswerIndex(null);
+        
+        if (quiz && currentQuestionIndex < quiz.questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
         } else {
-            // Quiz finished, handle completion (e.g., show results page)
-            alert('Quiz Finished!');
-            setCurrentQuestionIndex(0); // Reset for now
+            // Quiz finished, submit result
+            if (quiz && user) {
+                submitQuizResult({
+                    userId: user.id,
+                    quizId: quiz.id,
+                    score: score
+                });
+                // Show results modal
+                setShowResults(true);
+                
+                // Show confetti animation for scores over 50%
+                const percentage = (score / quiz.questions.length) * 100;
+                if (percentage >= 50) {
+                    fireConfetti({
+                        particleCount: Math.min(150, Math.floor(percentage * 2)),
+                        spread: 70
+                    });
+                }
+                
+                // Show achievement notification for excellent scores
+                if (percentage >= 80) {
+                    showAchievement(
+                        "Quiz Master",
+                        `You scored ${score}/${quiz.questions.length} (${percentage.toFixed(0)}%)!`
+                    );
+                }
+            }
         }
     };
 
     const handleWhyClick = () => {
-        // Implement "Why?" functionality - e.g., show an explanation modal
-        alert('Explanation for this question would appear here.');
+        // Show explanation if available
+        const explanation = currentQuestion?.explanation;
+        if (explanation) {
+            alert(explanation);
+        } else {
+            alert('No explanation available for this question.');
+        }
     };
 
-    if (!currentQuestion) {
-        return <div>Loading quiz...</div>; // Or some other loading state
+    if (isLoading) {
+        return <div className="flex justify-center items-center min-h-screen">Loading quiz data...</div>;
     }
 
+    if (error) {
+        return <div className="flex justify-center items-center min-h-screen text-red-500">
+            Error loading quiz: {error.message}
+        </div>;
+    }
+
+    if (!quiz || !currentQuestion) {
+        return <div className="flex justify-center items-center min-h-screen">No quiz available for this roadmap.</div>;
+    }
+    
+    // Generate an answers array for the AnswerGrid component
+    const answers = currentQuestion.choices.map((choice, index) => ({
+        id: index.toString(),
+        text: choice,
+        isCorrect: index === currentQuestion.correctAnswer
+    }));
+
     return (
-        <div className="min-h-screen bg-white    flex flex-col items-center">
+        <div className="min-h-screen bg-white flex flex-col items-center">
             <QuizHeader 
-                currentQuestionIndex={currentQuestionIndex + 1}
-                totalQuestions={mockQuiz.questions.length}
+                roadmapTitle={quiz.roadmap?.title}
             />
             <div className="flex justify-center w-full max-w-4xl mx-auto px-4 py-8">
                 <div className="p-8 w-full">
                     <div className="bg-gray-50 p-6 rounded-t-xl shadow-inner">
                         <QuestionDisplay
-                            questionText={currentQuestion.text}
+                            questionText={currentQuestion.name}
+                            imageUrl={currentQuestion.questionImageUrl}
                         />
                         <AnswerGrid
-                            answers={currentQuestion.answers}
-                            selectedAnswerId={selectedAnswerId}
-                            correctAnswerId={currentQuestion.correctAnswerId}
-                            onAnswerClick={handleAnswerClick}
+                            answers={answers}
+                            selectedAnswerId={selectedAnswerIndex !== null ? selectedAnswerIndex.toString() : undefined}
+                            correctAnswerId={currentQuestion.correctAnswer.toString()}
+                            onAnswerClick={(answerId) => handleAnswerClick(parseInt(answerId))}
                             showResult={showFeedback}
                         />
                     </div>
-                    <FeedbackIndicator show={showFeedback} isCorrect={isAnswerCorrect} />
+                    <FeedbackIndicator 
+                        show={showFeedback} 
+                        isCorrect={isAnswerCorrect}
+                        hint={showFeedback && !isAnswerCorrect ? currentQuestion.hints?.[0] : undefined}
+                    />
                     <ContinueButton
                         onClick={handleContinue}
                         onWhyClick={handleWhyClick}
                         disabled={!showFeedback}
+                        isSubmitting={isSubmitting && currentQuestionIndex === quiz.questions.length - 1}
+                        isLastQuestion={currentQuestionIndex === quiz.questions.length - 1}
                     />
                 </div>
             </div>
+            <div className="w-full max-w-4xl mx-auto px-4 pb-8">
+                <ProgressBar 
+                    currentStep={currentQuestionIndex+1} 
+                    totalSteps={quiz.questions.length}
+                    score={score}
+                />
+            </div>
+            
+            {/* Results Modal */}
+            {quiz && (
+                <Modal
+                    isOpen={showResults}
+                    onClose={() => router.push(`/roadmap/${roadmapId}`)}
+                    title="Quiz Results"
+                    size="md"
+                >
+                    <div className="flex flex-col items-center py-6">
+                        <div className="text-6xl mb-4">
+                            {(score / quiz.questions.length) >= 0.8 ? '🏆' : 
+                             (score / quiz.questions.length) >= 0.5 ? '🎉' : '🤔'}
+                        </div>
+                        <h3 className="text-2xl font-bold mb-2">
+                            You scored {score}/{quiz.questions.length}
+                        </h3>
+                        <p className="text-lg mb-6 text-gray-600">
+                            {(score / quiz.questions.length) >= 0.8 ? 'Excellent job!' : 
+                             (score / quiz.questions.length) >= 0.5 ? 'Good work!' : 
+                             'Keep practicing!'}
+                        </p>
+                        <div className="w-full bg-gray-200 rounded-full h-4 mb-6 overflow-hidden">
+                            <div 
+                                className={`h-4 rounded-full ${
+                                    (score / quiz.questions.length) >= 0.8 ? 'bg-green-500' : 
+                                    (score / quiz.questions.length) >= 0.5 ? 'bg-blue-500' : 'bg-yellow-500'
+                                }`}
+                                style={{ width: `${(score / quiz.questions.length) * 100}%` }}
+                            />
+                        </div>
+                    </div>
+                    <ModalActions>
+                        <Button 
+                            variant="outline" 
+                            onClick={() => {
+                                // Reset quiz state and start over
+                                setCurrentQuestionIndex(0);
+                                setSelectedAnswerIndex(null);
+                                setShowFeedback(false);
+                                setIsAnswerCorrect(false);
+                                setScore(0);
+                                setShowResults(false);
+                            }}
+                        >
+                            Try Again
+                        </Button>
+                        <Button 
+                            onClick={() => router.push(`/roadmap/${roadmapId}`)}
+                        >
+                            Return to Roadmap
+                        </Button>
+                    </ModalActions>
+                </Modal>
+            )}
         </div>
     );
 };

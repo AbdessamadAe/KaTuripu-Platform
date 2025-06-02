@@ -16,6 +16,8 @@ import RoadmapNode from "./RoadmapNode";
 import { Roadmap } from "@/types/types";
 import { useRoadmap } from "@/hooks/roadmap/queries/useRoadmap";
 import ErrorMessage from "./Error";
+import Button from "./ui/Button";
+import { useRouter } from "next/navigation";
 
 interface RoadmapProps {
   roadmapId: string | undefined;
@@ -29,23 +31,43 @@ const nodeTypes = {
 
 const RoadmapCanvas: React.FC<RoadmapProps> = ({ roadmapId }) => {
   const [selectedNode, setSelectedNode] = useState<any>(null);
+  const router = useRouter();
 
   const { data, isLoading, isError } = useRoadmap(roadmapId);
 
   const nodes = data?.nodes || [];
   const edges = data?.edges || [];
 
+  const handleNodeClick = (event: React.MouseEvent, node: any) => {
+    setSelectedNode(node);
+  };
+
+  const handleQuizNavigation = () => {
+    // Navigate to the quiz for the current roadmap
+    router.push(`/roadmap/${roadmapId}/quiz`);
+  };
+
   if (isError) return <ErrorMessage />;
 
   return (
     isLoading ? <Loader /> : (
       <div style={{ position: "relative", width: "100%", height: "90vh" }} className="dark:bg-gray-900">
+        {/* Test your knowledge button - always visible */}
+        <div className="absolute top-4 left-4 z-30">
+          <Button
+            variant="primary"
+            size="md"
+            leftIcon={<span className="mr-2">🧠</span>}
+            onClick={() => router.push(`/roadmap/${roadmapId}/quiz`)}
+            className="shadow-lg hover:shadow-xl transform transition-transform hover:scale-105"
+          >
+            Test your knowledge
+          </Button>
+        </div>
         <div style={{ width: "100%", height: "100%" }}>
           <ReactFlow
             nodes={nodes}
-            onNodeClick={(event, node) => {
-              setSelectedNode(node);
-            }}
+            onNodeClick={handleNodeClick}
             edges={edges}
             nodeTypes={nodeTypes}
             fitView
