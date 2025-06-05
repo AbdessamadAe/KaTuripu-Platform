@@ -1,6 +1,6 @@
 import React from 'react'
 import { Footer } from '../../../components/Footer'
-import { FaLinkedin, FaGithub, FaFacebook } from "react-icons/fa";
+import { FaLinkedin, FaGithub, FaEnvelope } from "react-icons/fa";
 import { useLocale, useTranslations } from 'next-intl';
 interface TeamMember {
     name: string;
@@ -25,9 +25,9 @@ export default function Team () {
             bio: t('member1.bio'),
             image: "/images/abdessamad.jpeg",
             socialLinks: {
-                linkedin: "#",
+                linkedin: "https://www.linkedin.com/in/abdessamad-ait-elmouden/",
                 github: "#",
-                facebook: "#"
+                email: "#"
             }
         },
         {
@@ -38,7 +38,7 @@ export default function Team () {
             socialLinks: {
                 linkedin: "#",
                 github: "#",
-                facebook: "#"
+                email: "#"
             }
         }
     ];
@@ -123,7 +123,7 @@ export default function Team () {
                                                 href={member.socialLinks.facebook}
                                                 aria-label="Facebook"
                                             >
-                                                <FaFacebook className="w-5 h-5" />
+                                                <FaEnvelope className="w-5 h-5" />
                                             </a>
                                         )}
                                     </div>

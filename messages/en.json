@@ -11,12 +11,12 @@
         "description": "We are a group of passionate students and graduates who are dedicated to helping you succeed in your academic journey.",
         "member1": {
             "name": "Abdesamad Ait Elmouden",
-            "title": "His friend",
-            "bio": "Bachelor's student at Al Akhawayn University in Ifrane, majoring in Computer Science and Mathematics."
+            "title": "Software Engineer",
+            "bio": "Bachelor student at Al Akhawayn University in Ifrane, majoring in Computer Science and Mathematics."
         },
         "member2": {
             "name": "Achraf Ajrhourh",
-            "title": "Coffee Shop Owner",
+            "title": "AI Engineer",
             "bio": "Master's graduate from Al Akhawayn University in Ifrane, specializing in Big Data Analytics."
         }
     },
