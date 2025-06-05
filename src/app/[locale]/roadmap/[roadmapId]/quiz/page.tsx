@@ -119,13 +119,6 @@ const QuizPage: React.FC = () => {
         return <div className="flex justify-center items-center min-h-screen">No quiz available for this roadmap.</div>;
     }
     
-    // Generate an answers array for the AnswerGrid component
-    const answers = currentQuestion.choices.map((choice, index) => ({
-        id: index.toString(),
-        text: choice,
-        isCorrect: index === currentQuestion.correctAnswer
-    }));
-
     return (
         <div className="min-h-screen bg-white flex flex-col items-center">
             <QuizHeader 
@@ -139,11 +132,12 @@ const QuizPage: React.FC = () => {
                             imageUrl={currentQuestion.questionImageUrl}
                         />
                         <AnswerGrid
-                            answers={answers}
-                            selectedAnswerId={selectedAnswerIndex !== null ? selectedAnswerIndex.toString() : undefined}
-                            correctAnswerId={currentQuestion.correctAnswer.toString()}
-                            onAnswerClick={(answerId) => handleAnswerClick(parseInt(answerId))}
+                            answers={currentQuestion.choices}
+                            selectedIndex={selectedAnswerIndex}
+                            correctIndex={currentQuestion.correctAnswer}
+                            onAnswerClick={handleAnswerClick}
                             showResult={showFeedback}
+                            allowMultipleAttempts={false}
                         />
                     </div>
                     <FeedbackIndicator 

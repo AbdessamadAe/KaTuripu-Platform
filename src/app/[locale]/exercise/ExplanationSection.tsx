@@ -14,39 +14,25 @@ interface ExplanationSectionProps {
   explanation?: string;
   exerciseId: string;
   completed?: boolean;
-  completeExerciseMutate: UseMutateFunction<any, Error, string, unknown>;
 }
 
 const ExplanationSection = ({ 
   explanation, 
   exerciseId, 
-  completed, 
-  completeExerciseMutate
+  completed
 }: ExplanationSectionProps) => {
   const t = useTranslations('exercise');
   const [showExplanation, setShowExplanation] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [isCompleting, setIsCompleting] = useState(false);
 
-  const triggerExplanation = async () => {
+  const triggerExplanation = () => {
     if (isAnimating) return;
     
     setIsAnimating(true);
     setShowExplanation((prev) => !prev);
     
-    try {
-      // Only trigger completion if showing explanation for the first time
-      if (!showExplanation && !completed) {
-        setIsCompleting(true);
-        await completeExerciseMutate(exerciseId);
-      }
-    } catch (error) {
-      Logger.error('Error completing exercise:', error);
-    } finally {
-      setIsCompleting(false);
-      // Small delay to prevent rapid toggling during animation
-      setTimeout(() => setIsAnimating(false), 300);
-    }
+    // Small delay to prevent rapid toggling during animation
+    setTimeout(() => setIsAnimating(false), 300);
   };
 
   if (!explanation) return null;
@@ -57,8 +43,7 @@ const ExplanationSection = ({
         <Button
           variant="outline"
           onClick={triggerExplanation}
-          disabled={isCompleting || isAnimating}
-          isLoading={isCompleting}
+          disabled={isAnimating}
           className={`w-full flex items-center justify-between py-4 transition-colors ${
             showExplanation
               ? 'text-green-700 dark:text-green-300 border-green-200 dark:border-green-900'
@@ -67,7 +52,7 @@ const ExplanationSection = ({
           leftIcon={
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
-              className={`h-5 w-5 ${isCompleting ? 'animate-pulse' : ''}`} 
+              className="h-5 w-5" 
               fill="none" 
               viewBox="0 0 24 24" 
               stroke="currentColor"
@@ -94,9 +79,6 @@ const ExplanationSection = ({
         >
           <div className="flex-grow text-left">
             {showExplanation ? t('hideExplanation') : t('showExplanation')}
-            {isCompleting && (
-              <span className="ml-2 text-sm">saving...</span>
-            )}
           </div>
         </Button>
 

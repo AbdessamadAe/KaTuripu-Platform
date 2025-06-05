@@ -1,221 +1,205 @@
 const { PrismaClient } = require('@prisma/client');
-const { faker } = require('@faker-js/faker/locale/fr');
 
 async function main() {
   const prisma = new PrismaClient();
   try {
     console.log('🌱 Starting seeding...');
 
-    // Seed Users
-    const users = [];
-    for (let i = 0; i < 5; i++) {
-      const user = await prisma.user.create({
-        data: {
-          email: faker.internet.email(),
-          name: faker.person.fullName(),
-          role: i === 0 ? 'ADMIN' : 'USER',
-        }
-      });
-      users.push(user);
-    }
-    console.log(`👥 Created ${users.length} users`);
-
-    // Seed Exercises
-    const difficulties = ['EASY', 'MEDIUM', 'HARD'];
-
-    const exercises = [];
-    for (let i = 0; i < 30; i++) {
-      const choices = [
-        faker.lorem.sentence(),
-        faker.lorem.sentence(),
-        faker.lorem.sentence(),
-        faker.lorem.sentence()
-      ];
-      
-      const correctAnswerIndex = faker.number.int({ min: 0, max: choices.length - 1 });
-      
-      const exercise = await prisma.exercise.create({
-        data: {
-          name: faker.lorem.words(3),
-          description: faker.lorem.paragraphs(3),
-          choices: choices,
-          correctAnswer: correctAnswerIndex,
-          explanation: faker.lorem.paragraph(),
-          difficulty: faker.helpers.arrayElement(difficulties),
-          hints: [faker.lorem.sentence(), faker.lorem.sentence()],
-          videoUrl: "https://www.youtube.com/watch?v=9XzosPEdnWA&t=1s",
-          questionImageUrl: "https://wmyedjqjxixlmdlgnjzy.supabase.co/storage/v1/object/public/exercises/question_images/medicine-e1-2023.png",
-          isActive: faker.datatype.boolean(0.9)
-        }
-      });
-      exercises.push(exercise);
-    }
-    console.log(`🏋️ Created ${exercises.length} exercises`);
-
-    // Seed Roadmaps
-    const roadmapCategories = ['PC', 'SM'];
-
-    const roadmaps = [];
-    for (let i = 0; i < 2; i++) {
-      const roadmap = await prisma.roadmap.create({
-        data: {
-          title: faker.lorem.words(3),
-          description: faker.lorem.paragraph(),
-          category: faker.helpers.arrayElement(roadmapCategories),
-          imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-ZxOCMznxGcjBhMPkS8cI5K8Ka3_owCf0q4luMEOTtMuon3LKYART4xpMkKF_Atu73f0&usqp=CAU",
-          duration: faker.number.int({ min: 1, max: 30 })
-        }
-      });
-      roadmaps.push(roadmap);
-    }
-    console.log(`🗺️ Created ${roadmaps.length} roadmaps`);
-
-    // Seed Nodes for each Roadmap in a binary tree structure
-    const nodes = [];
-    const edges = [];
-    
-    for (const roadmap of roadmaps) {
-      const nodeCount = faker.number.int({ min: 3, max: 7 });
-      const roadmapNodes = [];
-      
-      // Create nodes in a way that forms a binary tree
-      const levels = Math.ceil(Math.log2(nodeCount + 1));
-      const horizontalSpacing = 110;
-      const verticalSpacing = 150;
-      
-      let nodeIndex = 0;
-      
-      for (let level = 0; level < levels; level++) {
-        const nodesInLevel = Math.min(Math.pow(2, level), nodeCount - nodeIndex);
-        const startX = (Math.pow(2, levels - level - 1) - 0.5) * horizontalSpacing;
-        
-        for (let i = 0; i < nodesInLevel; i++) {
-          const x = startX + i * Math.pow(2, levels - level) * horizontalSpacing;
-          const y = level * verticalSpacing;
-          
-          const node = await prisma.roadmapNode.create({
-            data: {
-              roadmapId: roadmap.id,
-              label: faker.lorem.words(2),
-              description: faker.lorem.sentence(),
-              type: "progressNode",
-              positionX: x,
-              positionY: y
-            }
-          });
-          
-          roadmapNodes.push(node);
-          nodeIndex++;
-          
-          // If this isn't the first level, create edges to parent
-          if (level > 0) {
-            const parentIndex = Math.floor((i) / 2);
-            const parentNode = roadmapNodes[Math.pow(2, level - 1) - 1 + parentIndex];
-            
-            const edge = await prisma.roadmapEdge.create({
-              data: {
-                roadmapId: roadmap.id,
-                sourceNodeId: parentNode.id,
-                targetNodeId: node.id
-              }
-            });
-            edges.push(edge);
-          }
-        }
+    // Seed Admin User
+    const adminUser = await prisma.user.create({
+      data: {
+        email: 'admin@mathroadmap.com',
+        name: 'Admin User',
+        role: 'ADMIN',
       }
-      
-      nodes.push(...roadmapNodes);
-    }
-    console.log(`🧠 Created ${nodes.length} nodes`);
-    console.log(`🔗 Created ${edges.length} edges`);
+    });
+    console.log('👤 Created admin user');
 
-    // Assign Exercises to Nodes
-    const nodeExercises = [];
+    // Seed Math Exercises
+    const mathExercises = [
+      {
+        name: "Quadratic Equations",
+        description: "Solve the quadratic equation: x² - 5x + 6 = 0",
+        choices: ["x = 2, x = 3", "x = 1, x = 6", "x = -2, x = -3", "No real solutions"],
+        correctAnswer: 0,
+        explanation: "The equation factors to (x-2)(x-3)=0, so the solutions are x=2 and x=3.",
+        difficulty: "MEDIUM",
+        hints: ["Try factoring the quadratic expression.", "Look for two numbers that multiply to 6 and add to -5."],
+        videoUrl: "https://www.youtube.com/watch?v=VIDEO_ID_QUADRATIC",
+        questionImageUrl: "https://example.com/quadratic.png",
+        isActive: true
+      },
+      {
+        name: "Pythagorean Theorem",
+        description: "In a right triangle with legs 3 and 4, what is the length of the hypotenuse?",
+        choices: ["5", "7", "12", "25"],
+        correctAnswer: 0,
+        explanation: "Using a² + b² = c², we get 3² + 4² = 9 + 16 = 25 = c², so c = 5.",
+        difficulty: "EASY",
+        hints: ["Remember the formula a² + b² = c²", "Calculate 3 squared plus 4 squared"],
+        videoUrl: "https://www.youtube.com/watch?v=VIDEO_ID_PYTHAGOREAN",
+        questionImageUrl: "https://example.com/pythagorean.png",
+        isActive: true
+      },
+      {
+        name: "Derivative Basics",
+        description: "What is the derivative of f(x) = 3x² + 2x - 5?",
+        choices: ["6x + 2", "3x + 2", "6x² + 2x", "3x² + 2"],
+        correctAnswer: 0,
+        explanation: "Using the power rule: derivative of 3x² is 6x, derivative of 2x is 2, and derivative of a constant is 0.",
+        difficulty: "HARD",
+        hints: ["Use the power rule for derivatives", "The derivative of xⁿ is nxⁿ⁻¹"],
+        videoUrl: "https://www.youtube.com/watch?v=VIDEO_ID_DERIVATIVES",
+        questionImageUrl: "https://example.com/derivative.png",
+        isActive: true
+      },
+      // Add more math exercises as needed...
+    ];
+
+    const createdExercises = [];
+    for (const exercise of mathExercises) {
+      const created = await prisma.exercise.create({
+        data: exercise
+      });
+      createdExercises.push(created);
+    }
+    console.log(`🏋️ Created ${createdExercises.length} math exercises`);
+
+    // Seed Math Roadmap
+    const mathRoadmap = await prisma.roadmap.create({
+      data: {
+        title: "High School Mathematics Journey",
+        description: "A comprehensive roadmap covering essential high school math topics from algebra to calculus.",
+        category: "MATH",
+        imageUrl: "https://example.com/math-roadmap.jpg",
+        duration: 90 // 90 days to complete
+      }
+    });
+    console.log('🗺️ Created math roadmap');
+
+    // Seed Nodes for Math Roadmap (structured learning path)
+    const nodes = [
+      {
+        label: "Algebra Fundamentals",
+        description: "Master basic algebraic concepts and equations",
+        positionX: 200,
+        positionY: 50
+      },
+      {
+        label: "Functions",
+        description: "Understand functions and their properties",
+        positionX: 100,
+        positionY: 150
+      },
+      {
+        label: "Trigonometry",
+        description: "Learn trigonometric functions and identities",
+        positionX: 300,
+        positionY: 150
+      },
+      {
+        label: "Geometry",
+        description: "Study shapes, angles, and geometric proofs",
+        positionX: 50,
+        positionY: 250
+      },
+      {
+        label: "Pre-Calculus",
+        description: "Prepare for calculus with advanced algebra",
+        positionX: 200,
+        positionY: 250
+      },
+      {
+        label: "Calculus Intro",
+        description: "Introduction to limits and derivatives",
+        positionX: 350,
+        positionY: 250
+      },
+    ];
+
+    const createdNodes = [];
     for (const node of nodes) {
-      const exerciseCount = faker.number.int({ min: 1, max: 4 });
-      const selectedExercises = faker.helpers.arrayElements(exercises, exerciseCount);
-
-      for (let i = 0; i < selectedExercises.length; i++) {
-        const nodeExercise = await prisma.nodeExercise.create({
-          data: {
-            nodeId: node.id,
-            exerciseId: selectedExercises[i].id,
-            orderIndex: i + 1
-          }
-        });
-        nodeExercises.push(nodeExercise);
-      }
-    }
-    console.log(`📚 Created ${nodeExercises.length} node-exercise relationships`);
-
-    // Create Quizzes for Roadmaps
-    const quizzes = [];
-    for (const roadmap of roadmaps) {
-      const quiz = await prisma.quiz.create({
+      const created = await prisma.roadmapNode.create({
         data: {
-          roadmapId: roadmap.id,
-          title: `Quiz for ${roadmap.title}`
+          ...node,
+          roadmapId: mathRoadmap.id,
+          type: "progressNode"
         }
       });
-      quizzes.push(quiz);
+      createdNodes.push(created);
     }
-    console.log(`📝 Created ${quizzes.length} quizzes`);
+    console.log(`🧠 Created ${createdNodes.length} roadmap nodes`);
 
-    // Add Questions to Quizzes
-    const quizQuestions = [];
-    for (const quiz of quizzes) {
-      const questionCount = faker.number.int({ min: 5, max: 10 });
-      const selectedExercises = faker.helpers.arrayElements(exercises, questionCount);
+    // Create edges between nodes (forming a learning path)
+    const edges = [
+      { sourceIndex: 0, targetIndex: 1 }, // Algebra -> Functions
+      { sourceIndex: 0, targetIndex: 2 }, // Algebra -> Trigonometry
+      { sourceIndex: 1, targetIndex: 3 }, // Functions -> Geometry
+      { sourceIndex: 1, targetIndex: 4 }, // Functions -> Pre-Calculus
+      { sourceIndex: 2, targetIndex: 5 }, // Trigonometry -> Calculus Intro
+      { sourceIndex: 4, targetIndex: 5 }, // Pre-Calculus -> Calculus Intro
+    ];
 
-      for (let i = 0; i < selectedExercises.length; i++) {
-        const quizQuestion = await prisma.quizQuestion.create({
-          data: {
-            quizId: quiz.id,
-            exerciseId: selectedExercises[i].id,
-            orderIndex: i + 1
-          }
-        });
-        quizQuestions.push(quizQuestion);
-      }
+    for (const edge of edges) {
+      await prisma.roadmapEdge.create({
+        data: {
+          roadmapId: mathRoadmap.id,
+          sourceNodeId: createdNodes[edge.sourceIndex].id,
+          targetNodeId: createdNodes[edge.targetIndex].id
+        }
+      });
     }
-    console.log(`❓ Created ${quizQuestions.length} quiz questions`);
+    console.log(`🔗 Created ${edges.length} edges between nodes`);
 
-    // Create User Progress (random completion)
-    const userProgressRecords = [];
-    for (const user of users) {
-      // Each user completes 10-80% of exercises
-      const exercisesToComplete = faker.helpers.arrayElements(
-        exercises,
-        faker.number.int({
-          min: Math.floor(exercises.length * 0.1),
-          max: Math.floor(exercises.length * 0.8)
-        })
-      );
+    // Assign exercises to nodes
+    await prisma.nodeExercise.createMany({
+      data: [
+        { nodeId: createdNodes[0].id, exerciseId: createdExercises[0].id, orderIndex: 1 }, // Quadratic to Algebra
+        { nodeId: createdNodes[0].id, exerciseId: createdExercises[1].id, orderIndex: 2 }, // Pythagorean to Algebra
+        { nodeId: createdNodes[5].id, exerciseId: createdExercises[2].id, orderIndex: 1 }, // Derivative to Calculus
+      ]
+    });
+    console.log('📚 Assigned exercises to nodes');
 
-      for (const exercise of exercisesToComplete) {
-        const progress = await prisma.userExerciseProgress.create({
-          data: {
-            userId: user.id,
-            exerciseId: exercise.id,
-            completed: true,
-            completedAt: faker.date.recent()
-          }
-        });
-        userProgressRecords.push(progress);
+    // Create quiz for the roadmap
+    const quiz = await prisma.quiz.create({
+      data: {
+        roadmapId: mathRoadmap.id,
+        title: "Math Fundamentals Assessment"
       }
+    });
+    console.log('📝 Created roadmap quiz');
 
-      // Create Quiz Results
-      for (const quiz of quizzes) {
-        await prisma.userQuizResult.create({
-          data: {
-            userId: user.id,
-            quizId: quiz.id,
-            score: faker.number.int({ min: 50, max: 100 })
-          }
-        });
+    // Add questions to quiz
+    await prisma.quizQuestion.createMany({
+      data: createdExercises.map((exercise, index) => ({
+        quizId: quiz.id,
+        exerciseId: exercise.id,
+        orderIndex: index + 1
+      }))
+    });
+    console.log(`❓ Added ${createdExercises.length} questions to quiz`);
+
+    // Create admin user progress
+    await prisma.userExerciseProgress.createMany({
+      data: createdExercises.map(exercise => ({
+        userId: adminUser.id,
+        exerciseId: exercise.id,
+        completed: true,
+        completedAt: new Date()
+      }))
+    });
+    console.log('✅ Created admin user progress records');
+
+    // Create quiz result for admin
+    await prisma.userQuizResult.create({
+      data: {
+        userId: adminUser.id,
+        quizId: quiz.id,
+        score: 100 // Admin got 100%
       }
-    }
-    console.log(`✅ Created ${userProgressRecords.length} user progress records`);
+    });
+    console.log('🏆 Created admin quiz result');
 
     console.log('🌱 Seeding completed!');
   } catch (e) {

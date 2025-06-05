@@ -6,9 +6,10 @@ interface AnswerOptionProps {
   isSelected: boolean;
   isCorrect?: boolean; // Optional: to show correct/incorrect status after selection
   disabled: boolean;
+  allowMultipleAttempts?: boolean; // Optional prop to control multiple attempts
 }
 
-const AnswerOption: React.FC<AnswerOptionProps> = ({ text, onClick, isSelected, isCorrect, disabled }) => {
+const AnswerOption: React.FC<AnswerOptionProps> = ({ text, onClick, isSelected, isCorrect, disabled, allowMultipleAttempts }) => {
   let bgColor = 'bg-white';
   let textColor = 'text-gray-700';
   let borderColor = 'border-gray-300';
@@ -32,7 +33,7 @@ const AnswerOption: React.FC<AnswerOptionProps> = ({ text, onClick, isSelected, 
   return (
     <button
       onClick={onClick}
-      disabled={disabled}
+      disabled={disabled && !allowMultipleAttempts}
       className={`p-4 border rounded-lg shadow hover:shadow-md transition-shadow w-full text-left ${bgColor} ${textColor} ${borderColor} disabled:opacity-50 disabled:cursor-not-allowed`}
     >
       {text}

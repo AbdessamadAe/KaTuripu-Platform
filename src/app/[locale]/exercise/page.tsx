@@ -127,8 +127,13 @@ const ExercisePage = () => {
             <div className="py-4">
               {activeTab === 'question' && (
                 <QuestionSection
-                  question={exercise?.question}
+                  question={exercise?.description}
+                  choices={exercise?.choices}
+                  answer={exercise?.correctAnswer}
                   imageUrl={exercise?.questionImageUrl}
+                  exerciseId={exerciseId as string}
+                  completed={exercise?.completed}
+                  completeExerciseMutate={completeExerciseMutate}
                 />
               )}
 
@@ -165,6 +170,7 @@ const ExercisePage = () => {
             title={nodeTitle}
             nodeId={nodeId}
             roadmapId={roadmapId}
+            roadmapTitle={roadmapTitle}
             allowClose={isMobile}
             onClose={() => isMobile && setSidebarVisible(false)}
           />

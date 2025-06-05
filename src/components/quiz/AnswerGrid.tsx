@@ -1,26 +1,26 @@
 import React from 'react';
 import AnswerOption from './AnswerOption';
-import { Answer } from './types';
 
 interface AnswerGridProps {
-  answers: Answer[];
-  selectedAnswerId?: string;
-  correctAnswerId?: string;
-  onAnswerClick: (answerId: string) => void;
+  answers?: string[];
+  selectedIndex?: number | null;
+  correctIndex?: number;
+  onAnswerClick: (index: number) => void;
   showResult: boolean;
 }
 
-const AnswerGrid: React.FC<AnswerGridProps> = ({ answers, selectedAnswerId, correctAnswerId, onAnswerClick, showResult }) => {
+const AnswerGrid: React.FC<AnswerGridProps> = ({ answers = [], selectedIndex, correctIndex, onAnswerClick, showResult }) => {
   return (
     <div className="grid grid-cols-2 gap-4 mb-8">
-      {answers.map((answer) => (
+      {answers.map((answer, index) => (
         <AnswerOption
-          key={answer.id}
-          text={answer.text}
-          onClick={() => onAnswerClick(answer.id)}
-          isSelected={selectedAnswerId === answer.id}
-          isCorrect={showResult ? answer.id === correctAnswerId : undefined}
+          key={index}
+          text={answer}
+          onClick={() => onAnswerClick(index)}
+          isSelected={selectedIndex === index}
+          isCorrect={showResult ? index === correctIndex : undefined}
           disabled={showResult}
+          allowMultipleAttempts={true}
         />
       ))}
     </div>
