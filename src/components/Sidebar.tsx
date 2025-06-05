@@ -6,7 +6,6 @@ import { getDifficultyStyle } from "@/utils/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@clerk/nextjs";
 import { Button, Card, Badge, Alert } from '@/components/ui';
-// Import icons from react-icons
 import { HiCheck, HiPlay, HiClock, HiAcademicCap } from 'react-icons/hi2';
 import { HiX } from "react-icons/hi";
 
@@ -14,14 +13,14 @@ import { HiX } from "react-icons/hi";
 async function fetchExerciseMetaList(nodeId: string): Promise<ExerciseMeta[]> {
   try {
     const res = await fetch(`/api/node/${nodeId}/exercise-list`);
-    
+
     if (!res.ok) {
       console.error(`Error fetching exercises: ${res.status} ${res.statusText}`);
       return [];
     }
-    
+
     const data = await res.json();
-    
+
     // Ensure we always return an array
     return Array.isArray(data) ? data : [];
   } catch (error) {
@@ -76,7 +75,7 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
     );
   }
 
-  if (!exercises || exercises.length === 0) {
+  if (exercises.length === 0 && !loadingExerciseList) {
     return (
       <Card variant="flat" className="h-full w-94 md:w-100">
         <Card.Body className="flex items-center justify-center">
@@ -92,9 +91,10 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
   const totalExercises = exercises.length;
   const progress = totalExercises > 0 ? Math.round((completedExercises / totalExercises) * 100) : 0;
 
+
   return (
-    <Card 
-      variant="flat" 
+    <Card
+      variant="flat"
       className="h-full w-94 md:w-100 overflow-y-auto flex flex-col shadow-sm"
     >
       <Card.Header className="flex justify-between items-center">
@@ -121,13 +121,13 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
 
         {/* Progress bar */}
         <div className="w-full bg-gray-200 overflow-hidden dark:bg-gray-700 rounded-full h-2 mb-4">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.8, ease: "easeInOut" }}
-              className={`h-full ${progress === 100 ? "bg-[var(--success-color)]" : "bg-[var(--secondary-color)]"
-                }`}
-            />
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+            className={`h-full ${progress === 100 ? "bg-[var(--success-color)]" : "bg-[var(--secondary-color)]"
+              }`}
+          />
         </div>
 
         {loadingExerciseList ? (
@@ -141,15 +141,9 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
             {exercises.map((exercise) => {
               // Determine badge variant based on difficulty
               const difficultyVariant = 
-                exercise.difficulty === "easy" ? "success" : 
-                exercise.difficulty === "medium" ? "warning" : 
-                exercise.difficulty === "hard" ? "danger" : "info";
-              
-              // Determine difficulty label
-              const difficultyLabel = 
-                exercise.difficulty === "easy" ? "Facile" :
-                exercise.difficulty === "medium" ? "Moyen" :
-                exercise.difficulty === "hard" ? "Difficile" : exercise.difficulty;
+                exercise.difficulty === "EASY" ? "success" : 
+                exercise.difficulty === "MEDIUM" ? "warning" : 
+                exercise.difficulty === "HARD" ? "danger" : "info";
 
               return (
                 <Card
@@ -174,7 +168,7 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
                       <div className="flex-grow ml-2 min-w-0">
                         <Link href={{
                           pathname: `/exercise`,
-                          query: { exerciseId: exercise.id, nodeId, roadmapId, nodeTitle: title, roadmapTitle: roadmapTitle}
+                          query: { exerciseId: exercise.id, nodeId, roadmapId, nodeTitle: title, roadmapTitle: roadmapTitle }
                         }} passHref>
                           <div className="text-gray-800 dark:text-white font-medium hover:text-[var(--primary-color)] dark:hover:text-[var(--primary-color)] transition-colors cursor-pointer truncate">
                             {exercise.name}
@@ -188,7 +182,7 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
 
                       <div className="flex-shrink-0 ml-2">
                         <Badge variant={difficultyVariant} size="sm" rounded>
-                          {difficultyLabel}
+                          {exercise?.difficulty}
                         </Badge>
                       </div>
                     </div>
@@ -198,15 +192,7 @@ const ExerciseSidebar: React.FC<SidebarProps> = ({
             })}
           </div>
         )}
-        {exercises.length === 0 && !loadingExerciseList && (
-          <Card variant="flat" className="text-center py-4">
-            <Card.Body>
-              <p className="text-gray-500 dark:text-gray-400">
-                No exercises available for this section.
-              </p>
-            </Card.Body>
-          </Card>
-        )}
+
       </Card.Body>
     </Card>
   );
