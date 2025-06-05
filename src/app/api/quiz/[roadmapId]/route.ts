@@ -6,7 +6,7 @@ export async function GET(
   { params }: { params: { roadmapId: string } }
 ) {
   try {
-    const { roadmapId } = params;
+    const { roadmapId } = await params;
 
     if (!roadmapId) {
       return NextResponse.json(

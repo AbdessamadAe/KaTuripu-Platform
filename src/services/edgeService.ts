@@ -1,7 +1,6 @@
-import prisma from '@/lib/prisma';
 import { auth, currentUser } from '@clerk/nextjs/server';
-import { Prisma } from '@prisma/client';
 import Logger from '@/utils/logger';
+import prisma from '@/lib/prisma';
 
 export async function createEdge(edgeData: {
   roadmapId: string;
@@ -13,7 +12,15 @@ export async function createEdge(edgeData: {
     const userId = user?.id;
 
     if (!user || user.publicMetadata?.admin !== true) {
-      Logger.error('Unauthorized attempt to create edge', { userId });
+      Logger.error('Unauthorized attempt to create edge', {
+        userId, 
+        component: 'edgeService',
+        functionName: 'createEdge',
+        context: {
+          roadmapId: edgeData.roadmapId,
+          action: 'create_edge'
+        }
+      });
       return { success: false, error: 'Unauthorized' };
     }
 
@@ -77,7 +84,18 @@ export async function createEdge(edgeData: {
 
     return { success: true, edge };
   } catch (error) {
-    Logger.error('Failed to create edge', error);
+    Logger.error('Failed to create edge', {
+      error,
+      component: 'edgeService',
+      functionName: 'createEdge',
+      userId: user?.id,
+      context: {
+        roadmapId: edgeData.roadmapId,
+        sourceNodeId: edgeData.sourceNodeId,
+        targetNodeId: edgeData.targetNodeId,
+        errorCode: error instanceof Prisma.PrismaClientKnownRequestError ? error.code : undefined
+      }
+    });
     
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === 'P2003') {
@@ -95,7 +113,15 @@ export async function deleteEdge(edgeId: string) {
     const userId = user?.id;
 
     if (!user || user.publicMetadata?.admin !== true) {
-      Logger.error('Unauthorized attempt to update edge', { userId });
+      Logger.error('Unauthorized attempt to delete edge', {
+        userId,
+        component: 'edgeService',
+        functionName: 'deleteEdge',
+        context: {
+          edgeId,
+          action: 'delete_edge'
+        }
+      });
       return { success: false, error: 'Unauthorized' };
     }
     
@@ -116,7 +142,16 @@ export async function deleteEdge(edgeId: string) {
 
     return { success: true };
   } catch (error) {
-    Logger.error('Failed to delete edge', error);
+    Logger.error('Failed to delete edge', {
+      error,
+      component: 'edgeService',
+      functionName: 'deleteEdge',
+      userId: user?.id,
+      context: {
+        edgeId,
+        errorCode: error instanceof Prisma.PrismaClientKnownRequestError ? error.code : undefined
+      }
+    });
     return { success: false, error: 'Failed to delete edge' };
   }
 }

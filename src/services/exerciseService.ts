@@ -1,6 +1,5 @@
 import prisma from '@/lib/prisma';
 import { auth, currentUser } from '@clerk/nextjs/server'
-import { Prisma } from '@prisma/client';
 import type { Exercise } from '@/types/types';
 import Logger from "@/utils/logger";
 import crypto from 'crypto';
@@ -10,6 +9,14 @@ export const getExerciseById = async (exerciseId: string) => {
     const { userId } = await auth();
     
     if (!userId) {
+      Logger.error('Unauthorized attempt to access exercise', {
+        component: 'exerciseService',
+        functionName: 'getExerciseById',
+        context: {
+          exerciseId,
+          action: 'get_exercise'
+        }
+      });
       return { success: false, error: 'Unauthorized' };
     }
 
@@ -41,7 +48,15 @@ export const getExerciseById = async (exerciseId: string) => {
 
     return { success: true, exercise: response };
   } catch (error) {
-    Logger.error('Failed to fetch exercise', error);
+    Logger.error('Failed to fetch exercise', {
+      error,
+      component: 'exerciseService',
+      functionName: 'getExerciseById',
+      userId,
+      context: {
+        exerciseId
+      }
+    });
     return { success: false, error: 'Failed to fetch exercise' };
   }
 }
@@ -51,6 +66,14 @@ export const completeExercise = async (exerciseId: string) => {
     const { userId } = await auth();
     
     if (!userId) {
+      Logger.error('Unauthorized attempt to complete exercise', {
+        component: 'exerciseService',
+        functionName: 'completeExercise',
+        context: {
+          exerciseId,
+          action: 'complete_exercise'
+        }
+      });
       return { success: false, error: 'Unauthorized' };
     }
 

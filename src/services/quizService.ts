@@ -1,4 +1,5 @@
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
+import Logger from "@/utils/logger";
 
 export interface QuizWithQuestions {
   id: string;
@@ -41,6 +42,13 @@ async function generateQuizForRoadmap(roadmapId: string, questionCount: number =
     });
 
     if (!roadmap) {
+      Logger.error(`Roadmap not found when generating quiz`, {
+        component: 'quizService',
+        functionName: 'generateQuizForRoadmap',
+        context: {
+          roadmapId
+        }
+      });
       throw new Error(`Roadmap ${roadmapId} not found`);
     }
 
@@ -57,6 +65,13 @@ async function generateQuizForRoadmap(roadmapId: string, questionCount: number =
     });
 
     if (roadmapExercises.length === 0) {
+      Logger.error(`No exercises found for roadmap when generating quiz`, {
+        component: 'quizService',
+        functionName: 'generateQuizForRoadmap',
+        context: {
+          roadmapId
+        }
+      });
       throw new Error(`No exercises found for roadmap ${roadmapId}`);
     }
 
@@ -182,7 +197,16 @@ export async function submitQuizResult(userId: string, quizId: string, score: nu
       },
     });
   } catch (error) {
-    console.error("Error submitting quiz result:", error);
+    Logger.error("Failed to submit quiz result", {
+      error,
+      component: 'quizService',
+      functionName: 'submitQuizResult',
+      userId,
+      context: {
+        quizId,
+        score
+      }
+    });
     throw new Error(`Failed to submit quiz result for user ${userId}`);
   }
 }

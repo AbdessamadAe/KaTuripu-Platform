@@ -7,6 +7,14 @@ export async function getNode(nodeId: string) {
     const { userId } = await auth();
     
     if (!userId) {
+      Logger.error('Unauthorized attempt to access node', {
+        component: 'nodeService',
+        functionName: 'getNode',
+        context: {
+          nodeId,
+          action: 'get_node'
+        }
+      });
       return { success: false, error: 'Unauthorized' };
     }
 

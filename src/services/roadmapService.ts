@@ -14,19 +14,17 @@ export async function createRoadmap(roadmapData: {
     const userId = user?.id;
 
     if (!user || user.publicMetadata?.admin !== true) {
-      Logger.error('Unauthorized attempt to create roadmap', { userId });
+      Logger.error('Unauthorized attempt to create roadmap', {
+        userId,
+        component: 'roadmapService', 
+        functionName: 'createRoadmap',
+        context: {
+          roadmapTitle: roadmapData.title,
+          action: 'create_roadmap'
+        }
+      });
       return { success: false, error: 'Unauthorized' };
     }
-
-    // // Check if user has admin role
-    // const user = await prisma.user.findUnique({
-    //   where: { id: userId },
-    //   select: { role: true }
-    // });
-
-    // if (!user || user.admin !== true) {
-    //   return { success: false, error: 'Unauthorized: Admin role required' };
-    // }
 
     // Create the roadmap
     const roadmap = await prisma.roadmap.create({
@@ -41,7 +39,17 @@ export async function createRoadmap(roadmapData: {
 
     return { success: true, roadmap };
   } catch (error) {
-    Logger.error('Failed to create roadmap', error);
+    Logger.error('Failed to create roadmap', {
+      error,
+      component: 'roadmapService',
+      functionName: 'createRoadmap',
+      userId: user?.id,
+      context: {
+        roadmapTitle: roadmapData.title,
+        category: roadmapData.category,
+        errorCode: error instanceof Prisma.PrismaClientKnownRequestError ? error.code : undefined
+      }
+    });
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === 'P2002') {
@@ -151,15 +159,6 @@ export async function updateRoadmap(
       return { success: false, error: 'Unauthorized' };
     }
 
-    // Check if user has admin role
-    // const user = await prisma.user.findUnique({
-    //   where: { id: userId },
-    //   select: { role: true }
-    // });
-
-    // if (!user || user.admin !== true) {
-    //   return { success: false, error: 'Unauthorized: Admin role required' };
-    // }
 
     // Check if roadmap exists
     const existingRoadmap = await prisma.roadmap.findUnique({
@@ -302,15 +301,7 @@ export async function deleteRoadmap(roadmapId: string) {
       return { success: false, error: 'Unauthorized' };
     }
 
-    // Check if user has admin role
-    // const user = await prisma.user.findUnique({
-    //   where: { id: userId },
-    //   select: { role: true }
-    // });
-
-    // if (!user || user.admin !== true) {
-    //   return { success: false, error: 'Unauthorized: Admin role required' };
-    // }
+  
 
     // Check if roadmap exists
     const existingRoadmap = await prisma.roadmap.findUnique({
