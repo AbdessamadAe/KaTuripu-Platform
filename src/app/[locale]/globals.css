@@ -40,7 +40,7 @@
 }
 
 body {
-  font-family: 'Open Sans', sans-serif;
+  font-family: var(--font-manjari), 'Manjari', sans-serif;
   background-color: var(--background);
   color: var(--foreground);
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -75,7 +75,7 @@ body {
 
 /* Math formatting */
 .math-solution {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--font-manjari), 'Manjari', sans-serif;
   line-height: 1.6;
 }
 

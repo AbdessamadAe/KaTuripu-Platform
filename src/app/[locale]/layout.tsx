@@ -1,6 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Manjari } from "next/font/google";
 import "./globals.css";
+
+const manjari = Manjari({
+  subsets: ['latin', 'latin-ext'],
+  weight: ['400', '700'],
+  variable: '--font-manjari',
+});
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import MathJaxProvider from "@/providers/MathJaxProvider";
@@ -35,7 +41,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`antialiased min-h-screen w-full overflow-x-hidden`}>
+      <body className={`${manjari.variable} antialiased min-h-screen w-full overflow-x-hidden`}>
         <QueryProvider>
           <ClerkProvider
             signInUrl={`/${locale}/auth/login`}
