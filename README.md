@@ -1,6 +1,9 @@
 # KaTuripu
 
 ![image](https://github.com/user-attachments/assets/adde95f9-3c07-4536-92d7-bfc42e7a1e95)
+![image](https://github.com/user-attachments/assets/99be4550-bfaf-491c-9c3d-a12c39a3e44e)
+![image](https://github.com/user-attachments/assets/8b5b1e3e-3d48-4ac9-84de-21e2e9b79112)
+![image](https://github.com/user-attachments/assets/64a932f6-0415-4fcd-9f50-211bf24847a2)
 
 ## Overview
 
@@ -98,7 +101,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Team 👋
 
-KaTuripu is developed by a team of passionate students and graduates dedicated to improving educational outcomes for Moroccan students.
+Abdessamad Ait Elmouden
 
 ## Contact 📧
 
