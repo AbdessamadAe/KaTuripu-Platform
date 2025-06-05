@@ -13,6 +13,7 @@ import { Button } from '@/components/ui';
 
 
 const navigation = [
+  { name: 'Dashboard', href: '/dashboard  ' },
   { name: 'Concours', href: '/roadmap' },
   { name: 'Équipe', href: '/team' },
   { name: 'Contact', href: '/contact-us' }

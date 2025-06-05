@@ -23,3 +23,6 @@ export { useDeleteExercise } from './exercise/mutations/useDeleteExercise';
 
 // Export all quiz hooks
 export { useQuizByRoadmap, useSubmitQuizResult } from './quiz';
+
+// Export all user hooks
+export { useUserMetrics } from './user';
